@@ -1,9 +1,7 @@
-**Magnum is a java tool for integrative analysis of regulatory networks and genome-wide association studies (GWAS)**.
-
-**Reference**
-Cell type-specific regulatory circuits reveal variable modular perturbations across complex diseases. 
+**Magnum** is a java tool implementing the methods described in the paper:
+* Cell type-specific regulatory circuits reveal variable modular perturbations across complex diseases. 
 Marbach D, Lamparter D, Quon G, Kellis M, Kutalik Z, Bergmann S. 
-*Submitted*
+*Submitted.*
 
 **Web site**
 * [regulatorycircuits.org](http://regulatorycircuits.org)
