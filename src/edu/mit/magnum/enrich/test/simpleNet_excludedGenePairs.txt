@@ -1,0 +1,5 @@
+gene1_id	gene2_id
+5	4
+X	Y
+oiseau	maasive
+6	7
