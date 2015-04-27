@@ -67,7 +67,7 @@ public class GroupNetworks {
 		
 		for (String name : networkSets_.keySet()) {
 			ArrayList<String> files = networkSets_.get(name);
-			Magnum.println("- " + name + " (" + files.size() + " networks)");
+			Magnum.println("- " + name + " (" + files.size() + " networks)\n");
 			
 			Union union = new Union(networkDir_, files);
 			Network net = union.run();

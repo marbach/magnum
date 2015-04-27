@@ -51,6 +51,7 @@ public class PairwiseSumTest {
 		Settings.computePairwiseSum_ = true;
 		Settings.isDirected_ = true;
 		Settings.isWeighted_ = true;
+		Settings.threshold_ = 0;
 	}
 
 	@AfterClass

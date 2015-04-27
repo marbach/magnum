@@ -1,6 +1,6 @@
 **Magnum** is a java tool implementing the methods described in the paper:
-* Cell type-specific regulatory circuits reveal variable modular perturbations across complex diseases. 
-Marbach D, Lamparter D, Quon G, Kellis M, Kutalik Z, Bergmann S. 
+* **Cell type-specific regulatory circuits reveal variable modular perturbations across complex diseases**. 
+Marbach D, Lamparter D, Quon G, Kellis M, Kutalik Z, and Bergmann S. 
 *Submitted.*
 
 **Web site**

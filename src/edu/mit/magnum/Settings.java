@@ -62,11 +62,13 @@ public class Settings {
 	// VARIOUS
 	
 	/** Current version of N-GSEA */
-	static public String ngseaVersion_ = "0.1 Alpha";
+	static public String magnumVersion_ = "1.0 alpha";
 	/** Mode: 1 => Network analysis; 2 => Enrichment analysis */
 	static public int mode_ = -1;
 	/** Seed for the random number generator. Set to -1 to use current time */
 	static public int randomSeed_ = -1;
+	/** Set true to use verbose mode (print more information) */
+	static public boolean verbose_ = false;
 	/** Output directory to save stuff */
 	static public String outputDirectory_ = "";
 	/** Output filename */
@@ -187,7 +189,7 @@ public class Settings {
 	/** Gene pairs to be excluded from enrichment analysis (e.g., genes in LD) */
 	static public String excludedGenePairsFile_ = null;
 	/** Exclude gene pairs with windows smaller than the given distance apart (given in megabases; -1: no exclusion; 1000000: all genes on same chromosome) */
-	static public int excludedGenesDistance_ = -1; 
+	static public double excludedGenesDistance_ = -1; 
 
 	/** Gene IDs used in geneScoreFile, excludedGenesFile, excludedGenePairsFile ('ensembl', 'entrez', 'hugo') */
 	static public String idTypeGeneScores_ = null;
@@ -250,8 +252,8 @@ public class Settings {
 		try {
 			InputStream in;
 			if (settingsFile_ == null || settingsFile_.compareTo("") == 0) {
-				Magnum.println("- No settings file specified");
-				Magnum.println("- Loading default settings\n");
+				Magnum.printlnVerbose("- No settings file specified");
+				Magnum.printlnVerbose("- Loading default settings\n");
 				in = Settings.class.getClassLoader().getResourceAsStream("edu/mit/magnum/settings.txt");
 			} else {
 				Magnum.println("- Loading settings file: " + settingsFile_ + "\n");
@@ -367,6 +369,7 @@ public class Settings {
 		// VARIOUS
 		mode_ = getSettingInt("mode");
 		randomSeed_ = getSettingInt("randomSeed");
+		verbose_ = getSettingBoolean("verbose");
 		outputDirectory_ = getSetting("outputDirectory");
 		if (outputDirectory_.equals("")) 
 			outputDirectory_ = System.getProperty("user.dir");
@@ -382,7 +385,7 @@ public class Settings {
 		threshold_ = getSettingDouble("threshold");
 		superHubThreshold_ = getSettingDouble("superHubThreshold");
 		refNodesFile_ = getSetting("refNodesFile");
-
+//tmp
 		// OUTPUT FILES
 		outputSuffix_ = getSetting("outputSuffix");
 		exportPairwiseNodeProperties_ = getSettingBoolean("exportPairwiseNodeProperties");

@@ -96,6 +96,13 @@ public class Magnum {
 	static public void print(String msg) {
 		System.out.print(msg);
 	}
+	
+	/** Write string to stdout only if in verbose mode */
+	static public void printlnVerbose(String msg) {
+		if (Settings.verbose_)
+			println(msg);
+	}
+
 
 	// ============================================================================
 	// PUBLIC METHODS
@@ -103,9 +110,9 @@ public class Magnum {
 	/** Constructor, parse command-line arguments, initialize settings */
 	public Magnum(String[] args) {
 
-		Magnum.println("SETTINGS FILE");
-		Magnum.println("-------------\n");
-
+		// Print magnum version
+		printlnVerbose("magnum " + Settings.magnumVersion_ + "\n");
+		
 		// Parse command-line arguments and initialize settings
 		MagnumOptionParser optionParser = new MagnumOptionParser();
 		optionParser.parse(args);
@@ -118,10 +125,7 @@ public class Magnum {
 
 	// ----------------------------------------------------------------------------
 
-	/**
-	 * Parse the command-line arguments, read the files, perform network
-	 * inference, write outputs
-	 */
+	/** Run */
 	public void run() {
 
 		if (Settings.mode_ == 1)
@@ -132,9 +136,10 @@ public class Magnum {
 			runEnrichmentAnalysis();
 		else if (Settings.mode_ == 4)
 			runLinkModuleAnalysis();
-		else
-			throw new IllegalArgumentException(
-					"Property 'mode' must be either '1' or '2'");
+		else {
+			MagnumOptionParser.displayHelp();
+			throw new IllegalArgumentException("--mode <int> must be between 1 and 3, found mode=" + Settings.mode_);
+		}
 
 		System.out.println("Success!");
 	}

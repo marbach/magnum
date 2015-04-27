@@ -295,12 +295,10 @@ public class GeneScoreList {
 	
 	// ----------------------------------------------------------------------------
 
-	/** Expand genes using the given window size and neighbor distance (used to exclude genes within a given distance) */
+	/** Expand genes using the given neighbor distance (used to exclude genes within a given distance) */
 	private void expandGeneWindows() {
 		
-		int d = 1000000 * Settings.excludedGenesDistance_;
-		//int down = Settings.geneWindowDownstream_ + d;
-		//int up = Settings.geneWindowUpstream_ + d;
+		int d = (int) (1000000 * Settings.excludedGenesDistance_);
 
 		for (Gene g : rankedGenes_)
 			g.expand(d, d);

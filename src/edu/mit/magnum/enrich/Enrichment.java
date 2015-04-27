@@ -87,6 +87,8 @@ abstract public class Enrichment {
 
 	/** The area under the curves for the observed and permuted curves */
 	protected ArrayList<double[]> AUCs_ = null;
+	/** The corresponding empirical p-values */
+	double[] pvals_ = null;
 
 	/** The number of random samples / curves */
 	protected int numPermutations_ = -1;
@@ -163,7 +165,7 @@ abstract public class Enrichment {
 		// Compute empirical p-values based on random permutations
 		empiricalPvals_ = new EmpiricalPvals(curvesPermut_, k_);
 		empiricalPvals_.computeCurvesSignificance();
-		empiricalPvals_.computePvalCurve(curveObs_, true);
+		empiricalPvals_.computePvalCurve(curveObs_, false); //true);
 		curveMedian_ = empiricalPvals_.getCurveMedian();
 
 		// Compute empirical p-values based on random permutations
@@ -175,7 +177,9 @@ abstract public class Enrichment {
 		}
 		
 		// Compute AUC for expected and permut curves
-		computeAUC();
+		computeAUC();		
+		// Compute p-values
+		computePvals();
 	}
 	
 	
@@ -381,6 +385,48 @@ abstract public class Enrichment {
 	}
 
 	
+	// ----------------------------------------------------------------------------
+
+	/** Compute empirical p-values */
+	private void computePvals() {
+		
+		// The observed AUCs
+		double[] observed = AUCs_.get(0);
+		
+		// The number of permutations with greater AUCs
+		int[] numGreater = new int[observed.length];
+		for (int i=0; i<numGreater.length; i++)
+			numGreater[i] = 0;
+
+		assert AUCs_.size() == numPermutations_ + 1;
+		for (int i=1; i<AUCs_.size(); i++) {
+			double[] permut = AUCs_.get(i);
+			for (int k=0; k<permut.length; k++)
+				if (permut[k] > observed[k])
+					numGreater[k]++;
+		}
+		
+		pvals_ = new double[observed.length];
+		for (int k=0; k<observed.length; k++)
+			pvals_[k] = (numGreater[k] + 1.0) / (numPermutations_ + 1.0);
+	}
+
+	
+	// ----------------------------------------------------------------------------
+
+	/** Print the empirical p-values */
+	public void printPvals() {
+
+		Magnum.println("Ranked gene list\tP-value");
+		Magnum.println(Math.round(100*Settings.curveCutoff_/4.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[4]));
+		Magnum.println(Math.round(100*Settings.curveCutoff_/2.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[5]));
+		Magnum.println(Math.round(100*3*Settings.curveCutoff_/4.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[6]));
+		Magnum.println(Math.round(100*Settings.curveCutoff_) + "%\t" + MagnumUtils.toStringScientific10(pvals_[7]));
+		Magnum.println();
+	}
+
+	
+
 	// ----------------------------------------------------------------------------
 
 	/** Compute AUC for the given curve with respect to the given reference curve */

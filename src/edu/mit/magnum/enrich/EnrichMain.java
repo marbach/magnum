@@ -231,8 +231,11 @@ public class EnrichMain {
 		enrichment_ = new EnrichmentPairwise(functData_, geneScores_, permuter_);
 		enrichment_.run();
 		
+		// Print pvals
+		enrichment_.printPvals();
+		
 		// Save results
-		String filename = Settings.outputDirectory_ + "/" + name_ + "--bin" + Settings.numBins_;
+		String filename = Settings.outputDirectory_ + "/" + name_;
 		if (geneScoreIndex > 0)
 			filename += "." + geneScoreIndex;
 		enrichment_.save(filename);

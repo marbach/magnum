@@ -1,7 +1,7 @@
 ##########################################################################
-# Configuration file for Network-based Gene Set Enrichment Analysis (N-GSEA)
+# Magnum configuration file
 # 
-# All variables that are loaded by NgseaSettings must be specified in this file,
+# All variables that are loaded by Settings must be specified in this file,
 # otherwise an error message is displayed.
 #
 # Boolean values: 0 => false, 1 => true
@@ -11,18 +11,20 @@
 ##########################################################################
 # VARIOUS
 
-# Mode: 
+# Mode: [--mode]
 # 1 => Network properties
 # 2 => Network operations
 # 3 => Enrichment analysis
 # 4 => Link module association analysis
-mode = 1
-# Seed for the random number generator, set to -1 to use current time
+mode = 0
+# Seed for the random number generator, set to -1 to use current time [--seed] 
 randomSeed = 42
-# Default output directory to save files (empty = home directory; '.' = working directory)
+# Set true to use verbose mode (print more information) [--verbose] 
+verbose = 0
+# Default output directory to save files (empty = home directory; '.' = working directory) [--outdir]
 outputDirectory = .
 # Output filename
-outputFilename = tf---gene.prec90
+outputFilename = 
 # Compress output files (gzip)
 compressFiles = 1
 
@@ -33,22 +35,23 @@ compressFiles = 1
 # ========================================================================
 # INPUT NETWORK
 
-# Directory containing the networks
-networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---gene.prec90/level2.scaled10
+# Directory containing the networks [--netdir <dir>]
+networkDir = .
+#networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---gene.prec90/level2.scaled10
 #networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---gene.prec90/global
-# The input network file
+# The input network file [--net <file>]
 #networkFile = scaled10.tf---gene.prec90.hepatocyte.txt.gz
 networkFile = 
 # Delimiter used to separate columns, either 'TAB' or 'SPACE'
 networkFileDelim = TAB
-# Defines if the network should be interpreted as directed or undirected
+# Defines if the network should be interpreted as directed or undirected [--dir]
 isDirected = 0
-# Defines if self loops should be removed from the network
+# Defines if self loops should be removed from the network [--self]
 removeSelfLoops = 0
-# Set true to treat the network as weighted
-isWeighted = 1
-# Threshold for including weighted edges
-threshold = 0.05
+# Set true to treat the network as weighted [--weighted]
+isWeighted = 0
+# Threshold for including weighted edges [--cutoff <value>]
+threshold = 0.0
 # Exclude "super-hubs" that connect to more than the given fraction of genes
 superHubThreshold = 0
 # Optional file specifying a set of reference nodes
@@ -57,40 +60,43 @@ refNodesFile =
 # ========================================================================
 # NETWORKOPS
 
-# Take union (max edge) over all networks in networkDir or the sets specified in the file below
+# Take union (max edge) over all networks in networkDir or the sets specified in the file below [--union]
 computeUnion = 0
 # Define the network sets that should be combined (leave empty to combine all networks)
-networkGroupFile = /Users/marbach/Java/genecircuits/data/fantom5/sampleAnnot/groups/level2.txt
+networkGroupFile = 
+#networkGroupFile = /Users/marbach/Java/genecircuits/data/fantom5/sampleAnnot/groups/level2.txt
 #networkGroupFile = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---gene.prec90/level2.scaled10.c4/_level2.scaled10.c4.txt
 # Prefix of the files in the network dir
-networkFilePrefix = tf---gene.prec90
+networkFilePrefix = 
+#networkFilePrefix = tf---gene.prec90
 
 # Add pairs of corresponding networks in two directories (e.g., promoter and enhancer-based networks)
 computePairwiseSum = 0
 # The network directory of the second networks
-networkDir2 = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---promoter---gene.prec90/level2
+#networkDir2 = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---promoter---gene.prec90/level2
+networkDir2 = 
 
 # ========================================================================
 # BASIC NETWORK PROPERTIES
 
-# Node degree (directed networks, also indegree and outdegree)
+# Node degree (directed networks, also indegree and outdegree) [--degree]
 computeDegree = 0
-# Node betweenness centrality (edge directionality observed for directed networks)
+# Node betweenness centrality (edge directionality observed for directed networks) [--betweenness]
 computeBetweenness = 0
-# Node clustering coefficient (edge directionality observed for directed networks)
-computeClusteringCoefficient = 1
-# For each node, distance to all other nodes (or all reference nodes; edge directionality observed) and closeness centrality
+# Node clustering coefficient (edge directionality observed for directed networks) [--clustcoeff]
+computeClusteringCoefficient = 0
+# For each node, distance to all other nodes (or all reference nodes; edge directionality observed) and closeness centrality [--shortestpath]
 computeShortestPathLengths = 0
 
 # ========================================================================
 # KERNELS
 # Only implemented for undirected networks
 
-# P-step random walk kernel (Smola & Kondor, 2003)
+# P-step random walk kernel (Smola & Kondor, 2003) [--pstep]
 computePstepKernel = 0
 # alpha parameter of p-step random walk kernel (alpha >= 2)
 pstepKernelAlpha = 2
-# Steps p of random walk kernel (comma-separated list of positive integers given in increasing order, the kernel for each listed p will be saved)
+# Steps p of random walk kernel (comma-separated list of positive integers given in increasing order, the kernel for each listed p will be saved) [-nsteps <int>]
 pstepKernelP = 4
 # Normalize the kernel matrix (divide by the max)
 pstepKernelNormalize = 1
@@ -111,7 +117,7 @@ outputSuffix =
 # Export all computed pairwise node properties (e.g., similarity, distance matrices)
 exportPairwiseNodeProperties = 1
 # Export all computed node properties (e.g., avg. similarity, distance for each node)
-exportNodeProperties = 0
+exportNodeProperties = 1
 
 
 ##########################################################################
@@ -142,28 +148,29 @@ geneIdMappingFile = data/annotation/gencode/ensembl_entrez_hugo_ids.txt
 # ========================================================================
 # INPUT
 
-# The gene coordinates (custom annotation)
-geneCoordFile = data/geneScores/gene_coord.bed
-#geneCoordFile = 
-# The gene scores
-#geneScoreFile = data/geneScores/14-07-21_priorityStudies/EUR.wtccc2_ms.pvals_real_analytic.genescores.txt
-geneScoreFile = /Users/marbach/Java/magnum/data/geneScores/gwasCollection_geneScores_v1/EUR.CARDIoGRAM_2010_lipids.HDL_ONE_max.genescores.txt
+# The gene coordinates (custom annotation) [--genes <file>]
+#geneCoordFile = data/geneScores/gene_coord.bed
+geneCoordFile = 
+# The gene scores [--scores <file>]
+#geneScoreFile = /Users/marbach/Java/magnum/data/geneScores/gwasCollection_geneScores_v1/EUR.CARDIoGRAM_2010_lipids.HDL_ONE_max.genescores.txt
+geneScoreFile = 
 # Cutoff for genome-wide significance of gene scores
 genomeWideSignificanceThreshold = 1e-6
 # Exclude genome-wide significant genes (below threshold)
 excludeGenomeWideSignificantGenes = 0
-# The file with the functional data, e.g. network kernels (cols: gene id, property 1, property 2, ...)
+# The file with the functional data, e.g. network kernels (cols: gene id, property 1, property 2, ...) [--cmatrix <file>]
 #functionalDataFile = tf---gene.prec90.global_4stepKernel_alpha2.0_weighted_undir.txt.gz
-functionalDataFile = /Users/marbach/Java/magnum/data/tmp_kernels/scaled10.tf---gene.prec90.global_4stepKernel_alpha2.0_weighted.txt.gz
+#functionalDataFile = /Users/marbach/Java/magnum/data/tmp_kernels/scaled10.tf---gene.prec90.global_4stepKernel_alpha2.0_weighted.txt.gz
+functionalDataFile = 
 # Comma-separated list of columns that should be loaded (leave empty: all columns; 1: first gene property column)
 functionalDataCols = 
 
-# Genes to be excluded from enrichment analysis (e.g., MHC region)
-excludedGenesFile = /Users/marbach/Java/magnum/data/geneScores/tfs_mhc.txt
-#excludedGenesFile =
+# Genes to be excluded from enrichment analysis (e.g., MHC region) [--excl <file>]
+#excludedGenesFile = /Users/marbach/Java/magnum/data/geneScores/tfs_mhc.txt
+excludedGenesFile = 
 # Gene pairs to be excluded from enrichment analysis (e.g., genes in LD)
 excludedGenePairsFile = 
-# Exclude gene pairs with windows smaller than the given distance apart (given in *megabases*; -1: no exclusion; 1000: all genes on same chromosome)
+# Exclude gene pairs with windows smaller than the given distance apart (given in *megabases*; -1: no exclusion; 1000: all genes on same chromosome) [--neighbors <int>]
 excludedGenesDistance = 1
 
 # Gene IDs used in geneScoreFile, excludedGenesFile, excludedGenePairsFile ('custom', 'ensembl', 'entrez', 'hugo')
@@ -174,9 +181,9 @@ idTypeFunctionalData = custom
 # ========================================================================
 # PARAMETERS
 
-# Number of random permutations used to compute FDR / q-values
+# Number of random permutations used to compute empirical p-values [--permut <int>]
 numPermutations = 10000
-# The number of bins for within-degree permutation
+# The number of bins for within-degree permutation [--bins <int>]
 numBins = 100
 # Scale kernels: K'(i,j) = K(i,j)/sqrt(rowSums(K)[i] * colSums(K)[j])
 scaleKernel = 0
@@ -184,9 +191,9 @@ scaleKernel = 0
 # Equidistant curve resolution, e.g., set 10 to compute every 10th point on the curves
 constCurveResolution = 10
 # Varying curve resolution, e.g., set 2 to compute points: 2, 6, 12, 20, 30, 42, ... (takes precedence over constCurveResolution, set -1 to disable)
-varCurveResolution = 2
-# Compute curves only for the top part of the list (e.g., 0.1 for top 10%)
-curveCutoff = 1
+varCurveResolution = -1
+# Compute curves only for the top part of the list (e.g., 0.1 for top 10%) [--curve <value>]
+curveCutoff = 0.2
 # Sliding window size (500)
 slidingWindowSize = -1
 

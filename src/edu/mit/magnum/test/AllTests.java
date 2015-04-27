@@ -40,6 +40,7 @@ import edu.mit.magnum.netprop.test.*;
 //@SuiteClasses({ NetworkTest.class, AnalyzerBasicPropertiesTest.class, AnalyzerShortestPathsTest.class, 
 //	AnalyzerPstepKernelTest.class, HandlerTest.class, LinkCommunityTest.class })
 @SuiteClasses({ 
+	MagnumOptionParserTest.class,
 	NetworkTest.class, 
 	BasicPropertiesTest.class, 
 	ShortestPathsTest.class, 
