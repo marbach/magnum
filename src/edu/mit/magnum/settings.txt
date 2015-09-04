@@ -16,7 +16,7 @@
 # 2 => Network operations
 # 3 => Enrichment analysis
 # 4 => Link module association analysis
-mode = 0
+mode = 2
 # Seed for the random number generator, set to -1 to use current time [--seed] 
 randomSeed = 42
 # Set true to use verbose mode (print more information) [--verbose] 
@@ -36,8 +36,8 @@ compressFiles = 1
 # INPUT NETWORK
 
 # Directory containing the networks [--netdir <dir>]
-networkDir = .
-#networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---gene.prec90/level2.scaled10
+#networkDir = 
+networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfRegionNet/enhancer---gene.prec90/level0
 #networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---gene.prec90/global
 # The input network file [--net <file>]
 #networkFile = scaled10.tf---gene.prec90.hepatocyte.txt.gz
@@ -45,11 +45,11 @@ networkFile =
 # Delimiter used to separate columns, either 'TAB' or 'SPACE'
 networkFileDelim = TAB
 # Defines if the network should be interpreted as directed or undirected [--dir]
-isDirected = 0
+isDirected = 1
 # Defines if self loops should be removed from the network [--self]
 removeSelfLoops = 0
 # Set true to treat the network as weighted [--weighted]
-isWeighted = 0
+isWeighted = 1
 # Threshold for including weighted edges [--cutoff <value>]
 threshold = 0.0
 # Exclude "super-hubs" that connect to more than the given fraction of genes
@@ -61,14 +61,15 @@ refNodesFile =
 # NETWORKOPS
 
 # Take union (max edge) over all networks in networkDir or the sets specified in the file below [--union]
-computeUnion = 0
+computeUnion = 1
 # Define the network sets that should be combined (leave empty to combine all networks)
-networkGroupFile = 
+#networkGroupFile =
 #networkGroupFile = /Users/marbach/Java/genecircuits/data/fantom5/sampleAnnot/groups/level2.txt
+networkGroupFile = /Users/marbach/Java/genecircuits/data/fantom5/sampleAnnot/groups/encodeCellLines.txt
 #networkGroupFile = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---gene.prec90/level2.scaled10.c4/_level2.scaled10.c4.txt
 # Prefix of the files in the network dir
-networkFilePrefix = 
-#networkFilePrefix = tf---gene.prec90
+#networkFilePrefix = 
+networkFilePrefix = enhancer---gene.prec90.
 
 # Add pairs of corresponding networks in two directories (e.g., promoter and enhancer-based networks)
 computePairwiseSum = 0
