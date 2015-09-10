@@ -42,38 +42,53 @@ import edu.mit.magnum.enrich.*;
  */
 public class Magnum {
 
+
 	// ============================================================================
 	// STATIC METHODS
-
+	
 	/** Main function */
 	static public void main(String[] args) {
 
 		try {
 			Magnum magnum = new Magnum(args);
 			magnum.run();
+			
 		} catch (Exception e) {
-			error(e);
+			e.printStackTrace();
+			System.exit(-1);
 		}
 	}
 
+	
 	// ----------------------------------------------------------------------------
 
-	/** Print the stack trace of the exception and exit */
+	/** Flag indicates if thread was interrupted */
+	static private boolean interrupted_ = false;
+
+	/** Gets and resets the interrupted flag (same behaviour as Thread.interrupted() */
+	static public boolean interrupted() {
+		
+		boolean returnValue = interrupted_;
+		interrupted_ = false;
+		return returnValue;
+	}
+
+	/** Set interrupted flag true */
+	static public void setInterrupted() {
+		interrupted_ = true;
+	}
+
+	
+	// ----------------------------------------------------------------------------
+
+	/** Wrap the exception in a RuntimeException */
 	static public void error(Exception e) {
-		e.printStackTrace();
-		System.exit(-1); // return -1 in case of error
+		throw new RuntimeException(e);
 	}
 
-	/** Print the stack trace of the exception and exit with error message */
-	static public void error(Exception e, String msg) {
-		System.err.println("ERROR: " + msg);
-		error(e);
-	}
-
-	/** Print error message and exit */
+	/** Throw RuntimeException with given message */
 	static public void error(String msg) {
-		System.err.println("ERROR: " + msg);
-		System.exit(-1);
+		throw new RuntimeException(msg);
 	}
 
 	/** Print warning message to stderr */

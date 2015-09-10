@@ -539,6 +539,13 @@ public class Network {
 				numRemovedMultiEdges_++;
 			}
 			
+			// Return if thread was interrupted
+			if (Thread.interrupted()) {
+				parser.close();
+				Magnum.setInterrupted();
+				throw new RuntimeException();
+			}
+			
 			// Read the next line
 			nextLine = parser.readLine();
 		}
@@ -638,6 +645,13 @@ public class Network {
 	// SETTERS AND GETTERS
 	
 	public String getFilename() { return filename_; }
+	
+	public int getNumRegulators() {
+		if (!isDirected_)
+			return 0;
+		else
+			return getRegulatorNodes().size();
+	}
 	
 	public int getNumNodes() { return numNodes_; }
 	public int getNumEdges() { return graph_.getEdgeCount(); }

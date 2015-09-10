@@ -113,9 +113,9 @@ public class PstepKernel extends PairwiseProperties {
 	/** Compute the p-step kernel matrix. Matrix multiplication could be done more efficiently by exploiting symmetry. */
 	public void computeK() {
 
-		Magnum.println("Computing normalized Laplacian...");
+		Magnum.println("Computing normalized Laplacian...");		
 		normalizedLaplacian_ = network_.computeNormalizedLaplacian();
-
+		
 		for (int i=0; i<alpha_.size(); i++)
 			computeK(alpha_.get(i));
 		

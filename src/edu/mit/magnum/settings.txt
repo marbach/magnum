@@ -16,7 +16,7 @@
 # 2 => Network operations
 # 3 => Enrichment analysis
 # 4 => Link module association analysis
-mode = 2
+mode = 5
 # Seed for the random number generator, set to -1 to use current time [--seed] 
 randomSeed = 42
 # Set true to use verbose mode (print more information) [--verbose] 
@@ -37,11 +37,11 @@ compressFiles = 1
 
 # Directory containing the networks [--netdir <dir>]
 #networkDir = 
-networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfRegionNet/enhancer---gene.prec90/level0
-#networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---gene.prec90/global
+#networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfRegionNet/enhancer---gene.prec90/level0
+networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---gene.prec90/global
 # The input network file [--net <file>]
 #networkFile = scaled10.tf---gene.prec90.hepatocyte.txt.gz
-networkFile = 
+networkFile = tf---gene.prec90.global.txt.gz
 # Delimiter used to separate columns, either 'TAB' or 'SPACE'
 networkFileDelim = TAB
 # Defines if the network should be interpreted as directed or undirected [--dir]
@@ -94,7 +94,7 @@ computeShortestPathLengths = 0
 # Only implemented for undirected networks
 
 # P-step random walk kernel (Smola & Kondor, 2003) [--pstep]
-computePstepKernel = 0
+computePstepKernel = 1
 # alpha parameter of p-step random walk kernel (alpha >= 2)
 pstepKernelAlpha = 2
 # Steps p of random walk kernel (comma-separated list of positive integers given in increasing order, the kernel for each listed p will be saved) [-nsteps <int>]
