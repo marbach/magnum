@@ -182,9 +182,9 @@ public class FunctionalData {
 
 		// Check that the two columns are present
 		if (colGene1 == -1)
-			Magnum.error("Did not find mandatory column 'gene1_id'");
+			Magnum.log.error("Did not find mandatory column 'gene1_id'");
 		if (colGene2 == -1)
-			Magnum.error("Did not find mandatory column 'gene2_id'");
+			Magnum.log.error("Did not find mandatory column 'gene2_id'");
 
 		int numExcluded = 0;
 
@@ -229,7 +229,7 @@ public class FunctionalData {
 					
 					if ((index1 == 3979 && index2 == 9831) ||
 							(index2 == 3979 && index1 == 9831))
-						Magnum.println();
+						Magnum.log.println();
 
 					// Set entry to NaN
 					data_.set(index1, index2, Double.NaN);
@@ -240,7 +240,7 @@ public class FunctionalData {
 			}
 		}
 		parser.close();
-		Magnum.println("- " + numExcluded + " gene pairs excluded");
+		Magnum.log.println("- " + numExcluded + " gene pairs excluded");
 	}
 
 	
@@ -380,7 +380,7 @@ public class FunctionalData {
 		if (!isPairwiseData_)
 			return;
 
-		Magnum.println("- Scaling kernel (adjusting for hubs)...");
+		Magnum.log.println("- Scaling kernel (adjusting for hubs)...");
 
 		// Note, I also did this using Blas following a stackoverflow comment
 		// (multiply matrix by a vector of ones), but it was much slower

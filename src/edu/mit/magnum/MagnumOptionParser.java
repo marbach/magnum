@@ -59,7 +59,7 @@ public class MagnumOptionParser extends Settings {
 			options = parser_.parse(args);
 		} catch (Exception e) {
 			displayHelp();
-			Magnum.error(e);
+			throw new RuntimeException(e);
 		}
 
 		// Display help
@@ -76,8 +76,8 @@ public class MagnumOptionParser extends Settings {
 			settingsFile_ = (String) options.valueOf("set");
 
 		// (3) Load the settings file
-		Magnum.printlnVerbose("SETTINGS FILE");
-		Magnum.printlnVerbose("-------------\n");
+		Magnum.log.printlnVerbose("SETTINGS FILE");
+		Magnum.log.printlnVerbose("-------------\n");
 		loadSettings();
 
 		// (4) Set command-line options (default is what has been loaded from settings file)
@@ -166,81 +166,81 @@ public class MagnumOptionParser extends Settings {
 	/** Display help on console */
 	static public void displayHelp() {
 
-		Magnum.println("Running magnum " + Settings.magnumVersion_);
-		Magnum.println();
+		Magnum.log.println("Running magnum " + Settings.magnumVersion_);
+		Magnum.log.println();
 
-		Magnum.println("1. USAGE");
-		Magnum.println("--------");
-		Magnum.println("   java [JAVA OPTIONS] -jar magnum.jar --mode <int> [OPTIONS]\n");
+		Magnum.log.println("1. USAGE");
+		Magnum.log.println("--------");
+		Magnum.log.println("   java [JAVA OPTIONS] -jar magnum.jar --mode <int> [OPTIONS]\n");
 		
-		Magnum.println("2. JAVA OPTIONS (see java documentation for details)");
-		Magnum.println("---------------");
-		Magnum.println("   -Xmx<memory>    Increase memory, e.g., -Xmx8g for 8GB memory");
-		Magnum.println("                   (more may be necessary depending on network size)");
-		Magnum.println("   -ea             Enable assertions (not necessary, activates");
-		Magnum.println("                   'debugging' tests built into the code)");
-		Magnum.println();
+		Magnum.log.println("2. JAVA OPTIONS (see java documentation for details)");
+		Magnum.log.println("---------------");
+		Magnum.log.println("   -Xmx<memory>    Increase memory, e.g., -Xmx8g for 8GB memory");
+		Magnum.log.println("                   (more may be necessary depending on network size)");
+		Magnum.log.println("   -ea             Enable assertions (not necessary, activates");
+		Magnum.log.println("                   'debugging' tests built into the code)");
+		Magnum.log.println();
 
-		Magnum.println("3. GENERAL OPTIONS");
-		Magnum.println("------------------");
-		Magnum.println("   --help | -h     Display help");
-		Magnum.println("   --verbose       Use verbose output (useful for debugging)");
-		Magnum.println("   --mode <int>    Select the mode (REQUIRED):");
-		Magnum.println("                      1 = Compute network properties (diffusion kernels,");
-		Magnum.println("                          shortest paths, clustering coefficients)");
-		Magnum.println("                      2 = Perform network operations (union)");
-		Magnum.println("                      3 = Connectivity enrichment analysis");
-		Magnum.println("   --seed <int>    Random number generator seed (default: 42; current time: -1)");
-		Magnum.println("   --outdir <dir>  Output directory (default: working directory)");
-		Magnum.println("   --netdir <dir>  Directory of input networks (default: working directory)");
-		Magnum.println("   --net <file>    Input network filename");
-		Magnum.println("   --directed      Input network is directed (default: undirected)");
-		Magnum.println("   --weighted      Input network is weighted (default: unweighted)");
-		Magnum.println("   --noself        Remove self-loops from input network");
-		Magnum.println("   --cutoff <value> Remove edges with weight < cutoff from input network");
-		Magnum.println();
+		Magnum.log.println("3. GENERAL OPTIONS");
+		Magnum.log.println("------------------");
+		Magnum.log.println("   --help | -h     Display help");
+		Magnum.log.println("   --verbose       Use verbose output (useful for debugging)");
+		Magnum.log.println("   --mode <int>    Select the mode (REQUIRED):");
+		Magnum.log.println("                      1 = Compute network properties (diffusion kernels,");
+		Magnum.log.println("                          shortest paths, clustering coefficients)");
+		Magnum.log.println("                      2 = Perform network operations (union)");
+		Magnum.log.println("                      3 = Connectivity enrichment analysis");
+		Magnum.log.println("   --seed <int>    Random number generator seed (default: 42; current time: -1)");
+		Magnum.log.println("   --outdir <dir>  Output directory (default: working directory)");
+		Magnum.log.println("   --netdir <dir>  Directory of input networks (default: working directory)");
+		Magnum.log.println("   --net <file>    Input network filename");
+		Magnum.log.println("   --directed      Input network is directed (default: undirected)");
+		Magnum.log.println("   --weighted      Input network is weighted (default: unweighted)");
+		Magnum.log.println("   --noself        Remove self-loops from input network");
+		Magnum.log.println("   --cutoff <value> Remove edges with weight < cutoff from input network");
+		Magnum.log.println();
 
-		Magnum.println("4. NETWORK PROPERTIES");
-		Magnum.println("---------------------");
-		Magnum.println("   --pstep         P-step random walk kernel (Smola & Kondor, 2003; allows for");
-		Magnum.println("                   weighted networks)");
-		Magnum.println("   --nsteps <int>  Number of steps for p-step random walk kernel (default: 4)");
-		Magnum.println("   --degree        Node degree (directed networks, also indegree and outdegree)");
-		Magnum.println("   --betweenness   Node betweenness centrality (allows for directed networks)");
-		Magnum.println("   --clustcoeff    Node clustering coefficient (allows for directed networks)");
-		Magnum.println("   --shortestpath  Shortest path lengths and closeness centrality");
-		Magnum.println();
+		Magnum.log.println("4. NETWORK PROPERTIES");
+		Magnum.log.println("---------------------");
+		Magnum.log.println("   --pstep         P-step random walk kernel (Smola & Kondor, 2003; allows for");
+		Magnum.log.println("                   weighted networks)");
+		Magnum.log.println("   --nsteps <int>  Number of steps for p-step random walk kernel (default: 4)");
+		Magnum.log.println("   --degree        Node degree (directed networks, also indegree and outdegree)");
+		Magnum.log.println("   --betweenness   Node betweenness centrality (allows for directed networks)");
+		Magnum.log.println("   --clustcoeff    Node clustering coefficient (allows for directed networks)");
+		Magnum.log.println("   --shortestpath  Shortest path lengths and closeness centrality");
+		Magnum.log.println();
 		
-		Magnum.println("5. NETWORK OPERATIONS");
-		Magnum.println("---------------------");
-		Magnum.println("   --union         Union (max edge weight) of all networks in network directory");
-		Magnum.println("                   (see option: --netdir <dir>)");
-		Magnum.println();
+		Magnum.log.println("5. NETWORK OPERATIONS");
+		Magnum.log.println("---------------------");
+		Magnum.log.println("   --union         Union (max edge weight) of all networks in network directory");
+		Magnum.log.println("                   (see option: --netdir <dir>)");
+		Magnum.log.println();
 
-		Magnum.println("6. NETWORK CONNECTIVITY ENRICHMENT");
-		Magnum.println("----------------------------------");
-		Magnum.println("   --genes <file>  The gene coordinates (REQUIRED)");
-		Magnum.println("   --scores <file> The GWAS gene scores (REQUIRED)");
-		Magnum.println("   --cmatrix <file> The connectivity matrix (e.g., diffusion kernel; REQUIRED)");
-		Magnum.println("   --excl <file>   Genes to be excluded (e.g., HLA region)");
-		Magnum.println("   --neighbors <X> Ignore connectivity between genes with distance < X mega-bases");
-		Magnum.println("                   (default: 1 [mega-base])");
-		Magnum.println("   --bins <int>    The number of bins for within-degree permutation (default: 100)");
-		Magnum.println("   --permut <int>  No. permutations to compute empirical p-values (default: 10000)");
-		Magnum.println("   --curve <X>     Compute curves only for the top part of the ranked gene list");
-		Magnum.println("                   (default: 0.2 [top 20%])");
-		Magnum.println();
+		Magnum.log.println("6. NETWORK CONNECTIVITY ENRICHMENT");
+		Magnum.log.println("----------------------------------");
+		Magnum.log.println("   --genes <file>  The gene coordinates (REQUIRED)");
+		Magnum.log.println("   --scores <file> The GWAS gene scores (REQUIRED)");
+		Magnum.log.println("   --cmatrix <file> The connectivity matrix (e.g., diffusion kernel; REQUIRED)");
+		Magnum.log.println("   --excl <file>   Genes to be excluded (e.g., HLA region)");
+		Magnum.log.println("   --neighbors <X> Ignore connectivity between genes with distance < X mega-bases");
+		Magnum.log.println("                   (default: 1 [mega-base])");
+		Magnum.log.println("   --bins <int>    The number of bins for within-degree permutation (default: 100)");
+		Magnum.log.println("   --permut <int>  No. permutations to compute empirical p-values (default: 10000)");
+		Magnum.log.println("   --curve <X>     Compute curves only for the top part of the ranked gene list");
+		Magnum.log.println("                   (default: 0.2 [top 20%])");
+		Magnum.log.println();
 
-		Magnum.println("7. EXAMPLES");
-		Magnum.println("-----------");
-		Magnum.println("See the step-by-step tutorial in the user guide for details.");
-		Magnum.println();		
-		Magnum.println("Compute random walk kernel for the network included in the tutorial directory:");
-		Magnum.println("   >> java -Xmx6g -ea -jar magnum_v1.0.jar --mode 1 --pstep --netdir tutorial_data --net smooth_muscle_cells_-_umbilical_vein.txt.gz --weighted");
-		Magnum.println();		
-		Magnum.println("Perform network connectivity enrichment analysis:");
-		Magnum.println("   >> java -Xmx6g -ea -jar magnum_v1.0.jar --mode 3 --genes tutorial_data/gene_coord.bed --excl tutorial_data/excluded_genes.txt --scores tutorial_data/macular_degeneration_neovascular.txt --cmatrix smooth_muscle_cells_-_umbilical_vein_4stepKernel_alpha2.0_weighted.txt.gz --permut 10000");
-		Magnum.println();		
+		Magnum.log.println("7. EXAMPLES");
+		Magnum.log.println("-----------");
+		Magnum.log.println("See the step-by-step tutorial in the user guide for details.");
+		Magnum.log.println();		
+		Magnum.log.println("Compute random walk kernel for the network included in the tutorial directory:");
+		Magnum.log.println("   >> java -Xmx6g -ea -jar magnum_v1.0.jar --mode 1 --pstep --netdir tutorial_data --net smooth_muscle_cells_-_umbilical_vein.txt.gz --weighted");
+		Magnum.log.println();		
+		Magnum.log.println("Perform network connectivity enrichment analysis:");
+		Magnum.log.println("   >> java -Xmx6g -ea -jar magnum_v1.0.jar --mode 3 --genes tutorial_data/gene_coord.bed --excl tutorial_data/excluded_genes.txt --scores tutorial_data/macular_degeneration_neovascular.txt --cmatrix smooth_muscle_cells_-_umbilical_vein_4stepKernel_alpha2.0_weighted.txt.gz --permut 10000");
+		Magnum.log.println();		
 	}
 
 	

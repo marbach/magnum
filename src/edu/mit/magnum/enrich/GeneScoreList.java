@@ -144,7 +144,7 @@ public class GeneScoreList {
 		// Parse header
 		String[] header = parser.readLine();
 		if (!header[0].equals("gene_id"))
-			Magnum.error("Expected header line with first field 'gene_id' (tab-separated)");
+			Magnum.log.error("Expected header line with first field 'gene_id' (tab-separated)");
 		
 		// First line
 		while (true) {
@@ -281,15 +281,15 @@ public class GeneScoreList {
 		sortGeneList(0);
 		
 		if (Settings.ignoreAllosomes_)
-			Magnum.println("- Excluding genes on allosomes");
+			Magnum.log.println("- Excluding genes on allosomes");
 		if (numExcluded > 0)
-			Magnum.println("- " + numExcluded + " genes excluded");
+			Magnum.log.println("- " + numExcluded + " genes excluded");
 		if (numNoScore > 0)
-			Magnum.println("- " + numNoScore + " genes with NA score");
+			Magnum.log.println("- " + numNoScore + " genes with NA score");
 		if (numNoAnnot > 0)
-			Magnum.println("- " + numNoAnnot + " genes not found in the annotation");
+			Magnum.log.println("- " + numNoAnnot + " genes not found in the annotation");
 		if (numSignificantExcluded > 0)
-			Magnum.println("- " + numSignificantExcluded + " genes with p-val <" + Settings.genomeWideSignificanceThreshold_ + " excluded");
+			Magnum.log.println("- " + numSignificantExcluded + " genes with p-val <" + Settings.genomeWideSignificanceThreshold_ + " excluded");
 	}
 	
 	

@@ -67,7 +67,7 @@ public class GroupNetworks {
 		
 		for (String name : networkSets_.keySet()) {
 			ArrayList<String> files = networkSets_.get(name);
-			Magnum.println("- " + name + " (" + files.size() + " networks)\n");
+			Magnum.log.println("- " + name + " (" + files.size() + " networks)\n");
 			
 			Union union = new Union(networkDir_, files);
 			Network net = union.run();
@@ -89,7 +89,7 @@ public class GroupNetworks {
 		if (networkGroupFile == null || networkGroupFile.isEmpty()) {
 			ArrayList<String> files = MagnumUtils.listFiles(networkDir_);
 			networkSets_.put("_networkUnion", files);
-			Magnum.println("- " + files.size() + " files in network directory");
+			Magnum.log.println("- " + files.size() + " files in network directory");
 			return;
 		}
 
@@ -124,8 +124,8 @@ public class GroupNetworks {
 			files.add(filename);	
 		}
 		parser.close();		
-		Magnum.println("- Initialized " + networkSets_.size() + " network sets");
-		Magnum.println();
+		Magnum.log.println("- Initialized " + networkSets_.size() + " network sets");
+		Magnum.log.println();
 	}
 
 	

@@ -51,7 +51,7 @@ public class FileExport {
 		try {
 			if (gzip)
 				filename += ".gz";
-			System.out.println("Writing file: " + filename);
+			Magnum.log.println("Writing file: " + filename);
 		
 			if (gzip) {
 				FileOutputStream output = new FileOutputStream(filename);
@@ -62,7 +62,7 @@ public class FileExport {
 			}
 			
 		} catch (Exception e) {
-			Magnum.error(e);
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -91,7 +91,7 @@ public class FileExport {
 		try {
 			writer_.write(str);
 		} catch (IOException e) {
-			Magnum.error(e);
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -104,7 +104,7 @@ public class FileExport {
 		try {
 			writer_.flush();
 		} catch (IOException e) {
-			Magnum.error(e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -117,7 +117,7 @@ public class FileExport {
 		try {
 			writer_.close();
 		} catch (IOException e) {
-			Magnum.error(e);
+			throw new RuntimeException(e);
 		}
 	}
 	  

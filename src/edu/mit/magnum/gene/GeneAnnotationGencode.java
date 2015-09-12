@@ -165,7 +165,7 @@ public class GeneAnnotationGencode extends GeneAnnotation {
 		
 		int start = keyValueList.indexOf(key + " \"");
 		if (start == -1)
-			Magnum.error("Key not found: '" + key + "\"");
+			Magnum.log.error("Key not found: '" + key + "\"");
 		
 		start = start + key.length() + 2;
 		int end = keyValueList.indexOf("\"", start);

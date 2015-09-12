@@ -252,11 +252,11 @@ public class Settings {
 		try {
 			InputStream in;
 			if (settingsFile_ == null || settingsFile_.compareTo("") == 0) {
-				Magnum.printlnVerbose("- No settings file specified");
-				Magnum.printlnVerbose("- Loading default settings\n");
+				Magnum.log.printlnVerbose("- No settings file specified");
+				Magnum.log.printlnVerbose("- Loading default settings\n");
 				in = Settings.class.getClassLoader().getResourceAsStream("edu/mit/magnum/settings.txt");
 			} else {
-				Magnum.println("- Loading settings file: " + settingsFile_ + "\n");
+				Magnum.log.println("- Loading settings file: " + settingsFile_ + "\n");
 				in = new FileInputStream(settingsFile_);
 			}
 			set_ = new Properties();
@@ -265,8 +265,8 @@ public class Settings {
 			setParameterValues();
 			
 		} catch (Exception e) {
-			Magnum.warning(e.getMessage());
-			Magnum.error("Failed to load settings file (a parameter may be missing or malformed): " + settingsFile_);
+			Magnum.log.warning(e.getMessage());
+			Magnum.log.error("Failed to load settings file (a parameter may be missing or malformed): " + settingsFile_);
 		}
 		
 		// Reinitialize the random number generators
@@ -485,7 +485,7 @@ public class Settings {
 		
 		String value = set_.getProperty(param);
 		if (value == null)
-			Magnum.error("Parameter not found in setting file: " + param);
+			Magnum.log.error("Parameter not found in setting file: " + param);
 		
 		return value; 
 	}
@@ -533,7 +533,7 @@ public class Settings {
 			prop.add(Integer.valueOf(propStr[i]));
 			
 		if (positiveSorted && !MagnumUtils.posIntIncreasing(prop))
-			Magnum.error("Error parsing settings file, " + name + " has to be an ordered list of positive integers, given in increasing order");
+			Magnum.log.error("Error parsing settings file, " + name + " has to be an ordered list of positive integers, given in increasing order");
 		
 		return prop;
 	}
@@ -554,7 +554,7 @@ public class Settings {
 			prop.add(Double.valueOf(propStr[i]));
 			
 		if (positiveSorted && !MagnumUtils.posDoubleIncreasing(prop))
-			Magnum.error("Error parsing settings file, " + name + " has to be an ordered list of positive numbers, given in increasing order");
+			Magnum.log.error("Error parsing settings file, " + name + " has to be an ordered list of positive numbers, given in increasing order");
 		
 		return prop;
 	}

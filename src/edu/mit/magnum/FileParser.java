@@ -59,9 +59,9 @@ public class FileParser {
 	public FileParser(String filename) {
 
 		try {
-			System.out.println("Reading file: " + filename);
+			Magnum.log.println("Reading file: " + filename);
 			if (filename.endsWith(" "))
-				Magnum.println("WARNING: Filename ends with a space (' ')");
+				Magnum.log.println("WARNING: Filename ends with a space (' ')");
 
 			if (filename.endsWith(".gz")) {
 				InputStream fileStream = new FileInputStream(filename);
@@ -75,7 +75,7 @@ public class FileParser {
 				reader_ = new BufferedReader(new FileReader(filename));
 			}
 		} catch (Exception e) {
-			Magnum.error(e);
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -89,7 +89,7 @@ public class FileParser {
 			lineCounter_++;
 			nextLine_ = reader_.readLine();
 		} catch (IOException e) {
-			Magnum.error(e);
+			throw new RuntimeException(e);
 		}
 		
 		if (nextLine_ == null)
@@ -116,7 +116,7 @@ public class FileParser {
 				data.add(nextLine_.split(separator_));
 			}
 		} catch (IOException e) {
-			Magnum.error(e);
+			throw new RuntimeException(e);
 		}
 		
 		return data;
@@ -131,7 +131,7 @@ public class FileParser {
 		try {
 			reader_.close();
 		} catch (IOException e) {
-			Magnum.error(e);
+			throw new RuntimeException(e);
 		}
 	}
 	  
@@ -145,7 +145,7 @@ public class FileParser {
 			for (int i=0; i<N; i++)
 				reader_.readLine();
 		} catch (IOException e) {
-			Magnum.error(e);
+			throw new RuntimeException(e);
 		}
 	}
 

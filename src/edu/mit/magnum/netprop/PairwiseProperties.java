@@ -78,7 +78,7 @@ public abstract class PairwiseProperties extends NetworkProperties {
 		long t0 = System.currentTimeMillis();
 		computeK();
 		long t1 = System.currentTimeMillis();
-		Magnum.println("Run time: " + MagnumUtils.chronometer(t1-t0));
+		Magnum.log.println("Run time: " + MagnumUtils.chronometer(t1-t0));
 
 		if (computeCentrality_)
 			computeCentrality();

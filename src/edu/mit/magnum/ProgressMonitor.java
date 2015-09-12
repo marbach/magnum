@@ -60,7 +60,7 @@ public class ProgressMonitor {
 		
 		t0_ = System.currentTimeMillis();
 		
-		Magnum.println("|-------------- Progress --------------|");
+		Magnum.log.println("|-------------- Progress --------------|");
 	}
 	
 	
@@ -78,7 +78,7 @@ public class ProgressMonitor {
 	public void iteration(int i) {
 		
 		if (i % freq_ == 0)
-			System.out.print(asterisks_);
+			Magnum.log.print(asterisks_);
 	}
 	
 	
@@ -88,7 +88,7 @@ public class ProgressMonitor {
 	public void estimatedTotalRuntime(int i) {
 		if (i % freq_ == 0) {
 			long t1 = System.currentTimeMillis();
-			Magnum.println(i + "\tERT: \t" + MagnumUtils.chronometer(totalIterations_*(t1-t0_)/i));
+			Magnum.log.println(i + "\tERT: \t" + MagnumUtils.chronometer(totalIterations_*(t1-t0_)/i));
 		}
 	
 	}
@@ -98,7 +98,7 @@ public class ProgressMonitor {
 
 	/** Print progress */
 	public void done() {
-		Magnum.print("\n\n");
+		Magnum.log.print("\n\n");
 	}
 
 }

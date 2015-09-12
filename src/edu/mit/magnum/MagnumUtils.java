@@ -63,7 +63,7 @@ public class MagnumUtils {
 		int numMinutes = 0;
 		int numSeconds = 0;
 		
-		//System.out.println(dt);
+		//Magnum.log.println(dt);
 		
 		numHours = (int)Math.floor(dt / 3600000.0);
 		dt -= numHours * 3600000.0;
@@ -88,9 +88,9 @@ public class MagnumUtils {
 		int size = v.length;
 		
 		for (int i=0; i < size; i++)
-			System.out.print(v[i] + "\t");
+			Magnum.log.print(v[i] + "\t");
 		
-		System.out.println("");
+		Magnum.log.println("");
 	}
 
 	
@@ -225,7 +225,7 @@ public class MagnumUtils {
 		try {
 
 			// Execute command
-			System.out.println(command);
+			Magnum.log.println(command);
 			Process p;
 			p = Runtime.getRuntime().exec(command);
 			BufferedReader stdInput = new BufferedReader(new
@@ -237,17 +237,17 @@ public class MagnumUtils {
 			// read the output from the command
 			String s;
 			while ((s = stdInput.readLine()) != null) {
-				System.out.println(s);
+				Magnum.log.println(s);
 			}
 
 			// read any errors from the attempted command
-			System.out.println("Here is the standard error of the command (if any):\n");
+			Magnum.log.println("Here is the standard error of the command (if any):\n");
 			while ((s = stdError.readLine()) != null) {
-				System.out.println(s);
+				Magnum.log.println(s);
 			}
 
 		} catch (IOException e) {
-			Magnum.error(e);
+			throw new RuntimeException(e);
 		}
 	}
 	

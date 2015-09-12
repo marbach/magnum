@@ -34,7 +34,9 @@ import edu.mit.magnum.netprop.NetpropMain;
 import edu.mit.magnum.enrich.*;
 
 /**
- * Main class Gene Module Weaver (GMW) MAGNuM (Multi-scale Analysis of Gene
+ * Main class 
+ * Gene Module Weaver (GMW) 
+ * MAGNuM (Multi-scale Analysis of Gene
  * Network Modules) Multi-scale analysis of GWAS 
  * Adam (Adaptive DiseAse Modules)
  * Magneto: multi-scale module analysis of gene networks
@@ -42,9 +44,12 @@ import edu.mit.magnum.enrich.*;
  */
 public class Magnum {
 
-
+	
 	// ============================================================================
 	// STATIC METHODS
+	
+	/** The logger -- a different logger can be plugged in for custom logging */
+	static public MagnumLogger log = new MagnumLogger();
 	
 	/** Main function */
 	static public void main(String[] args) {
@@ -79,46 +84,6 @@ public class Magnum {
 	}
 
 	
-	// ----------------------------------------------------------------------------
-
-	/** Wrap the exception in a RuntimeException */
-	static public void error(Exception e) {
-		throw new RuntimeException(e);
-	}
-
-	/** Throw RuntimeException with given message */
-	static public void error(String msg) {
-		throw new RuntimeException(msg);
-	}
-
-	/** Print warning message to stderr */
-	static public void warning(String msg) {
-		System.out.println("WARNING: " + msg);
-		System.out.flush();
-	}
-
-	/** Write line to stdout */
-	static public void println(String msg) {
-		System.out.println(msg);
-	}
-
-	/** Write empty line to stdout */
-	static public void println() {
-		System.out.println();
-	}
-
-	/** Write string to stdout */
-	static public void print(String msg) {
-		System.out.print(msg);
-	}
-	
-	/** Write string to stdout only if in verbose mode */
-	static public void printlnVerbose(String msg) {
-		if (Settings.verbose_)
-			println(msg);
-	}
-
-
 	// ============================================================================
 	// PUBLIC METHODS
 
@@ -126,7 +91,7 @@ public class Magnum {
 	public Magnum(String[] args) {
 
 		// Print magnum version
-		printlnVerbose("magnum " + Settings.magnumVersion_ + "\n");
+		Magnum.log.printlnVerbose("magnum " + Settings.magnumVersion_ + "\n");
 		
 		// Parse command-line arguments and initialize settings
 		MagnumOptionParser optionParser = new MagnumOptionParser();
@@ -156,7 +121,7 @@ public class Magnum {
 			throw new IllegalArgumentException("--mode <int> must be between 1 and 3, found mode=" + Settings.mode_);
 		}
 
-		System.out.println("Success!");
+		Magnum.log.println("Success!");
 	}
 
 	// ----------------------------------------------------------------------------
@@ -208,12 +173,12 @@ public class Magnum {
 		Network network = loadInputNetwork(networkFile);
 
 		// Analyze network properties
-		Magnum.println("COMPUTING NETWORK PROPERTIES");
-		Magnum.println("----------------------------\n");
+		Magnum.log.println("COMPUTING NETWORK PROPERTIES");
+		Magnum.log.println("----------------------------\n");
 
 		NetpropMain netprop = new NetpropMain(network);
 		ArrayList<Double> networkMeans = netprop.runAll();
-		Magnum.println();
+		Magnum.log.println();
 		netprop.saveAll();
 		
 		return networkMeans;
@@ -226,8 +191,8 @@ public class Magnum {
 	public void runNetworkOperations() {
 
 		// Perform operations on networks
-		Magnum.println("PERFORMING NETWORK OPERATIONS");
-		Magnum.println("-----------------------------\n");
+		Magnum.log.println("PERFORMING NETWORK OPERATIONS");
+		Magnum.log.println("-----------------------------\n");
 
 		if (Settings.computeUnion_) {
 			GroupNetworks grouper = new GroupNetworks(Settings.networkDir_, Settings.networkGroupFile_, Settings.networkFilePrefix_);
@@ -246,15 +211,15 @@ public class Magnum {
 	public void runEnrichmentAnalysis() {
 
 		// Load input files
-		Magnum.println("LOADING INPUT FILES");
-		Magnum.println("-------------------\n");
+		Magnum.log.println("LOADING INPUT FILES");
+		Magnum.log.println("-------------------\n");
 
 		EnrichMain enrich = new EnrichMain();
 		// Ngsea.println();
 
 		// Analyze enrichment
-		Magnum.println("COMPUTING ENRICHMENT");
-		Magnum.println("--------------------\n");
+		Magnum.log.println("COMPUTING ENRICHMENT");
+		Magnum.log.println("--------------------\n");
 
 		enrich.run();
 	}
@@ -286,8 +251,8 @@ public class Magnum {
 	/** Load the input network */
 	private Network loadInputNetwork(String networkFile) {
 
-		Magnum.println("LOADING INPUT NETWORK");
-		Magnum.println("---------------------\n");
+		Magnum.log.println("LOADING INPUT NETWORK");
+		Magnum.log.println("---------------------\n");
 
 		return new Network(Settings.networkDir_ + "/" + networkFile, Settings.refNodesFile_,
 				Settings.isDirected_, Settings.removeSelfLoops_,

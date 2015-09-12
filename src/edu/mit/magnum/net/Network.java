@@ -161,24 +161,24 @@ public class Network {
 		useRefNodes_ = false;
 		
 		// Print info
-		Magnum.println("- Treat as: " + (isDirected_ ? "DIRECTED" : "UNDIRECTED") + ", " + (isWeighted_ ? "WEIGHTED" : "UNWEIGHTED"));
-		Magnum.println("- Remove self-loops: " + (removeSelfLoops_ ? "YES" : "NO"));
-		Magnum.println("- Discard edges below threshold: " + threshold_);
-		Magnum.println("");
+		Magnum.log.println("- Treat as: " + (isDirected_ ? "DIRECTED" : "UNDIRECTED") + ", " + (isWeighted_ ? "WEIGHTED" : "UNWEIGHTED"));
+		Magnum.log.println("- Remove self-loops: " + (removeSelfLoops_ ? "YES" : "NO"));
+		Magnum.log.println("- Discard edges below threshold: " + threshold_);
+		Magnum.log.println("");
 		
-		Magnum.println("Loaded network with:");
-		Magnum.println("- " + graph_.getVertexCount() + " nodes");
-		Magnum.println("- " + graph_.getEdgeCount() + " edges");
-		Magnum.println("Removed:");
-		Magnum.println("- " + numBelowThreshold_ + " edges below threshold");			
-		Magnum.println("- " + numRemovedMultiEdges_ + " multi-edges" + (isWeighted_? ", taking MAX edge weight" : "") );
+		Magnum.log.println("Loaded network with:");
+		Magnum.log.println("- " + graph_.getVertexCount() + " nodes");
+		Magnum.log.println("- " + graph_.getEdgeCount() + " edges");
+		Magnum.log.println("Removed:");
+		Magnum.log.println("- " + numBelowThreshold_ + " edges below threshold");			
+		Magnum.log.println("- " + numRemovedMultiEdges_ + " multi-edges" + (isWeighted_? ", taking MAX edge weight" : "") );
 		if (removeSelfLoops_)
-			Magnum.println("- " + numRemovedSelfEdges_ + " self-loops");
+			Magnum.log.println("- " + numRemovedSelfEdges_ + " self-loops");
 		if (Settings.superHubThreshold_ > 0 && Settings.superHubThreshold_ < 1)
-			Magnum.println("- " + numRemovedSuperHubs_ + " super-hubs connecting > " + 100*Settings.superHubThreshold_ + "% of all genes");
+			Magnum.log.println("- " + numRemovedSuperHubs_ + " super-hubs connecting > " + 100*Settings.superHubThreshold_ + "% of all genes");
 		if (numRemovedIsolatedNodes_ > 0)
-			Magnum.println("- " + numRemovedIsolatedNodes_ + " isolated nodes (degree 0)");
-		Magnum.println("");
+			Magnum.log.println("- " + numRemovedIsolatedNodes_ + " isolated nodes (degree 0)");
+		Magnum.log.println("");
 	}
 
 	
@@ -396,7 +396,7 @@ public class Network {
 			weightedDegree[i] = weightedDegree(n);
         }
         if (isolatedNodes)
-        	Magnum.warning("Isolated nodes in network (degree 0)");
+        	Magnum.log.warning("Isolated nodes in network (degree 0)");
 
 		// Case 2
         for (Edge edge : graph_.getEdges()) {

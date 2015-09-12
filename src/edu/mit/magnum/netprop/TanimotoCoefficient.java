@@ -84,7 +84,7 @@ public class TanimotoCoefficient extends PairwiseProperties {
 	/** Compute the pairwise tanimoto coefficient for all target genes or regulators */
 	public void computeK() {
 
-		Magnum.println("Computing pairwise Tanimoto coefficient for " + (computeTargetSimilarity_ ? "TARGETS" : "TFs") + "...");
+		Magnum.log.println("Computing pairwise Tanimoto coefficient for " + (computeTargetSimilarity_ ? "TARGETS" : "TFs") + "...");
 
 		// Initialize nodes
 		initialize();

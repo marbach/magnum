@@ -31,7 +31,7 @@ import java.util.Map;
 
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraDistance;
-
+import edu.mit.magnum.Magnum;
 import edu.mit.magnum.ProgressMonitor;
 import edu.mit.magnum.net.*;
 
@@ -56,7 +56,7 @@ public class ShortestPaths extends PairwiseProperties {
 	/** Compute the degree for every node */
 	public void computeK() {
 		
-		System.out.println("Computing shortest paths...");
+		Magnum.log.println("Computing shortest paths...");
 		
 		// Dijkstra distance
 		K_ = new DenseDoubleMatrix2D(numNodes_, numRefNodes_);

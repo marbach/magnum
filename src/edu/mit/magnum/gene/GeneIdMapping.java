@@ -72,7 +72,7 @@ public class GeneIdMapping {
 	public void load(String filename) {
 		
 		if (ensembl2entrez_ != null) {
-			Magnum.warning("Gene mapping already loaded");
+			Magnum.log.warning("Gene mapping already loaded");
 			return;
 		}
 		
@@ -87,12 +87,12 @@ public class GeneIdMapping {
 			
 			// Check number of columns
 			if (nextLine.length != 3)
-				Magnum.error("Expected three columns (ensembl id, entrez id, gene symbol)");
+				Magnum.log.error("Expected three columns (ensembl id, entrez id, gene symbol)");
 			
 			// Parse ensembl id
 			String ensg = nextLine[0];
 			if (!(ensg.length() > 4 && ensg.substring(0, 4).equals("ENSG")))
-				Magnum.error("Invalid ENSEMBL gene ID (expected 'ENSG...'): " + ensg);
+				Magnum.log.error("Invalid ENSEMBL gene ID (expected 'ENSG...'): " + ensg);
 			ensg = removeEnsemblVersion(ensg);
 
 			// Parse entrez id
@@ -101,7 +101,7 @@ public class GeneIdMapping {
 				try {
 					Integer.valueOf(entrez);
 				} catch (NumberFormatException e) {
-					Magnum.error("Invalid Entrez gene ID (expected an integer number): " + entrez);
+					Magnum.log.error("Invalid Entrez gene ID (expected an integer number): " + entrez);
 				}
 			}
 			

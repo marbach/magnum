@@ -16,7 +16,7 @@
 # 2 => Network operations
 # 3 => Enrichment analysis
 # 4 => Link module association analysis
-mode = 5
+mode = 0
 # Seed for the random number generator, set to -1 to use current time [--seed] 
 randomSeed = 42
 # Set true to use verbose mode (print more information) [--verbose] 

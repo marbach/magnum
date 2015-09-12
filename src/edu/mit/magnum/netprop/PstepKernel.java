@@ -94,7 +94,7 @@ public class PstepKernel extends PairwiseProperties {
 		if (isDirected_)
 			throw new IllegalArgumentException("P-step kernels are not implemented for directed networks");
 		if (numRefNodes_ != numNodes_)
-			Magnum.warning("Specified reference nodes will be ignored by p-step kernel");
+			Magnum.log.warning("Specified reference nodes will be ignored by p-step kernel");
 		// We now explicitly check for self-loops and abort if there are, because it screws up the degrees
 		//if (!Settings.removeSelfLoops_)
 			//Ngsea.warning("Self-loops will be ignored by p-step kernel");
@@ -113,7 +113,7 @@ public class PstepKernel extends PairwiseProperties {
 	/** Compute the p-step kernel matrix. Matrix multiplication could be done more efficiently by exploiting symmetry. */
 	public void computeK() {
 
-		Magnum.println("Computing normalized Laplacian...");		
+		Magnum.log.println("Computing normalized Laplacian...");		
 		normalizedLaplacian_ = network_.computeNormalizedLaplacian();
 		
 		for (int i=0; i<alpha_.size(); i++)
@@ -129,8 +129,8 @@ public class PstepKernel extends PairwiseProperties {
 	/** Compute the p-step kernel matrix. Matrix multiplication could be done more efficiently by exploiting symmetry. */
 	public void computeK(double alpha) {
 		
-		System.out.println("Computing " + numSteps_ + "-step kernel with alpha=" + alpha + ":");
-		Magnum.println("Step 1...");
+		Magnum.log.println("Computing " + numSteps_ + "-step kernel with alpha=" + alpha + ":");
+		Magnum.log.println("Step 1...");
 
 		// K = (a*I - L)^p ,  with a >= 2
 		// B := a*I - L
@@ -158,7 +158,7 @@ public class PstepKernel extends PairwiseProperties {
 
 		// K = B^p
 		for (int i=2; i<=p_.get(p_.size()-1); i++) {
-			Magnum.println("Step " + i + "...");
+			Magnum.log.println("Step " + i + "...");
 			saved_ = false;
 
 			//long t0 = System.currentTimeMillis();

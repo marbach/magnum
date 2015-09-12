@@ -124,18 +124,18 @@ abstract public class Enrichment {
 				
 		// Display info
 		if (Settings.curveCutoff_ < 1)
-			Magnum.println("- " + 100*Settings.curveCutoff_ + "% top genes used");
-		Magnum.print("- " + k_.size() + " points per curve ");
+			Magnum.log.println("- " + 100*Settings.curveCutoff_ + "% top genes used");
+		Magnum.log.print("- " + k_.size() + " points per curve ");
 		if (Settings.varCurveResolution_ > 0) 
-			Magnum.print("(variable resolution, delta=" + Settings.varCurveResolution_ + ")\n");
+			Magnum.log.print("(variable resolution, delta=" + Settings.varCurveResolution_ + ")\n");
 		else
-			Magnum.print("(fixed resolution, delta=" + Settings.constCurveResolution_ + ")\n");
-		Magnum.println("- " + numPermutations_ + " permutations");
-		Magnum.println("- " + Settings.numBins_ + " bins for within-degree permutation");
+			Magnum.log.print("(fixed resolution, delta=" + Settings.constCurveResolution_ + ")\n");
+		Magnum.log.println("- " + numPermutations_ + " permutations");
+		Magnum.log.println("- " + Settings.numBins_ + " bins for within-degree permutation");
 		if (Settings.excludedGenesDistance_ > 0)
-			Magnum.println("- Excluding gene pairs with respective windows <" + Settings.excludedGenesDistance_ + "mb apart");
-		Magnum.println("- Sliding window size: " + Settings.slidingWindowSize_);
-		Magnum.println();
+			Magnum.log.println("- Excluding gene pairs with respective windows <" + Settings.excludedGenesDistance_ + "mb apart");
+		Magnum.log.println("- Sliding window size: " + Settings.slidingWindowSize_);
+		Magnum.log.println();
 
 	}
 
@@ -149,7 +149,7 @@ abstract public class Enrichment {
 		//expected_ = computeSum();
 		
 		// Compute enrichment curve for original / unpermuted case (also computes curveExpected_)
-		Magnum.println("Computing enrichment curve for unpermuted list:");
+		Magnum.log.println("Computing enrichment curve for unpermuted list:");
 		long t0 = System.currentTimeMillis();
 		
 		computeCurve(true);
@@ -157,7 +157,7 @@ abstract public class Enrichment {
 		curveObsSlidingWindow_ = curCurveSlidingWindow_;
 		
 		long t1 = System.currentTimeMillis();
-		Magnum.println("Estimated runtime for " + numPermutations_ + " random permutations: " + MagnumUtils.chronometer(numPermutations_*(t1-t0)));
+		Magnum.log.println("Estimated runtime for " + numPermutations_ + " random permutations: " + MagnumUtils.chronometer(numPermutations_*(t1-t0)));
 				
 		// Do random permutations
 		computePermutCurves();
@@ -417,12 +417,12 @@ abstract public class Enrichment {
 	/** Print the empirical p-values */
 	public void printPvals() {
 
-		Magnum.println("Ranked gene list\tP-value");
-		Magnum.println(Math.round(100*Settings.curveCutoff_/4.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[4]));
-		Magnum.println(Math.round(100*Settings.curveCutoff_/2.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[5]));
-		Magnum.println(Math.round(100*3*Settings.curveCutoff_/4.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[6]));
-		Magnum.println(Math.round(100*Settings.curveCutoff_) + "%\t" + MagnumUtils.toStringScientific10(pvals_[7]));
-		Magnum.println();
+		Magnum.log.println("Ranked gene list\tP-value");
+		Magnum.log.println(Math.round(100*Settings.curveCutoff_/4.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[4]));
+		Magnum.log.println(Math.round(100*Settings.curveCutoff_/2.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[5]));
+		Magnum.log.println(Math.round(100*3*Settings.curveCutoff_/4.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[6]));
+		Magnum.log.println(Math.round(100*Settings.curveCutoff_) + "%\t" + MagnumUtils.toStringScientific10(pvals_[7]));
+		Magnum.log.println();
 	}
 
 	

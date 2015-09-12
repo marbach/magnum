@@ -137,11 +137,11 @@ public class EmpiricalPvals {
 		}
 		
 		if (printInfo) {
-			Magnum.println("Most significant point:");
-			Magnum.println("- " + (minPvalIsEnrichment_ ? "ENRICHMENT" : "DEPLETION"));
-			Magnum.println("- k    = " + minPvalK_);
-			Magnum.println("- pval = " + minPval_);
-			Magnum.println();
+			Magnum.log.println("Most significant point:");
+			Magnum.log.println("- " + (minPvalIsEnrichment_ ? "ENRICHMENT" : "DEPLETION"));
+			Magnum.log.println("- k    = " + minPvalK_);
+			Magnum.log.println("- pval = " + minPval_);
+			Magnum.log.println();
 		}
 	}
 

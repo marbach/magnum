@@ -77,7 +77,7 @@ public class EnrichMain {
 		
 		// Delete temporary file
 		if (Settings.functionalDataFile_ == null || Settings.functionalDataFile_.equals("")) {
-			Magnum.println("Deleting file: " + functionalDataFile);
+			Magnum.log.println("Deleting file: " + functionalDataFile);
 			new File(functionalDataFile).delete();
 		}
 		
@@ -95,17 +95,17 @@ public class EnrichMain {
 		//assert geneScores_.getNumGenes() == functData_.getNumGenes();
 		int numDuplicateGenes = geneScores_.getNumGenes() - functData_.getNumGenes();
 		if (numDuplicateGenes < 0)
-			Magnum.error("More genes in functional data than gene score list");
+			Magnum.log.error("More genes in functional data than gene score list");
 		else if (numDuplicateGenes > 0)
-			Magnum.warning(numDuplicateGenes + " duplicate genes in gene score list because of many-to-many mappings from Ensembl to Entrez gene IDs");
+			Magnum.log.warning(numDuplicateGenes + " duplicate genes in gene score list because of many-to-many mappings from Ensembl to Entrez gene IDs");
 		
 		// Print info on gene overlap
-		Magnum.println();
-		Magnum.println("Loaded:");
-		Magnum.println("- " + functData_.getNumGenes() + " genes with scores and functional data");
-		Magnum.println("Removed:");
-		Magnum.println("- " + genesMissingScores.size() + " genes with functional data but no scores");
-		Magnum.println("- " + genesMissingFunctData.size() + " genes with scores but no functional data");
+		Magnum.log.println();
+		Magnum.log.println("Loaded:");
+		Magnum.log.println("- " + functData_.getNumGenes() + " genes with scores and functional data");
+		Magnum.log.println("Removed:");
+		Magnum.log.println("- " + genesMissingScores.size() + " genes with functional data but no scores");
+		Magnum.log.println("- " + genesMissingFunctData.size() + " genes with scores but no functional data");
 		
 //		// Export genes without scores
 //		if (genesMissingScores.size() > 0) {
@@ -122,7 +122,7 @@ public class EnrichMain {
 //				writer.println(gene);
 //			writer.close();
 //		}
-		Magnum.println();
+		Magnum.log.println();
 	}
 
 	
@@ -215,7 +215,7 @@ public class EnrichMain {
 			if (geneScoreIndex > 0)
 				filename += "." + geneScoreIndex;
 			enrichment_.save(filename);
-			Magnum.println();
+			Magnum.log.println();
 		}
 	}
 	
@@ -239,7 +239,7 @@ public class EnrichMain {
 		if (geneScoreIndex > 0)
 			filename += "." + geneScoreIndex;
 		enrichment_.save(filename);
-		Magnum.println();
+		Magnum.log.println();
 	}
 
 	

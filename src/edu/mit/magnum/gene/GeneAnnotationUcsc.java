@@ -57,7 +57,7 @@ public class GeneAnnotationUcsc extends GeneAnnotation {
 	 */
 	public LinkedHashMap<String, Gene> loadAnnotation() {
 		
-		Magnum.error("TBD: Check, debug, adapt so that genesToBeLoaded_ is used");
+		Magnum.log.error("TBD: Check, debug, adapt so that genesToBeLoaded_ is used");
 		
 		genes_ = new LinkedHashMap<String, Gene>();
 		FileParser parser = new FileParser(Settings.ucscAnnotationFile_);

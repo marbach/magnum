@@ -85,7 +85,7 @@ abstract public class GeneAnnotation {
 				if (!entry.getValue())
 					genesNotFound += entry.getKey() + " ";
 
-			Magnum.println("   - " + numNotFound + " genes were not found in the annotation: " + genesNotFound);
+			Magnum.log.println("   - " + numNotFound + " genes were not found in the annotation: " + genesNotFound);
 		}
 		return genes_;
 	}
@@ -109,7 +109,7 @@ abstract public class GeneAnnotation {
 				g.setPosition(g_annot.chr_, g_annot.start_, g_annot.end_, g_annot.posStrand_);
 		}
 		if (notFound > 0)
-			Magnum.warning(notFound + " genes not found in annotation");
+			Magnum.log.warning(notFound + " genes not found in annotation");
 	}
 
 
@@ -165,7 +165,7 @@ abstract public class GeneAnnotation {
 			}
 			
 			if (gene.start_ < prevStart)
-				Magnum.error("Genes are not ordered by genomic position");
+				Magnum.log.error("Genes are not ordered by genomic position");
 			
 			String nextLine = gene.id_ + "\t" + gene.symbol_ + "\t" + 
 					gene.chr_ + "\t" + gene.start_ + "\t" + gene.end_ + "\t" + 
@@ -206,7 +206,7 @@ abstract public class GeneAnnotation {
 		if (ch.equals("-"))
 			posStrand = false;
 		else if (!ch.equals("+"))
-			Magnum.error("Strand has to be '+' or '-'");
+			Magnum.log.error("Strand has to be '+' or '-'");
 		
 		return posStrand;
 	}
