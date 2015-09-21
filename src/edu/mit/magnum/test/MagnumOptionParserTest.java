@@ -29,8 +29,7 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
-import edu.mit.magnum.MagnumOptionParser;
-import edu.mit.magnum.MagnumSettings;
+import edu.mit.magnum.Magnum;
 
 
 /**
@@ -44,7 +43,7 @@ public class MagnumOptionParserTest {
 	
 	@BeforeClass
 	public static void testSetup() {
-		MagnumSettings.loadSettings();
+		Magnum.set.resetToDefaults();
 	}
 
 	@AfterClass
@@ -87,36 +86,35 @@ public class MagnumOptionParserTest {
 				"--curve", "0.8"
 				}; 
 		
-		MagnumOptionParser parser =  new MagnumOptionParser();
-		parser.parse(args);
+		Magnum.set.parse(args);
 		
-		assertEquals(22, MagnumSettings.mode_);
-		assertEquals(23, MagnumSettings.randomSeed_);
-		assertEquals(true, MagnumSettings.verbose_);
-		assertEquals("myOutdir", MagnumSettings.outputDirectory_);
+		assertEquals(22, Magnum.set.mode_);
+		assertEquals(23, Magnum.set.getRandomSeed());
+		assertEquals(true, Magnum.set.verbose_);
+		assertEquals("myOutdir", Magnum.set.outputDirectory_);
 
-		assertEquals("myNetdir", MagnumSettings.networkDir_);
-		assertEquals("myNet", MagnumSettings.networkFile_);
-		assertEquals(true, MagnumSettings.isDirected_);
-		assertEquals(true, MagnumSettings.isWeighted_);
-		assertEquals(0.42, MagnumSettings.threshold_, 1e-12);
+		assertEquals("myNetdir", Magnum.set.networkDir_);
+		assertEquals("myNet", Magnum.set.networkFile_);
+		assertEquals(true, Magnum.set.isDirected_);
+		assertEquals(true, Magnum.set.isWeighted_);
+		assertEquals(0.42, Magnum.set.threshold_, 1e-12);
 		
-		assertEquals(true, MagnumSettings.computePstepKernel_);
-		assertEquals(5, (int)MagnumSettings.pstepKernelP_.get(0));
-		assertEquals(true, MagnumSettings.computeDegree_);
-		assertEquals(true, MagnumSettings.computeBetweenness_);
-		assertEquals(true, MagnumSettings.computeClusteringCoefficient_);
-		assertEquals(true, MagnumSettings.computeShortestPathLengths_);
-		assertEquals(true, MagnumSettings.computeUnion_);
+		assertEquals(true, Magnum.set.computePstepKernel_);
+		assertEquals(5, (int)Magnum.set.pstepKernelP_.get(0));
+		assertEquals(true, Magnum.set.computeDegree_);
+		assertEquals(true, Magnum.set.computeBetweenness_);
+		assertEquals(true, Magnum.set.computeClusteringCoefficient_);
+		assertEquals(true, Magnum.set.computeShortestPathLengths_);
+		assertEquals(true, Magnum.set.computeUnion_);
 
-		assertEquals("myGenes", MagnumSettings.geneCoordFile_);
-		assertEquals("myScores", MagnumSettings.geneScoreFile_);
-		assertEquals("myCmatrix", MagnumSettings.functionalDataFile_);
-		assertEquals("myExcl", MagnumSettings.excludedGenesFile_);
-		assertEquals(5.0, MagnumSettings.excludedGenesDistance_, 1e-12);
-		assertEquals(6, MagnumSettings.numBins_);
-		assertEquals(7, MagnumSettings.numPermutations_);
-		assertEquals(0.8, MagnumSettings.curveCutoff_, 1e-12);
+		assertEquals("myGenes", Magnum.set.geneCoordFile_);
+		assertEquals("myScores", Magnum.set.geneScoreFile_);
+		assertEquals("myCmatrix", Magnum.set.functionalDataFile_);
+		assertEquals("myExcl", Magnum.set.excludedGenesFile_);
+		assertEquals(5.0, Magnum.set.excludedGenesDistance_, 1e-12);
+		assertEquals(6, Magnum.set.numBins_);
+		assertEquals(7, Magnum.set.numPermutations_);
+		assertEquals(0.8, Magnum.set.curveCutoff_, 1e-12);
 		
 	}
 
@@ -130,87 +128,86 @@ public class MagnumOptionParserTest {
 		
 		double eps = 1e-12; 
 		
-		assertEquals(0, MagnumSettings.mode_);
-		assertEquals(42, MagnumSettings.randomSeed_);
-		assertEquals(false, MagnumSettings.verbose_);
-		assertEquals(".", MagnumSettings.outputDirectory_);
-		assertEquals("", MagnumSettings.outputFilename_);
-		assertEquals(true, MagnumSettings.compressFiles_);
+		assertEquals(0, Magnum.set.mode_);
+		assertEquals(42, Magnum.set.getRandomSeed());
+		assertEquals(false, Magnum.set.verbose_);
+		assertEquals(".", Magnum.set.outputDirectory_);
+		assertEquals("", Magnum.set.outputFilename_);
+		assertEquals(true, Magnum.set.compressFiles_);
 
-		assertEquals(".", MagnumSettings.networkDir_);
-		assertEquals("", MagnumSettings.networkFile_);
-		assertEquals("TAB", MagnumSettings.networkFileDelim_);
-		assertEquals(false, MagnumSettings.isDirected_);
-		assertEquals(false, MagnumSettings.removeSelfLoops_);
-		assertEquals(false, MagnumSettings.isWeighted_);
-		assertEquals(0.0, MagnumSettings.threshold_, eps);
-		assertEquals(0.0, MagnumSettings.superHubThreshold_, eps);
-		assertEquals("", MagnumSettings.refNodesFile_);
+		assertEquals(null, Magnum.set.networkDir_);
+		assertEquals(null, Magnum.set.networkFile_);
+		assertEquals("TAB", Magnum.set.networkFileDelim_);
+		assertEquals(true, Magnum.set.isDirected_);
+		assertEquals(true, Magnum.set.removeSelfLoops_);
+		assertEquals(true, Magnum.set.isWeighted_);
+		assertEquals(0.0, Magnum.set.threshold_, eps);
+		assertEquals(0.0, Magnum.set.superHubThreshold_, eps);
+		assertEquals(null, Magnum.set.refNodesFile_);
 
-		assertEquals(false, MagnumSettings.computeUnion_);
-		assertEquals("", MagnumSettings.networkGroupFile_);
-		assertEquals("", MagnumSettings.networkFilePrefix_);
-		assertEquals(false, MagnumSettings.computePairwiseSum_);
-		assertEquals("", MagnumSettings.networkDir2_);
+		assertEquals(false, Magnum.set.computeUnion_);
+		assertEquals(null, Magnum.set.networkGroupFile_);
+		assertEquals("", Magnum.set.networkFilePrefix_);
+		assertEquals(false, Magnum.set.computePairwiseSum_);
+		assertEquals(null, Magnum.set.networkDir2_);
 
-		assertEquals(false, MagnumSettings.computeDegree_);
-		assertEquals(false, MagnumSettings.computeBetweenness_);
-		assertEquals(false, MagnumSettings.computeClusteringCoefficient_);
-		assertEquals(false, MagnumSettings.computeShortestPathLengths_);
+		assertEquals(false, Magnum.set.computeDegree_);
+		assertEquals(false, Magnum.set.computeBetweenness_);
+		assertEquals(false, Magnum.set.computeClusteringCoefficient_);
+		assertEquals(false, Magnum.set.computeShortestPathLengths_);
 
-		assertEquals(false, MagnumSettings.computePstepKernel_);
-		assertEquals(2.0, MagnumSettings.pstepKernelAlpha_.get(0), eps);
-		assertEquals(4, (int) MagnumSettings.pstepKernelP_.get(0));
-		assertEquals(true, MagnumSettings.pstepKernelNormalize_);
+		assertEquals(false, Magnum.set.computePstepKernel_);
+		assertEquals(2.0, Magnum.set.pstepKernelAlpha_, eps);
+		assertEquals(4, (int) Magnum.set.pstepKernelP_.get(0));
+		assertEquals(true, Magnum.set.pstepKernelNormalize_);
 
-		assertEquals(false, MagnumSettings.computeTargetTanimoto_);
-		assertEquals(false, MagnumSettings.computeTfTanimoto_);
+		assertEquals(false, Magnum.set.computeTargetTanimoto_);
+		assertEquals(false, Magnum.set.computeTfTanimoto_);
 
-		assertEquals("", MagnumSettings.outputSuffix_);
-		assertEquals(true, MagnumSettings.exportPairwiseNodeProperties_);
-		assertEquals(true, MagnumSettings.exportNodeProperties_);
+		assertEquals("", Magnum.set.outputSuffix_);
+		assertEquals(true, Magnum.set.exportPairwiseNodeProperties_);
+		assertEquals(true, Magnum.set.exportNodeProperties_);
 
-		assertEquals("", MagnumSettings.genesToBeLoadedFile_);
+		assertEquals(null, Magnum.set.genesToBeLoadedFile_);
 
-		assertEquals("", MagnumSettings.chromosome_);
-		assertEquals(true, MagnumSettings.ignoreAllosomes_);
+		assertEquals(null, Magnum.set.chromosome_);
+		assertEquals(true, Magnum.set.ignoreAllosomes_);
 
-		assertEquals(true, MagnumSettings.loadOnlyProteinCodingGenes_);
+		assertEquals(true, Magnum.set.loadOnlyProteinCodingGenes_);
 
-		assertEquals("", MagnumSettings.geneCoordFile_);
-		assertEquals("", MagnumSettings.geneCoordFile_);
-		assertEquals(1e-6, MagnumSettings.genomeWideSignificanceThreshold_, eps);
-		assertEquals(false, MagnumSettings.excludeGenomeWideSignificantGenes_);
-		assertEquals("", MagnumSettings.functionalDataFile_);
-		assertEquals(0, MagnumSettings.functionalDataCols_.size());
+		assertEquals(null, Magnum.set.geneCoordFile_);
+		assertEquals(1e-6, Magnum.set.genomeWideSignificanceThreshold_, eps);
+		assertEquals(false, Magnum.set.excludeGenomeWideSignificantGenes_);
+		assertEquals(null, Magnum.set.functionalDataFile_);
+		//assertEquals(0, Magnum.set.functionalDataCols_.size());
+		assertEquals(null, Magnum.set.functionalDataCols_);
 
-		assertEquals("", MagnumSettings.excludedGenesFile_);
-		assertEquals("", MagnumSettings.excludedGenePairsFile_);
-		assertEquals(1.0, MagnumSettings.excludedGenesDistance_, eps);
+		assertEquals(null, Magnum.set.excludedGenesFile_);
+		assertEquals(null, Magnum.set.excludedGenePairsFile_);
+		assertEquals(1.0, Magnum.set.excludedGenesDistance_, eps);
 
-		assertEquals("custom", MagnumSettings.idTypeGeneScores_);
-		assertEquals("custom", MagnumSettings.idTypeFunctionalData_);
+		assertEquals("custom", Magnum.set.idTypeGeneScores_);
+		assertEquals("custom", Magnum.set.idTypeFunctionalData_);
 
-		assertEquals(10000, MagnumSettings.numPermutations_);
-		assertEquals(100, MagnumSettings.numBins_);
-		assertEquals(false, MagnumSettings.scaleKernel_);
+		assertEquals(10000, Magnum.set.numPermutations_);
+		assertEquals(100, Magnum.set.numBins_);
+		assertEquals(false, Magnum.set.scaleKernel_);
 
-		assertEquals(10, MagnumSettings.constCurveResolution_);
-		assertEquals(-1, MagnumSettings.varCurveResolution_);
-		assertEquals(0.2, MagnumSettings.curveCutoff_, eps);
-		assertEquals(-1, MagnumSettings.slidingWindowSize_);
+		assertEquals(10, Magnum.set.constCurveResolution_);
+		assertEquals(-1, Magnum.set.varCurveResolution_);
+		assertEquals(0.2, Magnum.set.curveCutoff_, eps);
+		assertEquals(-1, Magnum.set.slidingWindowSize_);
 
-		assertEquals(0.01, MagnumSettings.pval_.get(0), eps);
-		assertEquals(0.05, MagnumSettings.pval_.get(1), eps);
-		assertEquals(false, MagnumSettings.twoSidedTest_);
-		assertEquals(false, MagnumSettings.controlFDR_);
-		assertEquals(100, MagnumSettings.FDRStart_);
-		assertEquals(10, MagnumSettings.AUCStart_);
-		assertEquals(0, MagnumSettings.geneScoreIndexStart_);
-		assertEquals(0, MagnumSettings.geneScoreIndexEnd_);
+		assertEquals(0.01, Magnum.set.pval_.get(0), eps);
+		assertEquals(0.05, Magnum.set.pval_.get(1), eps);
+		assertEquals(false, Magnum.set.twoSidedTest_);
+		assertEquals(false, Magnum.set.controlFDR_);
+		assertEquals(100, Magnum.set.FDRStart_);
+		assertEquals(10, Magnum.set.AUCStart_);
+		assertEquals(0, Magnum.set.geneScoreIndexStart_);
+		assertEquals(0, Magnum.set.geneScoreIndexEnd_);
 
-		assertEquals(0, MagnumSettings.numPermutationsExport_);
-		assertEquals("", MagnumSettings.outputPrefix_);
+		assertEquals(0, Magnum.set.numPermutationsExport_);
 	}
 	
 	

@@ -70,11 +70,11 @@ public class BasicProperties extends NetworkProperties {
 	public ArrayList<Double> run() {
 		
 		// Compute all metrics
-		if (MagnumSettings.computeDegree_)
+		if (Magnum.set.computeDegree_)
 			computeDegree();
-		if (MagnumSettings.computeBetweenness_)
+		if (Magnum.set.computeBetweenness_)
 			computeBetweenness();
-		if (MagnumSettings.computeClusteringCoefficient_)
+		if (Magnum.set.computeClusteringCoefficient_)
 			computeClusteringCoefficient();
 		
 		ArrayList<Double> networkMeans = new ArrayList<Double>();

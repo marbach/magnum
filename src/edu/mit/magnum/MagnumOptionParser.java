@@ -26,6 +26,7 @@ THE SOFTWARE.
 package edu.mit.magnum;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -71,22 +72,17 @@ public class MagnumOptionParser extends MagnumSettings {
 		if (options.has("verbose"))
 			verbose_ = true;
 
-		// (2) Set the settings file
+		// (2-3) Set and load the settings file
 		if (options.has("set"))
-			settingsFile = (String) options.valueOf("set");
+			loadSettings((String) options.valueOf("set"));
 
-		// (3) Load the settings file
-		Magnum.log.printlnVerbose("SETTINGS FILE");
-		Magnum.log.printlnVerbose("-------------\n");
-		loadSettings();
-
-		// (4) Set command-line options (default is what has been loaded from settings file)
+		// (4) Set command-line options (override settings in loaded settings file)
 		
 		// GENERAL OPTIONS
 		if (options.has("mode"))
 			mode_ = (Integer) options.valueOf("mode");
 		if (options.has("seed"))
-			randomSeed_ = (Integer) options.valueOf("seed");
+			setRandomSeed((Integer) options.valueOf("seed"));
 		if (options.has("verbose"))
 			verbose_ = true;
 		if (options.has("outdir"))
@@ -107,11 +103,8 @@ public class MagnumOptionParser extends MagnumSettings {
 		// MODE 1
 		if (options.has("pstep"))
 			computePstepKernel_ = true;
-		if (options.has("nsteps")) {
-			int nsteps = (Integer) options.valueOf("nsteps");
-			pstepKernelP_ = new ArrayList<Integer>();
-			pstepKernelP_.add(nsteps);
-		}
+		if (options.has("nsteps"))
+			pstepKernelP_ = new ArrayList<Integer>(Arrays.asList((Integer) options.valueOf("nsteps")));
 		if (options.has("degree"))
 			computeDegree_ = true;
 		if (options.has("betweenness"))
@@ -166,7 +159,7 @@ public class MagnumOptionParser extends MagnumSettings {
 	/** Display help on console */
 	static public void displayHelp() {
 
-		Magnum.log.println("Running magnum " + MagnumSettings.magnumVersion);
+		Magnum.log.println("Running magnum " + Magnum.set.magnumVersion);
 		Magnum.log.println();
 
 		Magnum.log.println("1. USAGE");

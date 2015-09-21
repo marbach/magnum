@@ -72,13 +72,13 @@ public class PairwiseSum {
 	/**  */
 	public Network[] run(boolean writeFiles) {
 		
-		if (!MagnumSettings.isDirected_)
+		if (!Magnum.set.isDirected_)
 			throw new RuntimeException("Not yet implemented for undirected networks");
-		if (!MagnumSettings.isWeighted_)
+		if (!Magnum.set.isWeighted_)
 			throw new RuntimeException("Not yet implemented for unweighted networks");
 		
 		// Output file prefix
-		String outPrefix = MagnumSettings.outputDirectory_ + "/" + MagnumSettings.outputFilename_ + ".";
+		String outPrefix = Magnum.set.outputDirectory_ + "/" + Magnum.set.outputFilename_ + ".";
 		
 		// Initialize array for results
 		Network[] networks = null;
@@ -86,8 +86,8 @@ public class PairwiseSum {
 			networks = new Network[numFiles_];
 		
 		for (int i=0; i<numFiles_; i++) {
-			Network net1 = new Network(networkDir1_ + "/" + networkFiles1_.get(i), MagnumSettings.isDirected_, MagnumSettings.removeSelfLoops_, MagnumSettings.isWeighted_, MagnumSettings.threshold_);
-			Network net2 = new Network(networkDir2_ + "/" + networkFiles2_.get(i), MagnumSettings.isDirected_, MagnumSettings.removeSelfLoops_, MagnumSettings.isWeighted_, MagnumSettings.threshold_);
+			Network net1 = new Network(networkDir1_ + "/" + networkFiles1_.get(i), Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
+			Network net2 = new Network(networkDir2_ + "/" + networkFiles2_.get(i), Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
 			
 			AbstractTypedGraph<Node, Edge> graph1 = net1.getGraph();
 			AbstractTypedGraph<Node, Edge> graph2 = net2.getGraph();

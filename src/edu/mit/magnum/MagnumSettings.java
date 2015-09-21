@@ -25,10 +25,12 @@ THE SOFTWARE.
  */
 package edu.mit.magnum;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.Random;
 
@@ -43,227 +45,333 @@ import org.apache.commons.math3.random.Well19937c;
  */
 public class MagnumSettings extends Settings {	
 	
-	/** The configuration file with the settings (leave empty for default settings) */
-	static public String settingsFile = null;
+	/** The configuration file with the settings (set null for default settings) */
+	public String settingsFile = null;
+	/** Flag indicates whether the parser should expect the settings file to be complete */
+	public boolean requireAllOptions = false;
 
 	/** Colt Mersenne Twister random engine (should be used by all other random number generators) */
-	static public MersenneTwister mersenneTwisterRng_ = null;
+	public MersenneTwister mersenneTwisterRng_ = null;
 	/** Apache Commons random engine */
-	static public Well19937c wellRng_ = null;
+	public Well19937c wellRng_ = null;
 	/** Java random engine */
-	static public Random jdkRng_ = null;
+	public Random jdkRng_ = null;
 
 	// ----------------------------------------------------------------------------
 	// VARIOUS
 	
 	/** Mode: 1 => Network analysis; 2 => Enrichment analysis */
-	static public int mode_ = -1;
-	/** Seed for the random number generator. Set to -1 to use current time */
-	static public int randomSeed_ = -1;
+	public int mode_ = 0;
+	/** PRIVATE, NEEDS TO BE SET WITH setRandomSeed(), which initializes the random number generators. Set to -1 to use current time */
+	private int randomSeed_ = 42;
 	/** Set true to use verbose mode (print more information) */
-	static public boolean verbose_ = false;
+	public boolean verbose_ = false;
 	/** Output directory to save stuff */
-	static public String outputDirectory_ = "";
+	public String outputDirectory_ = ".";
 	/** Output filename */
-	static public String outputFilename_ = "";
+	public String outputFilename_ = "";
 	/** Compress output files (gzip) */
-	static public boolean compressFiles_ = true;
+	public boolean compressFiles_ = true;
 
 	// ----------------------------------------------------------------------------
 	// NETWORK PROPERTIES
 
 	// INPUT NETWORK
 	/** Directory containing the networks */
-	static public String networkDir_ = null;
+	public String networkDir_ = null;
 	/** The input network file */
-	static public String networkFile_ = null;
+	public String networkFile_ = null;
 	/** Delimiter used to separate columns (default 'tab' */
-	static public String networkFileDelim_ = null;  
+	public String networkFileDelim_ = "TAB";  
 	/** Defines if the network should be interpreted as directed or undirected */
-	static public boolean isDirected_ = true;
+	public boolean isDirected_ = true;
 	/** Defines if self loops should be removed from the network */
-	static public boolean removeSelfLoops_ = false;
+	public boolean removeSelfLoops_ = true;
 	/** Set true to treat the network as weighted */
-	static public boolean isWeighted_ = false;
+	public boolean isWeighted_ = true;
 	/** Threshold for including weighted edges */
-	static public double threshold_ = 0;
+	public double threshold_ = 0;
 	/** Exclude "super-hubs" that connect to more than the given fraction of genes (set 1 to include all) */
-	static public double superHubThreshold_ = 1;
+	public double superHubThreshold_ = 0;
 	/** Optional file specifying a set of reference nodes */
-	static public String refNodesFile_ = null;
+	public String refNodesFile_ = null;
 
 	// NETWORKOPS
 	/** Take union (max edge) over all networks in networkDir or the sets specified in the file below */
-	static public boolean computeUnion_ = false;
+	public boolean computeUnion_ = false;
 	/** Define the network sets that should be combined (leave empty to combine all networks) */
-	static public String networkGroupFile_ = null;
+	public String networkGroupFile_ = null;
 	/** Prefix of the files in the network dir */
-	static public String networkFilePrefix_ = null;
+	public String networkFilePrefix_ = null;
 	/** Add networks of the same cell type */
-	static public boolean computePairwiseSum_ = false;
+	public boolean computePairwiseSum_ = false;
 	/** The network directory of the second networks */
-	static public String networkDir2_ = null;
+	public String networkDir2_ = null;
 	
 	// BASIC NETWORK PROPERTIES
 	/** Node degree (directed networks, also indegree and outdegree) */
-	static public boolean computeDegree_ = true;
+	public boolean computeDegree_ = false;
 	/** Node betweenness centrality (edge directionality observed for directed networks) */
-	static public boolean computeBetweenness_ = false;
+	public boolean computeBetweenness_ = false;
 	/** Node clustering coefficient (edge directionality observed for directed networks) */
-	static public boolean computeClusteringCoefficient_ = false;
+	public boolean computeClusteringCoefficient_ = false;
 	/** For each node, distance to all other nodes (or all reference nodes) and closeness centrality */
-	static public boolean computeShortestPathLengths_ = false;
+	public boolean computeShortestPathLengths_ = false;
 
 	// KERNELS
 	/** P-step random walk kernel (Smola & Kondor, 2003) */
-	static public boolean computePstepKernel_ = false;
+	public boolean computePstepKernel_ = false;
 	/** alpha parameter of p-step random walk kernel (alpha >= 2) */
-	static public ArrayList<Double> pstepKernelAlpha_ = null;
+	public double pstepKernelAlpha_ = 2;
 	/** Number of steps p of random walk kernel (p >= 1) */
-	static public ArrayList<Integer> pstepKernelP_ = null;
+	public ArrayList<Integer> pstepKernelP_ = new ArrayList<Integer>(Arrays.asList(4));
 	/** Normalize the kernel matrix (divide by the max) */
-	static public boolean pstepKernelNormalize_ = true;
+	public boolean pstepKernelNormalize_ = true;
 	
 	// TANIMOTO COEFFICIENT
 	/** Tanimoto coefficient between target genes */
-	static public boolean computeTargetTanimoto_ = false;
+	public boolean computeTargetTanimoto_ = false;
 	/** Tanimoto coefficient between regulators */
-	static public boolean computeTfTanimoto_ = false;
+	public boolean computeTfTanimoto_ = false;
 
 	// OUTPUT FILES
 	/** A suffix/ending that is appended to all output files for this run (use to distinguish output files from multiple runs) */
-	static public String outputSuffix_ = "";
+	public String outputSuffix_ = "";
 	/** Export all computed pairwise node properties (e.g., similarity, distance matrices) */
-	static public boolean exportPairwiseNodeProperties_ = true;
+	public boolean exportPairwiseNodeProperties_ = true;
 	/** Export all computed node properties (e.g., avg. similarity, distance for each node) */
-	static public boolean exportNodeProperties_ = true;
+	public boolean exportNodeProperties_ = true;
 
 	// ----------------------------------------------------------------------------
 	// GENOME ANNOTATION
 
 	/** Set of genes to be considered (leave empty to use all genes from the annotation file) */
-	static public String genesToBeLoadedFile_ = null;
+	public String genesToBeLoadedFile_ = null;
 
 	/** The chromosome to be considered (chr1, ..., chr22, chrX, chrY), leave empty for all chromosomes */ 
-	static public String chromosome_ = null;
+	public String chromosome_ = null;
 	/** Ignore sex chromosomes */
-	static public boolean ignoreAllosomes_ = true;
+	public boolean ignoreAllosomes_ = true;
 
 	/** The file with the gencode annotation */
-	static public String gencodeAnnotationFile_ = null;
+	public String gencodeAnnotationFile_ = null;
 	/** UCSC genome browser annotation (use for Entrez IDs) */ 
-	static public String ucscAnnotationFile_ = null;
+	public String ucscAnnotationFile_ = null;
 	/** Set true to load only protein-coding genes */
-	static public boolean loadOnlyProteinCodingGenes_ = false;
+	public boolean loadOnlyProteinCodingGenes_ = true;
 
 	/** Mapping file to convert Entrez IDs, ENSEMBL IDs and gene symbols */
-	static public String geneIdMappingFile_ = null;
+	public String geneIdMappingFile_ = null;
 		
 	// ----------------------------------------------------------------------------
 	// ENRICHMENT CURVES
 	
 	// INPUT
 	/** The gene coordinates (custom annotation) */
-	static public String geneCoordFile_ = null;
+	public String geneCoordFile_ = null;
 	/** The gene scores */
-	static public String geneScoreFile_ = null;
+	public String geneScoreFile_ = null;
 	/** Cutoff for genome-wide significance of gene scores */
-	static public double genomeWideSignificanceThreshold_ = -1;
+	public double genomeWideSignificanceThreshold_ = 1e-6;
 	/** Exclude genome-wide significant genes (below threshold) */
-	static public boolean excludeGenomeWideSignificantGenes_ = false;
+	public boolean excludeGenomeWideSignificantGenes_ = false;
 
 	/** The file with the functional data, e.g. network kernels (cols: gene id, property 1, property 2, ...) */ 
-	static public String functionalDataFile_ = null; 
+	public String functionalDataFile_ = null; 
 	/** Specify which columns should be loaded (-1: all columns; 1: first gene property column) */
-	static public ArrayList<Integer> functionalDataCols_ = null;
+	public ArrayList<Integer> functionalDataCols_ = null;
 
 	/** Genes to be excluded from enrichment analysis (e.g., MHC region) */
-	static public String excludedGenesFile_ = null;
+	public String excludedGenesFile_ = null;
 	/** Gene pairs to be excluded from enrichment analysis (e.g., genes in LD) */
-	static public String excludedGenePairsFile_ = null;
+	public String excludedGenePairsFile_ = null;
 	/** Exclude gene pairs with windows smaller than the given distance apart (given in megabases; -1: no exclusion; 1000000: all genes on same chromosome) */
-	static public double excludedGenesDistance_ = -1; 
+	public double excludedGenesDistance_ = 1; 
 
 	/** Gene IDs used in geneScoreFile, excludedGenesFile, excludedGenePairsFile ('ensembl', 'entrez', 'hugo') */
-	static public String idTypeGeneScores_ = null;
+	public String idTypeGeneScores_ = "custom";
 	/** Gene IDs used in functionalDataFile */
-	static public String idTypeFunctionalData_ = null;
+	public String idTypeFunctionalData_ = "custom";
 
 	// PARAMETERS
 	/** Number of random permutations to compute confidence intervals */
-	static public int numPermutations_ = -1;
+	public int numPermutations_ = 10000;
 	/** The number of bins for within-degree permutation */
-	static public int numBins_ = 1;
+	public int numBins_ = 100;
 	/** Scale kernels: K'(i,j) = K(i,j)/sqrt(rowSums(K)[i] * colSums(K)[j]) */
-	static public boolean scaleKernel_ = false;
+	public boolean scaleKernel_ = false;
 
 	/** Equidistant curve resolution, e.g., set 10 to compute every 10th point on the curves */
-	static public int constCurveResolution_ = 1;
+	public int constCurveResolution_ = 10;
 	/** Varying curve resolution, e.g., set 2 to compute points: 2, 6, 12, 20, 30, 42, ... (takes precedence over constCurveResolution, set -1 to disable) */
-	static public int varCurveResolution_ = -1;
+	public int varCurveResolution_ = -1;
 	/** Compute curves only for the top part of the list (e.g., 0.1 for top 10%) */
-	static public double curveCutoff_ = 1;
+	public double curveCutoff_ = 0.2;
 	/** Sliding window size */
-	static public int slidingWindowSize_ = -1;
+	public int slidingWindowSize_ = -1;
 
 	/** Draw boundaries for given p-values (e.g., set 0.05 to draw the upper/lower boundary where only 5% of random curves above/below) */ 
-	static public ArrayList<Double> pval_ = null;
+	public ArrayList<Double> pval_ = new ArrayList<Double>(Arrays.asList(0.01, 0.05));
 	/** Indicates whether the boundaries are one-sided or two-sided (equivalent to dividing pval by two) */
-	static public boolean twoSidedTest_ = false;
+	public boolean twoSidedTest_ = false;
 	/** Control FDR over all points of the curve together (i.e., correct for multiple hypothesis testing across curve) */
-	static public boolean controlFDR_ = false;
+	public boolean controlFDR_ = false;
 	/** The top X snps will be ignored for FDR control (too noisy at start of the list) */
-	static public int FDRStart_ = 0;
+	public int FDRStart_ = 100;
 	/** Start to integrate the AUC only at k=10 (reduce noise at the start of the list) */
-	static public int AUCStart_ = 0;
+	public int AUCStart_ = 10;
 	/** Index of gene scores for which enrichment is to be computed, e.g., (0,9) for the first ten gene scores */ 
-	static public int geneScoreIndexStart_ = -1;
-	static public int geneScoreIndexEnd_ = -1;
+	public int geneScoreIndexStart_ = 0;
+	public int geneScoreIndexEnd_ = 0;
 
 	
 	// OUTPUT FILES
 	/** Number of random permutations for which enrichment curves are exported (smaller or equal numPermutations) */
-	static public int numPermutationsExport_ = -1;
-	/** Prefix for output files (usually the network name) */
-	static public String outputPrefix_ = null;
+	public int numPermutationsExport_ = 0;
 
 	
 	// ============================================================================
 	// PUBLIC METHODS
 	
-	/** Initialize settings */
-	static public void initialize() {
-		
-		initializeRandomNumberGenerators();
+	/** Constructor */
+	public MagnumSettings() {
+		resetToDefaults();
 	}
+	
 	
 	// ----------------------------------------------------------------------------
 	
-	/** Load and initialize settings */
-	static public void loadSettings() {
+	/** Set default values for all settings */
+	public void resetToDefaults() {
+		
+		settingsFile = null;
+		requireAllOptions = false;
+
+		// Initializes the RNGs
+		setRandomSeed(42);
+
+		mode_ = 0;
+		verbose_ = false;
+		outputDirectory_ = ".";
+		outputFilename_ = "";
+		compressFiles_ = true;
+
+		networkDir_ = null;
+		networkFile_ = null;
+		networkFileDelim_ = "TAB";  
+		isDirected_ = true;
+		removeSelfLoops_ = true;
+		isWeighted_ = true;
+		threshold_ = 0;
+		superHubThreshold_ = 0;
+		refNodesFile_ = null;
+
+		computeUnion_ = false;
+		networkGroupFile_ = null;
+		networkFilePrefix_ = "";
+		computePairwiseSum_ = false;
+		networkDir2_ = null;
+		
+		computeDegree_ = false;
+		computeBetweenness_ = false;
+		computeClusteringCoefficient_ = false;
+		computeShortestPathLengths_ = false;
+
+		computePstepKernel_ = false;
+		pstepKernelAlpha_ = 2;
+		pstepKernelP_ = new ArrayList<Integer>();
+		pstepKernelP_.add(4);
+		pstepKernelNormalize_ = true;
+		
+		computeTargetTanimoto_ = false;
+		computeTfTanimoto_ = false;
+
+		outputSuffix_ = "";
+		exportPairwiseNodeProperties_ = true;
+		exportNodeProperties_ = true;
+
+		genesToBeLoadedFile_ = null;
+
+		chromosome_ = null;
+		ignoreAllosomes_ = true;
+
+		gencodeAnnotationFile_ = null;
+		ucscAnnotationFile_ = null;
+		loadOnlyProteinCodingGenes_ = true;
+
+		geneIdMappingFile_ = null;
+			
+		geneCoordFile_ = null;
+		geneScoreFile_ = null;
+		genomeWideSignificanceThreshold_ = 1e-6;
+		excludeGenomeWideSignificantGenes_ = false;
+
+		functionalDataFile_ = null; 
+		functionalDataCols_ = null;
+
+		excludedGenesFile_ = null;
+		excludedGenePairsFile_ = null;
+		excludedGenesDistance_ = 1; 
+
+		idTypeGeneScores_ = "custom";
+		idTypeFunctionalData_ = "custom";
+
+		numPermutations_ = 10000;
+		numBins_ = 100;
+		scaleKernel_ = false;
+
+		constCurveResolution_ = 10;
+		varCurveResolution_ = -1;
+		curveCutoff_ = 0.2;
+		slidingWindowSize_ = -1;
+
+		pval_ = new ArrayList<Double>();
+		pval_.add(0.01);
+		pval_.add(0.05);
+		twoSidedTest_ = false;
+		controlFDR_ = false;
+		FDRStart_ = 100;
+		AUCStart_ = 10;
+		geneScoreIndexStart_ = 0;
+		geneScoreIndexEnd_ = 0;
+		
+		numPermutationsExport_ = 0;		
+	}
+
+	
+	// ----------------------------------------------------------------------------
+	
+	/** Load settings from given file */
+	public void loadSettings(String settingsFile) {
+		
+		Magnum.log.printlnVerbose("SETTINGS FILE");
+		Magnum.log.printlnVerbose("-------------\n");
 		
 		try {
-			InputStream in;
-			if (settingsFile == null || settingsFile.compareTo("") == 0) {
-				Magnum.log.printlnVerbose("- No settings file specified");
-				Magnum.log.printlnVerbose("- Loading default settings\n");
-				in = MagnumSettings.class.getClassLoader().getResourceAsStream("edu/mit/magnum/settings.txt");
-			} else {
-				Magnum.log.println("- Loading settings file: " + settingsFile + "\n");
-				in = new FileInputStream(settingsFile);
-			}
-			set = new Properties();
-			set.load(new InputStreamReader(in));
+			// Open the input stream
+			//InputStream in = MagnumSettings.class.getClassLoader().getResourceAsStream("edu/mit/magnum/settings.txt");
+				
+			// Check that the specified settings file exists
+			if (settingsFile == null || settingsFile.isEmpty())
+				throw new RuntimeException("No settings file specified");
+			else if (!new File(settingsFile).exists())
+				throw new RuntimeException("Settings file not found: " + settingsFile);
+
+			// Open file input stream
+			Magnum.log.println("- Loading settings file: " + settingsFile + "\n");
+			InputStream in = new FileInputStream(settingsFile);
+
+			// Load the settings
+			prop = new Properties();
+			prop.load(new InputStreamReader(in));
 			
+			// Get the param values
 			setParameterValues();
 			
 		} catch (Exception e) {
 			Magnum.log.warning(e.getMessage());
 			Magnum.log.error("Failed to load settings file (a parameter may be missing or malformed): " + settingsFile);
-		}
-		
-		// Reinitialize the random number generators
-		initializeRandomNumberGenerators();		
+		}		
 	}
 	
 	
@@ -285,8 +393,9 @@ public class MagnumSettings extends Settings {
 	// ----------------------------------------------------------------------------
 
 	/** Create new instances for the random number generators, initialize with randomSeed_ */
-	static public void initializeRandomNumberGenerators() {
+	public void setRandomSeed(int seed) {
 		
+		randomSeed_ = seed;
 		if (randomSeed_ == -1) {
 			mersenneTwisterRng_ = new MersenneTwister();
 			wellRng_ = new Well19937c();
@@ -306,11 +415,11 @@ public class MagnumSettings extends Settings {
 	// PRIVATE METHODS
 
 	/** Set ngsea parameters based on the loaded properties */
-	static private void setParameterValues() throws Exception {
+	private void setParameterValues() throws Exception {
 
 		// VARIOUS
 		mode_ = getSettingInt("mode");
-		randomSeed_ = getSettingInt("randomSeed");
+		setRandomSeed(getSettingInt("randomSeed"));
 		verbose_ = getSettingBoolean("verbose");
 		outputDirectory_ = getSetting("outputDirectory");
 		if (outputDirectory_.equals("")) 
@@ -351,7 +460,7 @@ public class MagnumSettings extends Settings {
 
 		// KERNELS
 		computePstepKernel_ = getSettingBoolean("computePstepKernel");
-		pstepKernelAlpha_ = getSettingDoubleArray("pstepKernelAlpha", false);
+		pstepKernelAlpha_ = getSettingDouble("pstepKernelAlpha");
 		pstepKernelP_ = getSettingIntArray("pstepKernelP", true);
 		pstepKernelNormalize_ = getSettingBoolean("pstepKernelNormalize");
 		
@@ -375,8 +484,8 @@ public class MagnumSettings extends Settings {
 
 		geneCoordFile_ = getSetting("geneCoordFile");
 		if (!geneCoordFile_.equals("")) {
-			MagnumSettings.idTypeFunctionalData_ = "custom";
-			MagnumSettings.idTypeGeneScores_ = "custom";
+			idTypeFunctionalData_ = "custom";
+			idTypeGeneScores_ = "custom";
 		}
 
 		geneScoreFile_ = getSetting("geneScoreFile");
@@ -414,9 +523,13 @@ public class MagnumSettings extends Settings {
 		geneScoreIndexStart_ = getSettingInt("geneScoreIndexStart");
 		geneScoreIndexEnd_ = getSettingInt("geneScoreIndexEnd");
 		
-		// OUTPUT FILES
-		outputPrefix_ = getSetting("outputPrefix");
-
 	}
+	
+	
+	// ============================================================================
+	// GETTERS AND SETTERS
+	
+	public int getRandomSeed() { return randomSeed_; }
+
 	
 }

@@ -36,19 +36,19 @@ import java.util.Properties;
 public class Settings {	
 	
 	/** The properties (settings file) */
-	static protected Properties set = null;
+	protected Properties prop = null;
 	
 	/** Current version */
-	static public String magnumVersion = "1.0";
+	public String magnumVersion = "1.0";
 
 	
 	// ============================================================================
 	// PROTECTED METHODS
 
 	/** Get the string value of a parameter from the setting file */
-	static protected String getSetting(String param) {
+	protected String getSetting(String param) {
 		
-		String value = set.getProperty(param);
+		String value = prop.getProperty(param);
 		if (value == null)
 			Magnum.log.error("Parameter not found in setting file: " + param);
 		
@@ -59,12 +59,12 @@ public class Settings {
 	// ----------------------------------------------------------------------------
 
 	/** Get the integer value of a parameter from the setting file */
-	static protected int getSettingInt(String param) {
+	protected int getSettingInt(String param) {
 		return Integer.valueOf(getSetting(param)); 
 	}
 
 	/** Get the double value of a parameter from the setting file */
-	static protected double getSettingDouble(String param) {
+	protected double getSettingDouble(String param) {
 		return Double.valueOf(getSetting(param)); 
 	}
 
@@ -72,7 +72,7 @@ public class Settings {
 	// ----------------------------------------------------------------------------
 
 	/** Parse a boolean property */
-	static protected boolean getSettingBoolean(String name) {
+	protected boolean getSettingBoolean(String name) {
 		
 		String value = getSetting(name);
 		if (value.equals("1") || value.equalsIgnoreCase("true") || value.equalsIgnoreCase("t"))
@@ -87,7 +87,7 @@ public class Settings {
 	// ----------------------------------------------------------------------------
 
 	/** Parse an int array property */
-	static protected ArrayList<Integer> getSettingIntArray(String name, boolean positiveSorted) {
+	protected ArrayList<Integer> getSettingIntArray(String name, boolean positiveSorted) {
 		
 		String[] propStr = getSetting(name).split(",");
 		ArrayList<Integer> prop = new ArrayList<Integer>();
@@ -108,7 +108,7 @@ public class Settings {
 	// ----------------------------------------------------------------------------
 
 	/** Parse an int array property */
-	static protected ArrayList<Double> getSettingDoubleArray(String name, boolean positiveSorted) {
+	protected ArrayList<Double> getSettingDoubleArray(String name, boolean positiveSorted) {
 		
 		String[] propStr = getSetting(name).split(",");
 		ArrayList<Double> prop = new ArrayList<Double>();
@@ -129,7 +129,7 @@ public class Settings {
 	// ----------------------------------------------------------------------------
 
 	/** Parse a string array property */
-	static protected String[] getStringArraySetting(Properties set, String name) {
+	protected String[] getStringArraySetting(Properties set, String name) {
 		
 		return set.getProperty(name).split(",");
 	}
@@ -138,7 +138,7 @@ public class Settings {
 	// ----------------------------------------------------------------------------
     
     /** Get a file / directory saved as a string, return null if it does not exist */
-    static protected File getFileSetting(String param) {
+    protected File getFileSetting(String param) {
     	
 		String filename = getSetting(param);
 		if (filename == null || filename.isEmpty())

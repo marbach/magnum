@@ -28,7 +28,7 @@ package edu.mit.magnum.netops;
 import java.util.ArrayList;
 
 import edu.mit.magnum.MagnumUtils;
-import edu.mit.magnum.MagnumSettings;
+import edu.mit.magnum.Magnum;
 import edu.mit.magnum.net.*;
 import edu.uci.ics.jung.graph.AbstractTypedGraph;
 
@@ -71,17 +71,17 @@ public class Union {
 	/** Compute union (max edges) across given network files */
 	public Network run() {
 		
-		if (!MagnumSettings.isDirected_)
+		if (!Magnum.set.isDirected_)
 			throw new RuntimeException("Not yet implemented for undirected networks");
 
 		// Load the first network
 		network_ = new Network(networkDir_ + "/" + networkFiles_.get(0), 
-				MagnumSettings.isDirected_, MagnumSettings.removeSelfLoops_, MagnumSettings.isWeighted_, MagnumSettings.threshold_);
+				Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
 		
 		// Add one network after the other
 		for (int i=1; i<networkFiles_.size(); i++) {
 			Network nextNet = new Network(networkDir_ + "/" + networkFiles_.get(i), 
-					MagnumSettings.isDirected_, MagnumSettings.removeSelfLoops_, MagnumSettings.isWeighted_, MagnumSettings.threshold_);
+					Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
 			union(nextNet);
 		}
 		

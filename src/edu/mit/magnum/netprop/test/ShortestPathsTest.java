@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import org.junit.*;
 import cern.colt.matrix.DoubleMatrix2D;
-import edu.mit.magnum.MagnumSettings;
+import edu.mit.magnum.Magnum;
 import edu.mit.magnum.net.*;
 import edu.mit.magnum.netprop.*;
 
@@ -45,10 +45,10 @@ public class ShortestPathsTest {
 	
 	@BeforeClass
 	public static void testSetup() {
-		MagnumSettings.loadSettings();
-		MagnumSettings.superHubThreshold_ = 0;
-		MagnumSettings.computeShortestPathLengths_ = true;
-		MagnumSettings.exportNodeProperties_ = true;
+		Magnum.set.resetToDefaults();
+		Magnum.set.superHubThreshold_ = 0;
+		Magnum.set.computeShortestPathLengths_ = true;
+		Magnum.set.exportNodeProperties_ = true;
 	}
 
 	@AfterClass

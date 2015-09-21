@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import org.junit.*;
 
 import cern.colt.matrix.DoubleMatrix2D;
-import edu.mit.magnum.MagnumSettings;
+import edu.mit.magnum.Magnum;
 import edu.mit.magnum.net.*;
 import edu.mit.magnum.netprop.*;
 
@@ -46,11 +46,11 @@ public class PstepKernelTest {
 	
 	@BeforeClass
 	public static void testSetup() {
-		MagnumSettings.loadSettings();
-		MagnumSettings.superHubThreshold_ = 0;
-		MagnumSettings.computePstepKernel_ = true;
-		MagnumSettings.exportNodeProperties_ = true;
-		MagnumSettings.pstepKernelNormalize_ = true;
+		Magnum.set.resetToDefaults();
+		Magnum.set.superHubThreshold_ = 0;
+		Magnum.set.computePstepKernel_ = true;
+		Magnum.set.exportNodeProperties_ = true;
+		Magnum.set.pstepKernelNormalize_ = true;
 	}
 
 	@AfterClass
@@ -71,8 +71,7 @@ public class PstepKernelTest {
 		numSteps.add(1);
 		numSteps.add(3);
 		numSteps.add(4); 
-		ArrayList<Double> alpha = new ArrayList<Double>();
-		alpha.add(2.0);
+		double alpha = 2.0;
 		PstepKernel test = new PstepKernel(testNet, alpha, numSteps, true, false);
 		
 		// Compute pstep kernel and corresponding node centrality

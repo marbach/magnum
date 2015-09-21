@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
-import edu.mit.magnum.MagnumSettings;
+import edu.mit.magnum.Magnum;
 import edu.mit.magnum.net.*;
 import edu.mit.magnum.netprop.*;
 
@@ -47,8 +47,8 @@ public class BasicPropertiesTest {
 	
 	@BeforeClass
 	public static void testSetup() {
-		MagnumSettings.loadSettings();
-		MagnumSettings.superHubThreshold_ = 0;
+		Magnum.set.resetToDefaults();
+		Magnum.set.superHubThreshold_ = 0;
 	}
 
 	@AfterClass

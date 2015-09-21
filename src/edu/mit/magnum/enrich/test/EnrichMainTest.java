@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
-import edu.mit.magnum.MagnumSettings;
+import edu.mit.magnum.Magnum;
 import edu.mit.magnum.enrich.*;
 import edu.mit.magnum.gene.*;
 
@@ -47,23 +47,22 @@ public class EnrichMainTest {
 	@BeforeClass
 	public static void testSetup() {
 		
-		MagnumSettings.loadSettings();		
-		MagnumSettings.geneScoreFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_genescores.txt";
-		MagnumSettings.constCurveResolution_ = 1;
-		MagnumSettings.varCurveResolution_ = -1;
-		MagnumSettings.curveCutoff_ = 1;
-		MagnumSettings.functionalDataCols_ = null;
-		MagnumSettings.numPermutations_ = 10;
-		MagnumSettings.numPermutationsExport_ = 10;
-		MagnumSettings.numBins_ = 1;
-		MagnumSettings.randomSeed_ = 1;
-		MagnumSettings.pval_ = new ArrayList<Double>();
-		MagnumSettings.pval_.add(0.2);
-		MagnumSettings.geneCoordFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_geneCoords.bed";
-		MagnumSettings.idTypeFunctionalData_ = "custom";
-		MagnumSettings.idTypeGeneScores_ = "custom";
-		MagnumSettings.excludeGenomeWideSignificantGenes_ = false;
-		MagnumSettings.initialize();
+		Magnum.set.resetToDefaults();		
+		Magnum.set.geneScoreFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_genescores.txt";
+		Magnum.set.constCurveResolution_ = 1;
+		Magnum.set.varCurveResolution_ = -1;
+		Magnum.set.curveCutoff_ = 1;
+		Magnum.set.functionalDataCols_ = null;
+		Magnum.set.numPermutations_ = 10;
+		Magnum.set.numPermutationsExport_ = 10;
+		Magnum.set.numBins_ = 1;
+		Magnum.set.setRandomSeed(1);
+		Magnum.set.pval_ = new ArrayList<Double>();
+		Magnum.set.pval_.add(0.2);
+		Magnum.set.geneCoordFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_geneCoords.bed";
+		Magnum.set.idTypeFunctionalData_ = "custom";
+		Magnum.set.idTypeGeneScores_ = "custom";
+		Magnum.set.excludeGenomeWideSignificantGenes_ = false;
 	}
 
 	@AfterClass
@@ -78,11 +77,11 @@ public class EnrichMainTest {
 	public void testPairwiseEnrichment_loadExcludedFromFiles() {
 
 		// Settings
-		MagnumSettings.functionalDataFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_testKernel.txt";
-		MagnumSettings.excludedGenesFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_excludedGenes.txt";
-		MagnumSettings.excludedGenePairsFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_excludedGenePairs.txt";
-		MagnumSettings.ignoreAllosomes_ = false;
-		MagnumSettings.excludedGenesDistance_ = -1;
+		Magnum.set.functionalDataFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_testKernel.txt";
+		Magnum.set.excludedGenesFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_excludedGenes.txt";
+		Magnum.set.excludedGenePairsFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_excludedGenePairs.txt";
+		Magnum.set.ignoreAllosomes_ = false;
+		Magnum.set.excludedGenesDistance_ = -1;
 		
 		// Run enrichment analysis
 		EnrichMain enrichMain = new EnrichMain();
@@ -144,11 +143,11 @@ public class EnrichMainTest {
 	public void testPairwiseEnrichment_excludeBasedOnCoords() {
 
 		// Settings
-		MagnumSettings.functionalDataFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_testKernel.txt";
-		MagnumSettings.excludedGenesFile_ = "";
-		MagnumSettings.excludedGenePairsFile_ = "";
-		MagnumSettings.ignoreAllosomes_ = true;
-		MagnumSettings.excludedGenesDistance_ = 1;
+		Magnum.set.functionalDataFile_ = "src/edu/mit/magnum/enrich/test/simpleNet_testKernel.txt";
+		Magnum.set.excludedGenesFile_ = "";
+		Magnum.set.excludedGenePairsFile_ = "";
+		Magnum.set.ignoreAllosomes_ = true;
+		Magnum.set.excludedGenesDistance_ = 1;
 		
 		// Run enrichment analysis
 		EnrichMain enrichMain = new EnrichMain();
@@ -195,20 +194,19 @@ public class EnrichMainTest {
 	public void testPairwiseEnrichment_computeKernel() {
 
 		// Settings
-		MagnumSettings.functionalDataFile_ = "";
-		MagnumSettings.networkDir_ = ".";
-		MagnumSettings.networkFile_ = "src/edu/mit/magnum/netprop/test/simpleNet.txt";
-		MagnumSettings.isDirected_ = false;
-		MagnumSettings.isWeighted_ = false;
-		MagnumSettings.excludedGenesFile_ = "";
-		MagnumSettings.excludedGenePairsFile_ = "";
-		MagnumSettings.ignoreAllosomes_ = true;
-		MagnumSettings.excludedGenesDistance_ = 1;
-		MagnumSettings.computePstepKernel_ = true;
-		MagnumSettings.pstepKernelP_ = new ArrayList<Integer>();
-		MagnumSettings.pstepKernelP_.add(4);
-		MagnumSettings.pstepKernelAlpha_ = new ArrayList<Double>();
-		MagnumSettings.pstepKernelAlpha_.add(2.0);
+		Magnum.set.functionalDataFile_ = "";
+		Magnum.set.networkDir_ = ".";
+		Magnum.set.networkFile_ = "src/edu/mit/magnum/netprop/test/simpleNet.txt";
+		Magnum.set.isDirected_ = false;
+		Magnum.set.isWeighted_ = false;
+		Magnum.set.excludedGenesFile_ = "";
+		Magnum.set.excludedGenePairsFile_ = "";
+		Magnum.set.ignoreAllosomes_ = true;
+		Magnum.set.excludedGenesDistance_ = 1;
+		Magnum.set.computePstepKernel_ = true;
+		Magnum.set.pstepKernelP_ = new ArrayList<Integer>();
+		Magnum.set.pstepKernelP_.add(4);
+		Magnum.set.pstepKernelAlpha_ = 2;
 
 		// Run enrichment analysis
 		EnrichMain enrichMain = new EnrichMain();

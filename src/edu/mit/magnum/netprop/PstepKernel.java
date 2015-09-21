@@ -36,7 +36,6 @@ import cern.colt.matrix.linalg.Blas;
 import cern.colt.matrix.linalg.SeqBlas;
 import edu.mit.magnum.Magnum;
 import edu.mit.magnum.MagnumUtils;
-import edu.mit.magnum.MagnumSettings;
 import edu.mit.magnum.net.*;
 
 
@@ -51,7 +50,7 @@ import edu.mit.magnum.net.*;
 public class PstepKernel extends PairwiseProperties {
 		
 	/** The alpha parameter (must be >= 2) */
-	private ArrayList<Double> alpha_ = null;
+	private double alpha_ = 2;
 	/** Steps p of random walk kernel (ordered list of positive integers given in increasing order, the kernel for each listed p will be saved) */
 	private ArrayList<Integer> p_ = null;
 	/** The total number of steps (equal to the last element of p_) */
@@ -75,7 +74,7 @@ public class PstepKernel extends PairwiseProperties {
 	// PUBLIC METHODS
 	
 	/** Constructor (network must be undirected) */
-	public PstepKernel(Network network, ArrayList<Double> alpha, ArrayList<Integer> p, boolean normalize, boolean computeCentrality) {
+	public PstepKernel(Network network, double alpha, ArrayList<Integer> p, boolean normalize, boolean computeCentrality) {
 		
 		super(network, "pstepKernel", "pstepKernel", computeCentrality);
 		alpha_ = alpha;
@@ -84,9 +83,8 @@ public class PstepKernel extends PairwiseProperties {
 		normalize_ = true;
 		pstepCentrality_ = new LinkedHashMap<String,Double[]>();
 		
-		for (int i=0; i<alpha_.size(); i++)
-			if (alpha_.get(i) < 2)
-				throw new IllegalArgumentException("Alpha must be greater or equal 2");
+		if (alpha_ < 2)
+			throw new IllegalArgumentException("Alpha must be greater or equal 2");
 		
 		if (!MagnumUtils.posIntIncreasing(p_))
 			throw new RuntimeException("p must be and ordered list of positive integers, given in increasing order");
@@ -104,7 +102,7 @@ public class PstepKernel extends PairwiseProperties {
 	/** Constructor using default alpha (network must be undirected) */
 	public PstepKernel(Network network, ArrayList<Integer> p) {
 		
-		this(network, MagnumSettings.pstepKernelAlpha_, p, MagnumSettings.pstepKernelNormalize_, MagnumSettings.exportNodeProperties_);
+		this(network, Magnum.set.pstepKernelAlpha_, p, Magnum.set.pstepKernelNormalize_, Magnum.set.exportNodeProperties_);
 	}
 
 
@@ -116,27 +114,14 @@ public class PstepKernel extends PairwiseProperties {
 		Magnum.log.println("Computing normalized Laplacian...");		
 		normalizedLaplacian_ = network_.computeNormalizedLaplacian();
 		
-		for (int i=0; i<alpha_.size(); i++)
-			computeK(alpha_.get(i));
-		
-		// Delete Laplacian
-		normalizedLaplacian_ = null;
-	}
-
-
-	// ----------------------------------------------------------------------------
-
-	/** Compute the p-step kernel matrix. Matrix multiplication could be done more efficiently by exploiting symmetry. */
-	public void computeK(double alpha) {
-		
-		Magnum.log.println("Computing " + numSteps_ + "-step kernel with alpha=" + alpha + ":");
+		Magnum.log.println("Computing " + numSteps_ + "-step kernel with alpha=" + alpha_ + ":");
 		Magnum.log.println("Step 1...");
 
 		// K = (a*I - L)^p ,  with a >= 2
 		// B := a*I - L
 		SparseDoubleMatrix2D B = new SparseDoubleMatrix2D(numNodes_, numNodes_); // initializes at 0
 		for (int i=0; i<numNodes_; i++)
-			B.set(i, i, alpha);
+			B.set(i, i, alpha_);
 				
 		// daxpy(double alpha, DoubleMatrix2D A, DoubleMatrix2D B)
         // Combined matrix scaling; B = B + alpha*A.
@@ -154,7 +139,7 @@ public class PstepKernel extends PairwiseProperties {
 		blas_.dcopy(B, K_);
 
 		saved_ = false;
-		saveStep(1, alpha);
+		saveStep(1, alpha_);
 
 		// K = B^p
 		for (int i=2; i<=p_.get(p_.size()-1); i++) {
@@ -174,16 +159,19 @@ public class PstepKernel extends PairwiseProperties {
 			//Ngsea.println("Run time: " + NgseaUtils.chronometer(t1-t0));
 
 			// Save step, also computes centrality
-			saveStep(i, alpha);
+			saveStep(i, alpha_);
 		}		
+		
+		// Delete Laplacian
+		normalizedLaplacian_ = null;
 	}
 
-	
+
 	// ----------------------------------------------------------------------------
 
 	public void addNodeProperties(LinkedHashMap<String,Number[]> map) {
 		
-		if (pstepCentrality_.size() != alpha_.size()*p_.size())
+		if (pstepCentrality_.size() != p_.size())
 			throw new RuntimeException("Centrality has not been saved for every specified step");
 		
 		for (String centrality : pstepCentrality_.keySet())
@@ -208,7 +196,7 @@ public class PstepKernel extends PairwiseProperties {
 		name_ = i + "stepKernel" + suffix;
 		nameCentrality_ = i + "stepKernelCentrality" + suffix;
 		
-		if (MagnumSettings.exportPairwiseNodeProperties_)
+		if (Magnum.set.exportPairwiseNodeProperties_)
 			saveK(MagnumUtils.extractBasicFilename(network_.getFilename(), false));
 		
 		if (computeCentrality_) {

@@ -37,7 +37,7 @@ public class MagnumLogger {
 
 	/** Write string to stdout only if in verbose mode */
 	public void printlnVerbose(String msg) {
-		if (MagnumSettings.verbose_)
+		if (Magnum.set.verbose_)
 			println(msg);
 	}
 

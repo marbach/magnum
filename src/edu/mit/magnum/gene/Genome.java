@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import edu.mit.magnum.FileExport;
-import edu.mit.magnum.MagnumSettings;
+import edu.mit.magnum.Magnum;
 
 
 /**
@@ -59,7 +59,7 @@ public class Genome {
 		
 		for (int i=1; i<=22; i++)
 			chromosomes_.put("chr" + i, new Chromosome());
-		if (!MagnumSettings.ignoreAllosomes_) {
+		if (!Magnum.set.ignoreAllosomes_) {
 			chromosomes_.put("chrX", new Chromosome());
 			chromosomes_.put("chrY", new Chromosome());
 		}

@@ -31,7 +31,6 @@ import java.util.HashMap;
 import edu.mit.magnum.FileParser;
 import edu.mit.magnum.Magnum;
 import edu.mit.magnum.MagnumUtils;
-import edu.mit.magnum.MagnumSettings;
 import edu.mit.magnum.net.Network;
 
 
@@ -72,7 +71,7 @@ public class GroupNetworks {
 			Union union = new Union(networkDir_, files);
 			Network net = union.run();
 			
-			String filename = MagnumSettings.outputDirectory_ + "/" + networkFilesPrefix_ + name + ".txt";
+			String filename = Magnum.set.outputDirectory_ + "/" + networkFilesPrefix_ + name + ".txt";
 			net.write(filename);
 		}
 	}

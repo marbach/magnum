@@ -52,24 +52,24 @@ public class NetpropMain {
 		analyzers_ = new ArrayList<NetworkProperties>();
 
 		// Basic node properties
-		if (MagnumSettings.computeDegree_ || MagnumSettings.computeBetweenness_ || MagnumSettings.computeClusteringCoefficient_)
+		if (Magnum.set.computeDegree_ || Magnum.set.computeBetweenness_ || Magnum.set.computeClusteringCoefficient_)
 			analyzers_.add(new BasicProperties(network));
 		
 		// Shortest paths
-		if (MagnumSettings.computeShortestPathLengths_)
-			analyzers_.add(new ShortestPaths(network, MagnumSettings.exportNodeProperties_));
+		if (Magnum.set.computeShortestPathLengths_)
+			analyzers_.add(new ShortestPaths(network, Magnum.set.exportNodeProperties_));
 		
 		// P-step kernel
-		if (MagnumSettings.computePstepKernel_)
-			analyzers_.add(new PstepKernel(network, MagnumSettings.pstepKernelAlpha_, MagnumSettings.pstepKernelP_, MagnumSettings.pstepKernelNormalize_, MagnumSettings.exportNodeProperties_));
+		if (Magnum.set.computePstepKernel_)
+			analyzers_.add(new PstepKernel(network, Magnum.set.pstepKernelAlpha_, Magnum.set.pstepKernelP_, Magnum.set.pstepKernelNormalize_, Magnum.set.exportNodeProperties_));
 
 		// Tanimoto coefficient between TFs
-		if (MagnumSettings.computeTfTanimoto_)
-			analyzers_.add(new TanimotoCoefficient(network, false, MagnumSettings.exportNodeProperties_));
+		if (Magnum.set.computeTfTanimoto_)
+			analyzers_.add(new TanimotoCoefficient(network, false, Magnum.set.exportNodeProperties_));
 
 		// Tanimoto coefficient between targets 
-		if (MagnumSettings.computeTargetTanimoto_)
-			analyzers_.add(new TanimotoCoefficient(network, true, MagnumSettings.exportNodeProperties_));
+		if (Magnum.set.computeTargetTanimoto_)
+			analyzers_.add(new TanimotoCoefficient(network, true, Magnum.set.exportNodeProperties_));
 }
 	
 	
@@ -131,7 +131,7 @@ public class NetpropMain {
 		basicFilename += "_nodeProperties" + weighted + directionality + ".txt";
 
 		// The file writer
-		FileExport writer = new FileExport(basicFilename, MagnumSettings.compressFiles_);
+		FileExport writer = new FileExport(basicFilename, Magnum.set.compressFiles_);
 		
 		// Write the header
 		for (int i=0; i<ids.size(); i++)

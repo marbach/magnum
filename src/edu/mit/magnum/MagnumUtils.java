@@ -155,8 +155,8 @@ public class MagnumUtils {
 		String basicFilename = filename.substring((includePath ? 0 : start), end);
 		
 		// Add custom suffix
-		if (MagnumSettings.outputSuffix_ != null && MagnumSettings.outputSuffix_.compareTo("") != 0)
-			basicFilename += MagnumSettings.outputSuffix_;
+		if (Magnum.set.outputSuffix_ != null && Magnum.set.outputSuffix_.compareTo("") != 0)
+			basicFilename += Magnum.set.outputSuffix_;
 		
 		return basicFilename;
 	}

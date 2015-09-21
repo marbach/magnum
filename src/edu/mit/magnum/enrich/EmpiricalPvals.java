@@ -28,7 +28,6 @@ package edu.mit.magnum.enrich;
 import java.util.ArrayList;
 
 import edu.mit.magnum.Magnum;
-import edu.mit.magnum.MagnumSettings;
 
 
 /**
@@ -122,7 +121,7 @@ public class EmpiricalPvals {
 		minPvalIsEnrichment_ = false;
 		
 		for (int p=0; p<curvePval_.getNumPoints(); p++) {
-			if (k_.get(p) < MagnumSettings.AUCStart_)
+			if (k_.get(p) < Magnum.set.AUCStart_)
 				continue;
 			
 			double pval = curvePval_.getValue(p);
@@ -158,14 +157,14 @@ public class EmpiricalPvals {
 		numPoints_ = k_.size();
 		
 		// significanceLevels_ (copy because we modify below)
-		significanceLevels_ = new ArrayList<Double>(MagnumSettings.pval_);
+		significanceLevels_ = new ArrayList<Double>(Magnum.set.pval_);
 		// Check that significance levels are below 0.5
 		for (int i=0; i<significanceLevels_.size(); i++)
 			if (significanceLevels_.get(i) >= 0.5)
 				throw new IllegalArgumentException("Significance levels must not be <0.5 (found: " + significanceLevels_.get(i) + ")");
 
 		// Divide by two if two-sided test
-		if (MagnumSettings.twoSidedTest_)
+		if (Magnum.set.twoSidedTest_)
 			for (int i=0; i<significanceLevels_.size(); i++)
 				significanceLevels_.set(i, significanceLevels_.get(i)/2.0);
 

@@ -34,7 +34,6 @@ import java.util.Set;
 
 import edu.mit.magnum.FileParser;
 import edu.mit.magnum.Magnum;
-import edu.mit.magnum.MagnumSettings;
 import edu.mit.magnum.gene.Gene;
 import edu.mit.magnum.gene.GeneAnnotation;
 import edu.mit.magnum.gene.GeneAnnotationCustom;
@@ -67,7 +66,7 @@ public class GeneScoreList {
 		// Load genes and scores
 		loadGeneScores(geneScoreFile);
 		// Expand genes using the given window size and neighbor distance (used to exclude genes within a given distance) 
-		if (MagnumSettings.excludedGenesDistance_ > 0)
+		if (Magnum.set.excludedGenesDistance_ > 0)
 			expandGeneWindows();
 	}
 
@@ -119,7 +118,7 @@ public class GeneScoreList {
 		for (int k=0; k<rankedGenes_.size(); k++) {
 			double score_k = rankedGenes_.get(k).getScore(i);
 		
-			if (score_k <= MagnumSettings.genomeWideSignificanceThreshold_)
+			if (score_k <= Magnum.set.genomeWideSignificanceThreshold_)
 				numGenomeWideSignificant_++;
 			else
 				break;
@@ -171,16 +170,16 @@ public class GeneScoreList {
 	private void loadGeneScores(String geneScoreFile) {
 		
 		GeneIdMapping idMapping = GeneIdMapping.getInstance();
-		boolean translateToEntrez = MagnumSettings.idTypeFunctionalData_.equalsIgnoreCase("entrez");
+		boolean translateToEntrez = Magnum.set.idTypeFunctionalData_.equalsIgnoreCase("entrez");
 
 		// Load gene positions so that gene pairs on same chromosome can be excluded
 		GeneAnnotation geneAnnot;
-		if (MagnumSettings.idTypeGeneScores_.equals("ensembl"))
-			geneAnnot = new GeneAnnotationGencode(null, MagnumSettings.loadOnlyProteinCodingGenes_);
-		else if (MagnumSettings.idTypeGeneScores_.equals("custom"))
+		if (Magnum.set.idTypeGeneScores_.equals("ensembl"))
+			geneAnnot = new GeneAnnotationGencode(null, Magnum.set.loadOnlyProteinCodingGenes_);
+		else if (Magnum.set.idTypeGeneScores_.equals("custom"))
 			geneAnnot = new GeneAnnotationCustom(null);
 		else
-			throw new RuntimeException("Invalid idTypeGeneScores: " + MagnumSettings.idTypeGeneScores_);
+			throw new RuntimeException("Invalid idTypeGeneScores: " + Magnum.set.idTypeGeneScores_);
 		geneAnnot.loadAnnotation();
 		
 		rankedGenes_ = new ArrayList<Gene>();
@@ -223,7 +222,7 @@ public class GeneScoreList {
 			
 			// Gene id
 			String geneId = nextLine[geneIdCol];
-			if (MagnumSettings.idTypeGeneScores_.equals("ensembl"))
+			if (Magnum.set.idTypeGeneScores_.equals("ensembl"))
 				geneId = idMapping.removeEnsemblVersion(geneId);
 			
 			// Check if it should be excluded
@@ -249,11 +248,11 @@ public class GeneScoreList {
 				continue;
 				//gencodeGene = new Gene(null);
 			}
-			if (MagnumSettings.ignoreAllosomes_ && geneAnnot.isAllosome(gencodeGene.chr_))
+			if (Magnum.set.ignoreAllosomes_ && geneAnnot.isAllosome(gencodeGene.chr_))
 				continue;
 			
 			// Exclude genome-wide significant genes
-			if (MagnumSettings.excludeGenomeWideSignificantGenes_ && scores[0] <= MagnumSettings.genomeWideSignificanceThreshold_) {
+			if (Magnum.set.excludeGenomeWideSignificantGenes_ && scores[0] <= Magnum.set.genomeWideSignificanceThreshold_) {
 				numSignificantExcluded++;
 				continue;
 			}
@@ -280,7 +279,7 @@ public class GeneScoreList {
 		}
 		sortGeneList(0);
 		
-		if (MagnumSettings.ignoreAllosomes_)
+		if (Magnum.set.ignoreAllosomes_)
 			Magnum.log.println("- Excluding genes on allosomes");
 		if (numExcluded > 0)
 			Magnum.log.println("- " + numExcluded + " genes excluded");
@@ -289,7 +288,7 @@ public class GeneScoreList {
 		if (numNoAnnot > 0)
 			Magnum.log.println("- " + numNoAnnot + " genes not found in the annotation");
 		if (numSignificantExcluded > 0)
-			Magnum.log.println("- " + numSignificantExcluded + " genes with p-val <" + MagnumSettings.genomeWideSignificanceThreshold_ + " excluded");
+			Magnum.log.println("- " + numSignificantExcluded + " genes with p-val <" + Magnum.set.genomeWideSignificanceThreshold_ + " excluded");
 	}
 	
 	
@@ -298,7 +297,7 @@ public class GeneScoreList {
 	/** Expand genes using the given neighbor distance (used to exclude genes within a given distance) */
 	private void expandGeneWindows() {
 		
-		int d = (int) (1000000 * MagnumSettings.excludedGenesDistance_);
+		int d = (int) (1000000 * Magnum.set.excludedGenesDistance_);
 
 		for (Gene g : rankedGenes_)
 			g.expand(d, d);

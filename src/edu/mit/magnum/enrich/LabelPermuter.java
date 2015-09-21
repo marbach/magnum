@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import edu.mit.magnum.MagnumSettings;
+import edu.mit.magnum.Magnum;
 import edu.mit.magnum.gene.Gene;
 
 
@@ -87,7 +87,7 @@ public class LabelPermuter {
 		
 		// We could shuffle either the indexes or the genes, doesn't matter
 		for (int i=0; i<numBins_; i++)
-			Collections.shuffle(binnedIndexes_.get(i), MagnumSettings.jdkRng_);
+			Collections.shuffle(binnedIndexes_.get(i), Magnum.set.jdkRng_);
 		
 		// Assign the new indexes to the genes
 		for (int i=0; i<numBins_; i++) {

@@ -44,6 +44,9 @@ import edu.mit.magnum.enrich.*;
  */
 public class Magnum {
 
+	/** The settings */
+	public static MagnumOptionParser set = new MagnumOptionParser();
+	
 	
 	// ============================================================================
 	// STATIC METHODS
@@ -87,38 +90,45 @@ public class Magnum {
 	// ============================================================================
 	// PUBLIC METHODS
 
+	/** Constructor without args */
+	public Magnum() {
+		this(null);
+	}
+
+	
 	/** Constructor, parse command-line arguments, initialize settings */
 	public Magnum(String[] args) {
 
 		// Print magnum version
-		Magnum.log.printlnVerbose("magnum " + MagnumSettings.magnumVersion + "\n");
+		Magnum.log.printlnVerbose("magnum " + set.magnumVersion + "\n");
 		
 		// Parse command-line arguments and initialize settings
-		MagnumOptionParser optionParser = new MagnumOptionParser();
-		optionParser.parse(args);
-
-		// Create output directory
-		File outputDir = new File(MagnumSettings.outputDirectory_);
-		if (!outputDir.exists())
-			outputDir.mkdirs();
+		if (args != null)
+			set.parse(args);
+		else  // TODO hmmm....
+			set.resetToDefaults();
 	}
 
+	
 	// ----------------------------------------------------------------------------
 
 	/** Run */
 	public void run() {
 
-		if (MagnumSettings.mode_ == 1)
+		// Create output directory
+		new File(set.outputDirectory_).mkdirs();
+
+		if (set.mode_ == 1)
 			runNetworkAnalysis();
-		else if (MagnumSettings.mode_ == 2)
+		else if (set.mode_ == 2)
 			runNetworkOperations();
-		else if (MagnumSettings.mode_ == 3)
+		else if (set.mode_ == 3)
 			runEnrichmentAnalysis();
-		else if (MagnumSettings.mode_ == 4)
+		else if (set.mode_ == 4)
 			runLinkModuleAnalysis();
 		else {
 			MagnumOptionParser.displayHelp();
-			throw new IllegalArgumentException("--mode <int> must be between 1 and 3, found mode=" + MagnumSettings.mode_);
+			throw new IllegalArgumentException("--mode <int> must be between 1 and 3, found mode=" + set.mode_);
 		}
 
 		Magnum.log.println("Success!");
@@ -130,17 +140,17 @@ public class Magnum {
 	public void runNetworkAnalysis() {
 
 		// Load the network
-		if (MagnumSettings.computePstepKernel_) {
-			MagnumSettings.isDirected_ = false;
-			MagnumSettings.removeSelfLoops_ = true;
+		if (set.computePstepKernel_) {
+			set.isDirected_ = false;
+			set.removeSelfLoops_ = true;
 		}
 		
-		if (MagnumSettings.networkFile_ != null && !MagnumSettings.networkFile_.isEmpty()) {
-			runNetworkAnalysis(MagnumSettings.networkFile_);
+		if (set.networkFile_ != null && !set.networkFile_.isEmpty()) {
+			runNetworkAnalysis(set.networkFile_);
 			
 		} else {
 			// List all files in the given directory
-			ArrayList<String> networkFiles = MagnumUtils.listFiles(MagnumSettings.networkDir_);
+			ArrayList<String> networkFiles = MagnumUtils.listFiles(set.networkDir_);
 			// Run for each file
 			ArrayList<ArrayList<Double>> networkMeans = new ArrayList<ArrayList<Double>>();
 			for (String file_i : networkFiles)
@@ -194,12 +204,12 @@ public class Magnum {
 		Magnum.log.println("PERFORMING NETWORK OPERATIONS");
 		Magnum.log.println("-----------------------------\n");
 
-		if (MagnumSettings.computeUnion_) {
-			GroupNetworks grouper = new GroupNetworks(MagnumSettings.networkDir_, MagnumSettings.networkGroupFile_, MagnumSettings.networkFilePrefix_);
+		if (set.computeUnion_) {
+			GroupNetworks grouper = new GroupNetworks(set.networkDir_, set.networkGroupFile_, set.networkFilePrefix_);
 			grouper.run();
 
-		} else if (MagnumSettings.computePairwiseSum_) {
-			PairwiseSum networkSum = new PairwiseSum(MagnumSettings.networkDir_, MagnumSettings.networkDir2_);
+		} else if (set.computePairwiseSum_) {
+			PairwiseSum networkSum = new PairwiseSum(set.networkDir_, set.networkDir2_);
 			networkSum.run(true);
 		}
 	}
@@ -254,9 +264,9 @@ public class Magnum {
 		Magnum.log.println("LOADING INPUT NETWORK");
 		Magnum.log.println("---------------------\n");
 
-		return new Network(MagnumSettings.networkDir_ + "/" + networkFile, MagnumSettings.refNodesFile_,
-				MagnumSettings.isDirected_, MagnumSettings.removeSelfLoops_,
-				MagnumSettings.isWeighted_, MagnumSettings.threshold_);
+		return new Network(set.networkDir_ + "/" + networkFile, set.refNodesFile_,
+				set.isDirected_, set.removeSelfLoops_,
+				set.isWeighted_, set.threshold_);
 	}
 
 }
