@@ -32,7 +32,7 @@ import cern.colt.matrix.DoubleMatrix2D;
 import edu.mit.magnum.FileExport;
 import edu.mit.magnum.Magnum;
 import edu.mit.magnum.MagnumUtils;
-import edu.mit.magnum.Settings;
+import edu.mit.magnum.MagnumSettings;
 import edu.mit.magnum.net.*;
 
 
@@ -114,10 +114,10 @@ public abstract class PairwiseProperties extends NetworkProperties {
 			throw new RuntimeException("Ref nodes implementation incomplete");
 		
 		// Add suffix to filename
-		String filename = Settings.outputDirectory_ + "/" + basicFilename + "_" + name_ + ".txt"; //+ (isDirected_? "_dir.txt" : "_undir.txt");
+		String filename = MagnumSettings.outputDirectory_ + "/" + basicFilename + "_" + name_ + ".txt"; //+ (isDirected_? "_dir.txt" : "_undir.txt");
 
 		// The file writer
-		FileExport writer = new FileExport(filename, Settings.compressFiles_);
+		FileExport writer = new FileExport(filename, MagnumSettings.compressFiles_);
 
 		// Write the header
 		//writer.print("node");

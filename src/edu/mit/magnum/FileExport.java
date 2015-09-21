@@ -26,6 +26,7 @@ THE SOFTWARE.
 package edu.mit.magnum;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -46,18 +47,16 @@ public class FileExport {
 	// PUBLIC METHODS
 	    
 	/** Constructor */
-	public FileExport(String filename, boolean gzip) {
+	public FileExport(File file, boolean gzip) {
 
 		try {
-			if (gzip)
-				filename += ".gz";
-			Magnum.log.println("Writing file: " + filename);
+			Magnum.log.println("Writing file: " + file.getAbsolutePath());
 		
 			if (gzip) {
-				FileOutputStream output = new FileOutputStream(filename);
+				FileOutputStream output = new FileOutputStream(file);
 				writer_ = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(output), "UTF-8"));
 			} else {				
-				FileWriter fstream = new FileWriter(filename);
+				FileWriter fstream = new FileWriter(file);
 				writer_ = new BufferedWriter(fstream);
 			}
 			
@@ -65,11 +64,19 @@ public class FileExport {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
+	/** Constructor for uncompressed file */
+	public FileExport(File file) {
+		this(file, false);
+	}
+
+	/** Constructor */
+	public FileExport(String filename, boolean gzip) {
+		this(new File(gzip ? filename + ".gz" : filename), gzip);
+	}
 	
 	/** Constructor for uncompressed file */
 	public FileExport(String filename) {
-		
 		this(filename, false);
 	}
 
@@ -78,16 +85,16 @@ public class FileExport {
 
 	/** Write a line to the file */
 	public void println(String str) {
-		
 		print(str + "\n");
 	}
 
-
-	// ----------------------------------------------------------------------------
+	/** Write a line to the file */
+	public void println() {
+		print("\n");
+	}
 
 	/** Write the given string to the file */
 	public void print(String str) {
-		
 		try {
 			writer_.write(str);
 		} catch (IOException e) {

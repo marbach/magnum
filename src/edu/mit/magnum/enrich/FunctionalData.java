@@ -90,7 +90,7 @@ public class FunctionalData {
 		// Load the data for the overlapping genes
 		loadData(functionalDataFile);
 		// Normalize by row/col sums to adjust for hubs
-		if (Settings.scaleKernel_)
+		if (MagnumSettings.scaleKernel_)
 			scaleKernel();
 		// Load the gene pairs that should be excluded from enrichment analysis, set corresponding data entries to NaN
 		loadExcludedGenePairs(excludedGenePairsFile);
@@ -164,7 +164,7 @@ public class FunctionalData {
 			return;
 
 		GeneIdMapping idMapping = GeneIdMapping.getInstance();
-		boolean translateToEntrez = Settings.idTypeFunctionalData_.equalsIgnoreCase("entrez");
+		boolean translateToEntrez = MagnumSettings.idTypeFunctionalData_.equalsIgnoreCase("entrez");
 
 		// Open the file
 		FileParser parser = new FileParser(excludedGenePairsFile);
@@ -197,7 +197,7 @@ public class FunctionalData {
 			// The two gene ids
 			String id1 = nextLine[colGene1];
 			String id2 = nextLine[colGene2];
-			if (Settings.idTypeFunctionalData_.equals("ensembl")) {
+			if (MagnumSettings.idTypeFunctionalData_.equals("ensembl")) {
 				id1 = idMapping.removeEnsemblVersion(id1);
 				id2 = idMapping.removeEnsemblVersion(id2);
 			}

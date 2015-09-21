@@ -43,7 +43,7 @@ public class GeneAnnotationCustom extends GeneAnnotation {
 	/** Constructor */
 	public GeneAnnotationCustom(String chromosomeToBeLoaded) {
 		
-		super(Settings.geneCoordFile_, chromosomeToBeLoaded, false);
+		super(MagnumSettings.geneCoordFile_, chromosomeToBeLoaded, false);
 	}
 	
 

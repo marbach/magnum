@@ -132,14 +132,6 @@ public class MagnumUtils {
 	
 	// ----------------------------------------------------------------------------
 
-//	/** Extract the basic file name without path and without extension */
-//	static public String extractBasicFilename(String filename) {
-//		
-//		return extractBasicFilename(filename, true);
-//	}
-
-	// ----------------------------------------------------------------------------
-
 	/** Extract the basic file name without path and without extension */
 	static public String extractBasicFilename(String filename, boolean includePath) {
 		
@@ -163,8 +155,8 @@ public class MagnumUtils {
 		String basicFilename = filename.substring((includePath ? 0 : start), end);
 		
 		// Add custom suffix
-		if (Settings.outputSuffix_ != null && Settings.outputSuffix_.compareTo("") != 0)
-			basicFilename += Settings.outputSuffix_;
+		if (MagnumSettings.outputSuffix_ != null && MagnumSettings.outputSuffix_.compareTo("") != 0)
+			basicFilename += MagnumSettings.outputSuffix_;
 		
 		return basicFilename;
 	}
@@ -270,23 +262,5 @@ public class MagnumUtils {
 		
 		return filenames;
 	}
-
 	
-//	// ----------------------------------------------------------------------------
-//
-//	/** Get a URL from a relative path */
-//	public URL getURL(String path)
-//	{	
-//		try
-//		{
-//			return new File(path).toURI().toURL();
-//		} 
-//		catch (MalformedURLException e)
-//		{
-//			log_.log(Level.WARNING, "NgseaSettings::getURL(): Bad URL", e);
-//		}
-//		return null;
-//	}
-
-
 }

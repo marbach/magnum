@@ -36,17 +36,14 @@ compressFiles = 1
 # INPUT NETWORK
 
 # Directory containing the networks [--netdir <dir>]
-#networkDir = 
-#networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfRegionNet/enhancer---gene.prec90/level0
-networkDir = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---gene.prec90/global
+networkDir = 
 # The input network file [--net <file>]
-#networkFile = scaled10.tf---gene.prec90.hepatocyte.txt.gz
-networkFile = tf---gene.prec90.global.txt.gz
+networkFile = 
 # Delimiter used to separate columns, either 'TAB' or 'SPACE'
 networkFileDelim = TAB
 # Defines if the network should be interpreted as directed or undirected [--dir]
 isDirected = 1
-# Defines if self loops should be removed from the network [--self]
+# Defines if self loops should be removed from the network [--noself]
 removeSelfLoops = 0
 # Set true to treat the network as weighted [--weighted]
 isWeighted = 1
@@ -61,20 +58,15 @@ refNodesFile =
 # NETWORKOPS
 
 # Take union (max edge) over all networks in networkDir or the sets specified in the file below [--union]
-computeUnion = 1
+computeUnion = 0
 # Define the network sets that should be combined (leave empty to combine all networks)
-#networkGroupFile =
-#networkGroupFile = /Users/marbach/Java/genecircuits/data/fantom5/sampleAnnot/groups/level2.txt
-networkGroupFile = /Users/marbach/Java/genecircuits/data/fantom5/sampleAnnot/groups/encodeCellLines.txt
-#networkGroupFile = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---gene.prec90/level2.scaled10.c4/_level2.scaled10.c4.txt
+networkGroupFile = 
 # Prefix of the files in the network dir
-#networkFilePrefix = 
-networkFilePrefix = enhancer---gene.prec90.
+networkFilePrefix = 
 
 # Add pairs of corresponding networks in two directories (e.g., promoter and enhancer-based networks)
 computePairwiseSum = 0
 # The network directory of the second networks
-#networkDir2 = /Users/marbach/Java/genecircuits/results/fantom5/fantom5_net/tfGeneNet/tf---promoter---gene.prec90/level2
 networkDir2 = 
 
 # ========================================================================
@@ -94,7 +86,7 @@ computeShortestPathLengths = 0
 # Only implemented for undirected networks
 
 # P-step random walk kernel (Smola & Kondor, 2003) [--pstep]
-computePstepKernel = 1
+computePstepKernel = 0
 # alpha parameter of p-step random walk kernel (alpha >= 2)
 pstepKernelAlpha = 2
 # Steps p of random walk kernel (comma-separated list of positive integers given in increasing order, the kernel for each listed p will be saved) [-nsteps <int>]
@@ -131,7 +123,6 @@ genesToBeLoadedFile =
 chromosome = 
 # Ignore sex chromosomes
 ignoreAllosomes = 1
-
 # Gencode annotation (use for ENSEMBL gene IDs)
 genecodeAnnotationFile = data/annotation/gencode/gencode.v18.annotation.genes.gtf
 # UCSC genome browser annotation (use for Entrez IDs) 
@@ -153,15 +144,12 @@ geneIdMappingFile = data/annotation/gencode/ensembl_entrez_hugo_ids.txt
 #geneCoordFile = data/geneScores/gene_coord.bed
 geneCoordFile = 
 # The gene scores [--scores <file>]
-#geneScoreFile = /Users/marbach/Java/magnum/data/geneScores/gwasCollection_geneScores_v1/EUR.CARDIoGRAM_2010_lipids.HDL_ONE_max.genescores.txt
 geneScoreFile = 
 # Cutoff for genome-wide significance of gene scores
 genomeWideSignificanceThreshold = 1e-6
 # Exclude genome-wide significant genes (below threshold)
 excludeGenomeWideSignificantGenes = 0
 # The file with the functional data, e.g. network kernels (cols: gene id, property 1, property 2, ...) [--cmatrix <file>]
-#functionalDataFile = tf---gene.prec90.global_4stepKernel_alpha2.0_weighted_undir.txt.gz
-#functionalDataFile = /Users/marbach/Java/magnum/data/tmp_kernels/scaled10.tf---gene.prec90.global_4stepKernel_alpha2.0_weighted.txt.gz
 functionalDataFile = 
 # Comma-separated list of columns that should be loaded (leave empty: all columns; 1: first gene property column)
 functionalDataCols = 

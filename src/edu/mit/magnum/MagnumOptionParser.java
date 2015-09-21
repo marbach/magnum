@@ -33,7 +33,7 @@ import joptsimple.OptionSet;
 /**
  * Defines and parses the command-line arguments
  */
-public class MagnumOptionParser extends Settings {
+public class MagnumOptionParser extends MagnumSettings {
 
 	/** The option parser */
 	OptionParser parser_ = null;
@@ -73,7 +73,7 @@ public class MagnumOptionParser extends Settings {
 
 		// (2) Set the settings file
 		if (options.has("set"))
-			settingsFile_ = (String) options.valueOf("set");
+			settingsFile = (String) options.valueOf("set");
 
 		// (3) Load the settings file
 		Magnum.log.printlnVerbose("SETTINGS FILE");
@@ -166,7 +166,7 @@ public class MagnumOptionParser extends Settings {
 	/** Display help on console */
 	static public void displayHelp() {
 
-		Magnum.log.println("Running magnum " + Settings.magnumVersion_);
+		Magnum.log.println("Running magnum " + MagnumSettings.magnumVersion);
 		Magnum.log.println();
 
 		Magnum.log.println("1. USAGE");

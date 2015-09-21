@@ -41,7 +41,7 @@ import edu.mit.magnum.FileExport;
 import edu.mit.magnum.FileParser;
 import edu.mit.magnum.Magnum;
 import edu.mit.magnum.MagnumUtils;
-import edu.mit.magnum.Settings;
+import edu.mit.magnum.MagnumSettings;
 import edu.uci.ics.jung.algorithms.util.Indexer;
 import edu.uci.ics.jung.graph.AbstractTypedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
@@ -174,8 +174,8 @@ public class Network {
 		Magnum.log.println("- " + numRemovedMultiEdges_ + " multi-edges" + (isWeighted_? ", taking MAX edge weight" : "") );
 		if (removeSelfLoops_)
 			Magnum.log.println("- " + numRemovedSelfEdges_ + " self-loops");
-		if (Settings.superHubThreshold_ > 0 && Settings.superHubThreshold_ < 1)
-			Magnum.log.println("- " + numRemovedSuperHubs_ + " super-hubs connecting > " + 100*Settings.superHubThreshold_ + "% of all genes");
+		if (MagnumSettings.superHubThreshold_ > 0 && MagnumSettings.superHubThreshold_ < 1)
+			Magnum.log.println("- " + numRemovedSuperHubs_ + " super-hubs connecting > " + 100*MagnumSettings.superHubThreshold_ + "% of all genes");
 		if (numRemovedIsolatedNodes_ > 0)
 			Magnum.log.println("- " + numRemovedIsolatedNodes_ + " isolated nodes (degree 0)");
 		Magnum.log.println("");
@@ -457,9 +457,9 @@ public class Network {
 		
 		// Open the file
 		FileParser parser = new FileParser(filename_);
-		if (Settings.networkFileDelim_.equalsIgnoreCase("TAB"))
+		if (MagnumSettings.networkFileDelim_.equalsIgnoreCase("TAB"))
 			parser.setSeparator("\t");
-		else if (Settings.networkFileDelim_.equalsIgnoreCase("SPACE"))
+		else if (MagnumSettings.networkFileDelim_.equalsIgnoreCase("SPACE"))
 			parser.setSeparator(" ");
 		else
 			throw new IllegalArgumentException("Settings.networkFileDelim_ must be either 'tab' or 'space' (in words like this)");
@@ -559,10 +559,10 @@ public class Network {
 	/** Exclude "super-hubs" that connect to more than the given fraction of genes */
 	private void removeSuperHubs() {
 				
-		if (Settings.superHubThreshold_ <= 0 || Settings.superHubThreshold_ >= 1)
+		if (MagnumSettings.superHubThreshold_ <= 0 || MagnumSettings.superHubThreshold_ >= 1)
 			return;
 		
-		int maxDegree = (int) (Settings.superHubThreshold_ * graph_.getVertexCount());
+		int maxDegree = (int) (MagnumSettings.superHubThreshold_ * graph_.getVertexCount());
 		ArrayList<Node> superHubs = new ArrayList<Node>();
 		
 		for (Node node : graph_.getVertices())

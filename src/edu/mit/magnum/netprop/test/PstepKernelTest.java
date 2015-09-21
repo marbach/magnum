@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import org.junit.*;
 
 import cern.colt.matrix.DoubleMatrix2D;
-import edu.mit.magnum.Settings;
+import edu.mit.magnum.MagnumSettings;
 import edu.mit.magnum.net.*;
 import edu.mit.magnum.netprop.*;
 
@@ -46,11 +46,11 @@ public class PstepKernelTest {
 	
 	@BeforeClass
 	public static void testSetup() {
-		Settings.loadSettings();
-		Settings.superHubThreshold_ = 0;
-		Settings.computePstepKernel_ = true;
-		Settings.exportNodeProperties_ = true;
-		Settings.pstepKernelNormalize_ = true;
+		MagnumSettings.loadSettings();
+		MagnumSettings.superHubThreshold_ = 0;
+		MagnumSettings.computePstepKernel_ = true;
+		MagnumSettings.exportNodeProperties_ = true;
+		MagnumSettings.pstepKernelNormalize_ = true;
 	}
 
 	@AfterClass

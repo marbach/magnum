@@ -33,7 +33,7 @@ import org.junit.*;
 
 import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
-import edu.mit.magnum.Settings;
+import edu.mit.magnum.MagnumSettings;
 import edu.mit.magnum.net.*;
 import edu.mit.magnum.netprop.*;
 
@@ -49,8 +49,8 @@ public class TanimotoCoefficientTest {
 	
 	@BeforeClass
 	public static void testSetup() {
-		Settings.loadSettings();
-		Settings.superHubThreshold_ = 0;
+		MagnumSettings.loadSettings();
+		MagnumSettings.superHubThreshold_ = 0;
 	}
 
 	@AfterClass

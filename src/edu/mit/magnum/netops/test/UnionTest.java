@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
-import edu.mit.magnum.Settings;
+import edu.mit.magnum.MagnumSettings;
 import edu.mit.magnum.net.Network;
 import edu.mit.magnum.netops.Union;
 
@@ -45,11 +45,11 @@ public class UnionTest {
 	
 	@BeforeClass
 	public static void testSetup() {
-		Settings.loadSettings();
-		Settings.superHubThreshold_ = 0;
-		Settings.computeUnion_ = true;
-		Settings.isDirected_ = true;
-		Settings.isWeighted_ = true;
+		MagnumSettings.loadSettings();
+		MagnumSettings.superHubThreshold_ = 0;
+		MagnumSettings.computeUnion_ = true;
+		MagnumSettings.isDirected_ = true;
+		MagnumSettings.isWeighted_ = true;
 	}
 
 	@AfterClass

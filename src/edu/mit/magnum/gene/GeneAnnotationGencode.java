@@ -58,7 +58,7 @@ public class GeneAnnotationGencode extends GeneAnnotation {
 	/** Constructor */
 	public GeneAnnotationGencode(String chromosomeToBeLoaded, boolean loadProteinCodingOnly) {
 		
-		super(Settings.gencodeAnnotationFile_, chromosomeToBeLoaded, loadProteinCodingOnly);
+		super(MagnumSettings.gencodeAnnotationFile_, chromosomeToBeLoaded, loadProteinCodingOnly);
 	}
 	
 

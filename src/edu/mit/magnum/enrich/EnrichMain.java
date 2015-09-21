@@ -57,26 +57,26 @@ public class EnrichMain {
 	/** Constructor */
 	public EnrichMain() {
 		
-		name_ = extractName(Settings.geneScoreFile_, Settings.functionalDataFile_);
+		name_ = extractName(MagnumSettings.geneScoreFile_, MagnumSettings.functionalDataFile_);
 		
 		// Initialize gene mapping
-		if (!Settings.idTypeFunctionalData_.equalsIgnoreCase(Settings.idTypeGeneScores_))
-			GeneIdMapping.getInstance().load(Settings.geneIdMappingFile_);
+		if (!MagnumSettings.idTypeFunctionalData_.equalsIgnoreCase(MagnumSettings.idTypeGeneScores_))
+			GeneIdMapping.getInstance().load(MagnumSettings.geneIdMappingFile_);
 		
 		// Load the gene scores, excluding genes from the excludedGenesFile
-		geneScores_ = new GeneScoreList(Settings.geneScoreFile_, Settings.excludedGenesFile_);
+		geneScores_ = new GeneScoreList(MagnumSettings.geneScoreFile_, MagnumSettings.excludedGenesFile_);
 		//LinkageDisequilibrium.exportNeighboringGeneWindows(geneScores_.getGenes());
 
 		// Compute similarity network (kernel / tanimoto)
-		String functionalDataFile = Settings.functionalDataFile_;
-		if (Settings.functionalDataFile_ == null || Settings.functionalDataFile_.equals(""))
+		String functionalDataFile = MagnumSettings.functionalDataFile_;
+		if (MagnumSettings.functionalDataFile_ == null || MagnumSettings.functionalDataFile_.equals(""))
 			functionalDataFile = computeSimilarityNetwork();
 		
 		// Loads the functional data, removes all genes that have no scores or no functional data
-		functData_ = new FunctionalData(functionalDataFile, Settings.excludedGenePairsFile_, Settings.functionalDataCols_, geneScores_.getGenes());
+		functData_ = new FunctionalData(functionalDataFile, MagnumSettings.excludedGenePairsFile_, MagnumSettings.functionalDataCols_, geneScores_.getGenes());
 		
 		// Delete temporary file
-		if (Settings.functionalDataFile_ == null || Settings.functionalDataFile_.equals("")) {
+		if (MagnumSettings.functionalDataFile_ == null || MagnumSettings.functionalDataFile_.equals("")) {
 			Magnum.log.println("Deleting file: " + functionalDataFile);
 			new File(functionalDataFile).delete();
 		}
@@ -87,7 +87,7 @@ public class EnrichMain {
 		ArrayList<String> genesMissingFunctData = geneScores_.intersect(functData_.getGenes().keySet());
 		
 		// Exclude neighboring gene pairs (this is here because we first want to remove scores that are not in funct data (see previous line)
-		if (Settings.excludedGenesDistance_ >= 0)
+		if (MagnumSettings.excludedGenesDistance_ >= 0)
 			functData_.excludeNeighbors(geneScores_.getGenes());
 		
 		// This is only true if we don't map gene scores to entrez, otherwise the same entrez gene can appear multiple
@@ -134,12 +134,12 @@ public class EnrichMain {
 		int numScoresPerGene = geneScores_.getNumScoresPerGene();
 		
 		// Compute enrichment for each gene score
-		if (Settings.geneScoreIndexEnd_ >= numScoresPerGene)
-			throw new IllegalArgumentException("geneScoreIndexEnd_=" + Settings.geneScoreIndexEnd_ + " >= numScoresPerGene=" + numScoresPerGene);
-		if (Settings.geneScoreIndexEnd_ < Settings.geneScoreIndexStart_)
+		if (MagnumSettings.geneScoreIndexEnd_ >= numScoresPerGene)
+			throw new IllegalArgumentException("geneScoreIndexEnd_=" + MagnumSettings.geneScoreIndexEnd_ + " >= numScoresPerGene=" + numScoresPerGene);
+		if (MagnumSettings.geneScoreIndexEnd_ < MagnumSettings.geneScoreIndexStart_)
 			throw new IllegalArgumentException("Settings.geneScoreIndexEnd_ < Settings.geneScoreIndexStart_");
 		
-		for (int i=Settings.geneScoreIndexStart_; i<=Settings.geneScoreIndexEnd_; i++) {
+		for (int i=MagnumSettings.geneScoreIndexStart_; i<=MagnumSettings.geneScoreIndexEnd_; i++) {
 			// Rank genes according to i'th score
 			geneScores_.sortGeneList(i);
 			
@@ -159,26 +159,26 @@ public class EnrichMain {
 	private String computeSimilarityNetwork() {
 		
 		// Load the input network
-		String filename = Settings.networkDir_ + "/" + Settings.networkFile_;
+		String filename = MagnumSettings.networkDir_ + "/" + MagnumSettings.networkFile_;
 		
 		// Write only K, not node centralities
-		Settings.compressFiles_ = true;
-		Settings.exportPairwiseNodeProperties_ = true;
-		Settings.exportNodeProperties_ = false;
+		MagnumSettings.compressFiles_ = true;
+		MagnumSettings.exportPairwiseNodeProperties_ = true;
+		MagnumSettings.exportNodeProperties_ = false;
 
 		// Initialize netprop
 		Network network;
 		PairwiseProperties netprop;		
 		
-		if (Settings.computePstepKernel_) {
+		if (MagnumSettings.computePstepKernel_) {
 			// Doesn't make sense to save more than one step
-			if (Settings.pstepKernelP_.size() != 1)
+			if (MagnumSettings.pstepKernelP_.size() != 1)
 				throw new RuntimeException("Specify only one pstepKernelP when computing kernels on the fly within enrichment analysis");
 			
 			// Load network: p-step kernel only defined for undirected networks without self-loops
-			network = new Network(filename, false, true, Settings.isWeighted_, Settings.threshold_);
+			network = new Network(filename, false, true, MagnumSettings.isWeighted_, MagnumSettings.threshold_);
 			// Initialize
-			netprop = new PstepKernel(network, Settings.pstepKernelAlpha_, Settings.pstepKernelP_, Settings.pstepKernelNormalize_, false);
+			netprop = new PstepKernel(network, MagnumSettings.pstepKernelAlpha_, MagnumSettings.pstepKernelP_, MagnumSettings.pstepKernelNormalize_, false);
 		
 		} else {
 			throw new RuntimeException("No similarity metric specified (computePstepKernel)");
@@ -189,7 +189,7 @@ public class EnrichMain {
 		
 		// filename where K was written
 		filename = MagnumUtils.extractBasicFilename(network.getFilename(), false);
-		filename = Settings.outputDirectory_ + "/" + filename + "_" + netprop.getName() + ".txt.gz";
+		filename = MagnumSettings.outputDirectory_ + "/" + filename + "_" + netprop.getName() + ".txt.gz";
 		return filename;
 	}
 
@@ -203,7 +203,7 @@ public class EnrichMain {
 		ArrayList<String> colNames = functData_.getColNames();
 		for (int i=0; i<colNames.size(); i++) {
 			// Reinitialize correct funct data indexes (they have been shuffled at prev iteration)
-			permuter_ = new LabelPermuter(functData_, geneScores_.getGenes(), Settings.numBins_, i);
+			permuter_ = new LabelPermuter(functData_, geneScores_.getGenes(), MagnumSettings.numBins_, i);
 
 			// Compute mean enrichment
 			enrichment_ = new EnrichmentIndividual(functData_, geneScores_, permuter_, i);
@@ -211,7 +211,7 @@ public class EnrichMain {
 
 			// Save results
 			String col = colNames.get(i).replace("_weighted", "");
-			String filename = Settings.outputDirectory_ + "/" + name_ + "_" + col + "_bin" + Settings.numBins_;
+			String filename = MagnumSettings.outputDirectory_ + "/" + name_ + "_" + col + "_bin" + MagnumSettings.numBins_;
 			if (geneScoreIndex > 0)
 				filename += "." + geneScoreIndex;
 			enrichment_.save(filename);
@@ -226,7 +226,7 @@ public class EnrichMain {
 	private void runPairwiseData(int geneScoreIndex) {
 		
 		// Map gwas genes to functional data
-		permuter_ = new LabelPermuter(functData_, geneScores_.getGenes(), Settings.numBins_);
+		permuter_ = new LabelPermuter(functData_, geneScores_.getGenes(), MagnumSettings.numBins_);
 
 		enrichment_ = new EnrichmentPairwise(functData_, geneScores_, permuter_);
 		enrichment_.run();
@@ -235,7 +235,7 @@ public class EnrichMain {
 		enrichment_.printPvals();
 		
 		// Save results
-		String filename = Settings.outputDirectory_ + "/" + name_;
+		String filename = MagnumSettings.outputDirectory_ + "/" + name_;
 		if (geneScoreIndex > 0)
 			filename += "." + geneScoreIndex;
 		enrichment_.save(filename);

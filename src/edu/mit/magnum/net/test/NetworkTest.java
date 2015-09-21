@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 import org.junit.*;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
-import edu.mit.magnum.Settings;
+import edu.mit.magnum.MagnumSettings;
 import edu.mit.magnum.net.*;
 
 
@@ -62,8 +62,8 @@ public class NetworkTest {
 	
 	@BeforeClass
 	public static void testSetup() {
-		Settings.loadSettings();
-		Settings.superHubThreshold_ = 0;
+		MagnumSettings.loadSettings();
+		MagnumSettings.superHubThreshold_ = 0;
 	}
 
 	@AfterClass

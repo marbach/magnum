@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 
 import org.junit.*;
 
-import edu.mit.magnum.Settings;
+import edu.mit.magnum.MagnumSettings;
 import edu.mit.magnum.net.Network;
 import edu.mit.magnum.netops.PairwiseSum;
 
@@ -46,12 +46,12 @@ public class PairwiseSumTest {
 	@BeforeClass
 	public static void testSetup() {
 		
-		Settings.loadSettings();
-		Settings.superHubThreshold_ = 0;
-		Settings.computePairwiseSum_ = true;
-		Settings.isDirected_ = true;
-		Settings.isWeighted_ = true;
-		Settings.threshold_ = 0;
+		MagnumSettings.loadSettings();
+		MagnumSettings.superHubThreshold_ = 0;
+		MagnumSettings.computePairwiseSum_ = true;
+		MagnumSettings.isDirected_ = true;
+		MagnumSettings.isWeighted_ = true;
+		MagnumSettings.threshold_ = 0;
 	}
 
 	@AfterClass

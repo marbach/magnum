@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
 
 import edu.mit.magnum.FileParser;
 import edu.mit.magnum.Magnum;
-import edu.mit.magnum.Settings;
+import edu.mit.magnum.MagnumSettings;
 
 
 /**
@@ -45,7 +45,7 @@ public class GeneAnnotationUcsc extends GeneAnnotation {
 	/** Constructor */
 	public GeneAnnotationUcsc(String chromosomeToBeLoaded, boolean loadProteinCodingOnly) {
 		
-		super(Settings.gencodeAnnotationFile_, chromosomeToBeLoaded, loadProteinCodingOnly);
+		super(MagnumSettings.gencodeAnnotationFile_, chromosomeToBeLoaded, loadProteinCodingOnly);
 	}
 
 	
@@ -60,7 +60,7 @@ public class GeneAnnotationUcsc extends GeneAnnotation {
 		Magnum.log.error("TBD: Check, debug, adapt so that genesToBeLoaded_ is used");
 		
 		genes_ = new LinkedHashMap<String, Gene>();
-		FileParser parser = new FileParser(Settings.ucscAnnotationFile_);
+		FileParser parser = new FileParser(MagnumSettings.ucscAnnotationFile_);
 		
 		// Skip the header lines (start with #)
 		String[] nextLine = parser.readLine();

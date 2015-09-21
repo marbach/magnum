@@ -36,7 +36,7 @@ import cern.colt.matrix.linalg.Blas;
 import cern.colt.matrix.linalg.SeqBlas;
 import edu.mit.magnum.Magnum;
 import edu.mit.magnum.MagnumUtils;
-import edu.mit.magnum.Settings;
+import edu.mit.magnum.MagnumSettings;
 import edu.mit.magnum.net.*;
 
 
@@ -104,7 +104,7 @@ public class PstepKernel extends PairwiseProperties {
 	/** Constructor using default alpha (network must be undirected) */
 	public PstepKernel(Network network, ArrayList<Integer> p) {
 		
-		this(network, Settings.pstepKernelAlpha_, p, Settings.pstepKernelNormalize_, Settings.exportNodeProperties_);
+		this(network, MagnumSettings.pstepKernelAlpha_, p, MagnumSettings.pstepKernelNormalize_, MagnumSettings.exportNodeProperties_);
 	}
 
 
@@ -208,7 +208,7 @@ public class PstepKernel extends PairwiseProperties {
 		name_ = i + "stepKernel" + suffix;
 		nameCentrality_ = i + "stepKernelCentrality" + suffix;
 		
-		if (Settings.exportPairwiseNodeProperties_)
+		if (MagnumSettings.exportPairwiseNodeProperties_)
 			saveK(MagnumUtils.extractBasicFilename(network_.getFilename(), false));
 		
 		if (computeCentrality_) {

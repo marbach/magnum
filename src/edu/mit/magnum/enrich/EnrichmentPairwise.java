@@ -25,7 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.enrich;
 
-import edu.mit.magnum.Settings;
+import edu.mit.magnum.MagnumSettings;
 import edu.mit.magnum.gene.Gene;
 
 
@@ -99,7 +99,7 @@ public class EnrichmentPairwise extends Enrichment {
 		if (N <= 1)
 			return 0;
 
-		int windowStart = Math.max(0, currentK_-Settings.slidingWindowSize_+1);
+		int windowStart = Math.max(0, currentK_-MagnumSettings.slidingWindowSize_+1);
 		double sum = 0;
 		int count = 0;
 		
