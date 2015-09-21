@@ -27,6 +27,8 @@ package edu.mit.magnum.netops.test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+
 import org.junit.*;
 
 import edu.mit.magnum.Magnum;
@@ -64,7 +66,7 @@ public class UnionTest {
 	public void testUnionMax() {
 
 		// Initialize netops
-		Union union = new Union("src/edu/mit/magnum/netops/test/net.e");
+		Union union = new Union(new File("src/edu/mit/magnum/netops/test/net.e"));
 		// Compute union
 		Network net = union.run();
 		assertEquals(8, net.getNumEdges());

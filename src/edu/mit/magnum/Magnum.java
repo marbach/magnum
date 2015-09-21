@@ -100,7 +100,7 @@ public class Magnum {
 	public Magnum(String[] args) {
 
 		// Print magnum version
-		Magnum.log.printlnVerbose("magnum " + set.magnumVersion + "\n");
+		Magnum.log.println("magnum " + set.magnumVersion + "\n");
 		
 		// Parse command-line arguments and initialize settings
 		if (args != null)
@@ -116,7 +116,7 @@ public class Magnum {
 	public void run() {
 
 		// Create output directory
-		new File(set.outputDirectory_).mkdirs();
+		set.outputDirectory_.mkdirs();
 
 		if (set.mode_ == 1)
 			runNetworkAnalysis();
@@ -145,7 +145,7 @@ public class Magnum {
 			set.removeSelfLoops_ = true;
 		}
 		
-		if (set.networkFile_ != null && !set.networkFile_.isEmpty()) {
+		if (set.networkFile_ != null) {
 			runNetworkAnalysis(set.networkFile_);
 			
 		} else {
@@ -154,7 +154,7 @@ public class Magnum {
 			// Run for each file
 			ArrayList<ArrayList<Double>> networkMeans = new ArrayList<ArrayList<Double>>();
 			for (String file_i : networkFiles)
-				networkMeans.add(runNetworkAnalysis(file_i));
+				networkMeans.add(runNetworkAnalysis(new File(file_i)));
 			
 			// Print means to file
 			FileExport writer = new FileExport("networkMeans.txt");
@@ -177,7 +177,7 @@ public class Magnum {
 	// ----------------------------------------------------------------------------
 
 	/** Analyze network properties */
-	public ArrayList<Double> runNetworkAnalysis(String networkFile) {
+	public ArrayList<Double> runNetworkAnalysis(File networkFile) {
 
 		// Load the specified network file
 		Network network = loadInputNetwork(networkFile);
@@ -220,12 +220,18 @@ public class Magnum {
 	/** Analyze enrichment */
 	public void runEnrichmentAnalysis() {
 
+		// Compute kernel if it was not specified
+		// TODO check if it's already available in the kernel dir
+		if (set.functionalDataFile_ == null) {
+			set.computePstepKernel_ = true;
+			runNetworkAnalysis();
+		}
+		
 		// Load input files
 		Magnum.log.println("LOADING INPUT FILES");
 		Magnum.log.println("-------------------\n");
 
 		EnrichMain enrich = new EnrichMain();
-		// Ngsea.println();
 
 		// Analyze enrichment
 		Magnum.log.println("COMPUTING ENRICHMENT");
@@ -259,12 +265,15 @@ public class Magnum {
 	// PRIVATE METHODS
 
 	/** Load the input network */
-	private Network loadInputNetwork(String networkFile) {
+	private Network loadInputNetwork(File networkFile) {
 
 		Magnum.log.println("LOADING INPUT NETWORK");
 		Magnum.log.println("---------------------\n");
 
-		return new Network(set.networkDir_ + "/" + networkFile, set.refNodesFile_,
+		if (set.networkDir_ != null)
+			networkFile = new File(set.networkDir_, networkFile.getPath());
+		
+		return new Network(networkFile, set.refNodesFile_,
 				set.isDirected_, set.removeSelfLoops_,
 				set.isWeighted_, set.threshold_);
 	}

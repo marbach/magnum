@@ -247,10 +247,10 @@ public class MagnumUtils {
 	// ----------------------------------------------------------------------------
 	
 	/** Constructor */
-	public static ArrayList<String> listFiles(String directory) {
+	public static ArrayList<String> listFiles(File directory) {
 		
 		// Get files in networkDir
-		File[] files = new File(directory).listFiles();
+		File[] files = directory.listFiles();
 		if (files == null)
 			throw new RuntimeException("Couldn't list files in directory: " + directory);
 		else if (files.length < 1)

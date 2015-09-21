@@ -197,7 +197,7 @@ public class PstepKernel extends PairwiseProperties {
 		nameCentrality_ = i + "stepKernelCentrality" + suffix;
 		
 		if (Magnum.set.exportPairwiseNodeProperties_)
-			saveK(MagnumUtils.extractBasicFilename(network_.getFilename(), false));
+			saveK(MagnumUtils.extractBasicFilename(network_.getFile().getName(), false));
 		
 		if (computeCentrality_) {
 			computeCentrality();

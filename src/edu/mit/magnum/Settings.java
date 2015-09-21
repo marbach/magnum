@@ -137,18 +137,14 @@ public class Settings {
 	
 	// ----------------------------------------------------------------------------
     
-    /** Get a file / directory saved as a string, return null if it does not exist */
+    /** Get a file / directory saved as a string, throw exception if the name is empty */
     protected File getFileSetting(String param) {
     	
-		String filename = getSetting(param);
-		if (filename == null || filename.isEmpty())
-			return null;
-		
-		File file = new File(filename);
-		if (!file.exists())
-			return null;
-
-		return file; 
+    	String filename = getSetting(param);
+    	if (filename.isEmpty() || filename.equals(" "))
+    		throw new RuntimeException(param + ": file/directory name is empty or has trailing whitespace");
+    	
+		return new File(filename);
     }
 
 

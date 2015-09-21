@@ -27,6 +27,8 @@ package edu.mit.magnum.test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+
 import org.junit.*;
 
 import edu.mit.magnum.Magnum;
@@ -62,7 +64,6 @@ public class MagnumOptionParserTest {
 		
 		String[] args = {"--mode", "22", 
 				"--seed", "23", 
-				"--verbose", 
 				"--outdir", "myOutdir",
 				"--netdir", "myNetdir",
 				"--net", "myNet",
@@ -90,11 +91,10 @@ public class MagnumOptionParserTest {
 		
 		assertEquals(22, Magnum.set.mode_);
 		assertEquals(23, Magnum.set.getRandomSeed());
-		assertEquals(true, Magnum.set.verbose_);
-		assertEquals("myOutdir", Magnum.set.outputDirectory_);
+		assertEquals(new File("myOutdir"), Magnum.set.outputDirectory_);
 
-		assertEquals("myNetdir", Magnum.set.networkDir_);
-		assertEquals("myNet", Magnum.set.networkFile_);
+		assertEquals(new File("myNetdir"), Magnum.set.networkDir_);
+		assertEquals(new File("myNet"), Magnum.set.networkFile_);
 		assertEquals(true, Magnum.set.isDirected_);
 		assertEquals(true, Magnum.set.isWeighted_);
 		assertEquals(0.42, Magnum.set.threshold_, 1e-12);
@@ -107,10 +107,10 @@ public class MagnumOptionParserTest {
 		assertEquals(true, Magnum.set.computeShortestPathLengths_);
 		assertEquals(true, Magnum.set.computeUnion_);
 
-		assertEquals("myGenes", Magnum.set.geneCoordFile_);
-		assertEquals("myScores", Magnum.set.geneScoreFile_);
-		assertEquals("myCmatrix", Magnum.set.functionalDataFile_);
-		assertEquals("myExcl", Magnum.set.excludedGenesFile_);
+		assertEquals(new File("myGenes"), Magnum.set.geneCoordFile_);
+		assertEquals(new File("myScores"), Magnum.set.geneScoreFile_);
+		assertEquals(new File("myCmatrix"), Magnum.set.functionalDataFile_);
+		assertEquals(new File("myExcl"), Magnum.set.excludedGenesFile_);
 		assertEquals(5.0, Magnum.set.excludedGenesDistance_, 1e-12);
 		assertEquals(6, Magnum.set.numBins_);
 		assertEquals(7, Magnum.set.numPermutations_);
@@ -130,8 +130,7 @@ public class MagnumOptionParserTest {
 		
 		assertEquals(0, Magnum.set.mode_);
 		assertEquals(42, Magnum.set.getRandomSeed());
-		assertEquals(false, Magnum.set.verbose_);
-		assertEquals(".", Magnum.set.outputDirectory_);
+		assertEquals(System.getProperty("user.dir"), Magnum.set.outputDirectory_.getPath());
 		assertEquals("", Magnum.set.outputFilename_);
 		assertEquals(true, Magnum.set.compressFiles_);
 

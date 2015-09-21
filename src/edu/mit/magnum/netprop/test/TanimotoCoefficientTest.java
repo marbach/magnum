@@ -27,6 +27,7 @@ package edu.mit.magnum.netprop.test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.junit.*;
@@ -65,7 +66,7 @@ public class TanimotoCoefficientTest {
 	public void testTargetTanimoto() {
 
 		// Load directed, weighted network with self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/tanimotoTestNet.txt", true, false, true, 0);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/tanimotoTestNet.txt"), true, false, true, 0);
 		// Initialize
 		TanimotoCoefficient tanimoto = new TanimotoCoefficient(testNet, true, false);
 		// Compute tanimoto similarity matrix and corresponding node centrality
@@ -110,7 +111,7 @@ public class TanimotoCoefficientTest {
 	public void testRegulatorTanimoto() {
 
 		// Load directed, weighted network with self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/tanimotoTestNet.txt", true, false, true, 0);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/tanimotoTestNet.txt"), true, false, true, 0);
 		// Initialize
 		TanimotoCoefficient tanimoto = new TanimotoCoefficient(testNet, false, false);
 		// Compute tanimoto similarity matrix and corresponding node centrality

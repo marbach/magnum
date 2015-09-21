@@ -25,6 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.netops;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import edu.mit.magnum.MagnumUtils;
@@ -40,7 +41,7 @@ import edu.uci.ics.jung.graph.AbstractTypedGraph;
 public class Union {
 
 	/** The network directory */
-	String networkDir_ = null;
+	File networkDir_ = null;
 	/** The input networks */
 	ArrayList<String> networkFiles_ = null;
 	/** The result network */
@@ -51,7 +52,7 @@ public class Union {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public Union(String networkDir) {
+	public Union(File networkDir) {
 		
 		networkDir_ = networkDir;
 		networkFiles_ = MagnumUtils.listFiles(networkDir);
@@ -59,7 +60,7 @@ public class Union {
 	
 	
 	/** Constructor */
-	public Union(String networkDir, ArrayList<String> networkFiles) {
+	public Union(File networkDir, ArrayList<String> networkFiles) {
 		
 		networkDir_ = networkDir;
 		networkFiles_ = networkFiles;
@@ -75,12 +76,12 @@ public class Union {
 			throw new RuntimeException("Not yet implemented for undirected networks");
 
 		// Load the first network
-		network_ = new Network(networkDir_ + "/" + networkFiles_.get(0), 
+		network_ = new Network(new File(networkDir_, networkFiles_.get(0)), 
 				Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
 		
 		// Add one network after the other
 		for (int i=1; i<networkFiles_.size(); i++) {
-			Network nextNet = new Network(networkDir_ + "/" + networkFiles_.get(i), 
+			Network nextNet = new Network(new File(networkDir_, networkFiles_.get(i)), 
 					Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
 			union(nextNet);
 		}

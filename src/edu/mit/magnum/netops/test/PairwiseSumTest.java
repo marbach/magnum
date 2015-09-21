@@ -27,6 +27,8 @@ package edu.mit.magnum.netops.test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+
 import org.junit.*;
 
 import edu.mit.magnum.Magnum;
@@ -66,7 +68,7 @@ public class PairwiseSumTest {
 	public void testPairwiseSum() {
 
 		// Initialize netops
-		PairwiseSum sum = new PairwiseSum("src/edu/mit/magnum/netops/test/net.e", "src/edu/mit/magnum/netops/test/net.p");
+		PairwiseSum sum = new PairwiseSum(new File("src/edu/mit/magnum/netops/test/net.e"), new File("src/edu/mit/magnum/netops/test/net.p"));
 		// Compute sum
 		Network[] nets = sum.run(false);
 		assertEquals(3, nets.length);

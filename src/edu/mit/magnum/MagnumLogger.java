@@ -35,12 +35,6 @@ public class MagnumLogger {
 	// ============================================================================
 	// PUBLIC FUNCTIONS
 
-	/** Write string to stdout only if in verbose mode */
-	public void printlnVerbose(String msg) {
-		if (Magnum.set.verbose_)
-			println(msg);
-	}
-
 	/** Write empty line to stdout */
 	public void println() {
 		print("\n");

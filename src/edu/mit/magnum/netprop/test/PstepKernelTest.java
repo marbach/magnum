@@ -26,6 +26,8 @@ THE SOFTWARE.
 package edu.mit.magnum.netprop.test;
 
 import static org.junit.Assert.*;
+
+import java.io.File;
 import java.util.ArrayList;
 import org.junit.*;
 
@@ -65,7 +67,7 @@ public class PstepKernelTest {
 	public void testComputeK() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/simpleNet.txt", false, false);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/simpleNet.txt"), false, false);
 		
 		ArrayList<Integer> numSteps = new ArrayList<Integer>();
 		numSteps.add(1);

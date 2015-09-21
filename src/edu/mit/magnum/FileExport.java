@@ -50,7 +50,7 @@ public class FileExport {
 	public FileExport(File file, boolean gzip) {
 
 		try {
-			Magnum.log.println("Writing file: " + file.getAbsolutePath());
+			Magnum.log.println("Writing file: " + file.getPath());
 		
 			if (gzip) {
 				FileOutputStream output = new FileOutputStream(file);

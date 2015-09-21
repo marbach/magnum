@@ -25,6 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.gene;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -41,7 +42,7 @@ import edu.mit.magnum.Magnum;
 abstract public class GeneAnnotation {
 
 	/** The file with the genome annotation */
-	protected String annotationFile_ = null;
+	protected File annotationFile_ = null;
 	
 	/** User specified set of genes to be loaded (leave empty for all genes, boolean indicates if gene was found in the annotation) */
 	protected HashMap<String, Boolean> genesToBeLoaded_ = null;
@@ -58,7 +59,7 @@ abstract public class GeneAnnotation {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public GeneAnnotation(String annotationFile, String chromosomeToBeLoaded, boolean loadOnlyProteinCoding) {
+	public GeneAnnotation(File annotationFile, String chromosomeToBeLoaded, boolean loadOnlyProteinCoding) {
 		
 		annotationFile_ = annotationFile; 
 		chromosomeToBeLoaded_ = chromosomeToBeLoaded;

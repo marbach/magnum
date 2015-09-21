@@ -25,6 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.netops;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import edu.mit.magnum.*;
@@ -39,9 +40,9 @@ import edu.uci.ics.jung.graph.AbstractTypedGraph;
 public class PairwiseSum {
 
 	/** The first network directory */
-	private String networkDir1_ = null;
+	private File networkDir1_ = null;
 	/** The second network directory */
-	private String networkDir2_ = null;
+	private File networkDir2_ = null;
 	
 	/** The input networks */
 	private ArrayList<String> networkFiles1_ = null;
@@ -58,7 +59,7 @@ public class PairwiseSum {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public PairwiseSum(String networkDir1, String networkDir2) {
+	public PairwiseSum(File networkDir1, File networkDir2) {
 		
 		networkDir1_ = networkDir1;
 		networkDir2_ = networkDir2;
@@ -78,7 +79,7 @@ public class PairwiseSum {
 			throw new RuntimeException("Not yet implemented for unweighted networks");
 		
 		// Output file prefix
-		String outPrefix = Magnum.set.outputDirectory_ + "/" + Magnum.set.outputFilename_ + ".";
+		String outPrefix = Magnum.set.outputDirectory_ + System.getProperty("file.separator") + Magnum.set.outputFilename_ + ".";
 		
 		// Initialize array for results
 		Network[] networks = null;
@@ -86,8 +87,8 @@ public class PairwiseSum {
 			networks = new Network[numFiles_];
 		
 		for (int i=0; i<numFiles_; i++) {
-			Network net1 = new Network(networkDir1_ + "/" + networkFiles1_.get(i), Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
-			Network net2 = new Network(networkDir2_ + "/" + networkFiles2_.get(i), Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
+			Network net1 = new Network(new File(networkDir1_, networkFiles1_.get(i)), Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
+			Network net2 = new Network(new File(networkDir2_, networkFiles2_.get(i)), Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
 			
 			AbstractTypedGraph<Node, Edge> graph1 = net1.getGraph();
 			AbstractTypedGraph<Node, Edge> graph2 = net2.getGraph();

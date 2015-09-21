@@ -95,7 +95,7 @@ public class NetpropMain {
 	public void saveAll() {
 		
 		// Construct the output filename (remove path and file extension from input filename)
-		String basicFilename = MagnumUtils.extractBasicFilename(network_.getFilename(), false);
+		String basicFilename = MagnumUtils.extractBasicFilename(network_.getFile().getName(), false);
 		
 		// Collect node properties from the analyzers and save together in one file
 		saveNodeProperties(basicFilename);

@@ -25,6 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.net;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,7 +55,7 @@ import edu.uci.ics.jung.graph.util.Pair;
 public class Network {
 
 	/** The file from which this network was loaded */
-	protected String filename_ = null;
+	protected File file_ = null;
 	
 	/** The JUNG graph */
 	protected AbstractTypedGraph<Node, Edge> graph_ = null;
@@ -104,7 +105,7 @@ public class Network {
 	public Network() { }
 
 	/** Constructor loading network from file */
-	public Network(String filename, 
+	public Network(File file, 
 			boolean isDirected, boolean removeSelfLoops, boolean isWeighted, double threshold) {
 		
 		isDirected_ = isDirected;
@@ -113,36 +114,36 @@ public class Network {
 		threshold_ = threshold;
 		
 		// Load the network
-		loadNetwork(filename);
+		loadNetwork(file);
 	}
 
 	/** Constructor loading network from file and specifying a set of reference nodes */
-	public Network(String filename, String refNodesFilename, 
+	public Network(File file, File refNodesFile, 
 			boolean isDirected, boolean removeSelfLoops, boolean isWeighted, double threshold) {
 		
-		this(filename, isDirected, removeSelfLoops, isWeighted, threshold);
+		this(file, isDirected, removeSelfLoops, isWeighted, threshold);
 		
 		// Load the reference nodes
-		if (refNodesFilename != null && !refNodesFilename.equals(""))
-			loadRefNodes(refNodesFilename);
+		if (refNodesFile != null)
+			loadRefNodes(refNodesFile);
 	}
 
 
 	/** Constructor for unweighted networks with default threshold 0 */
-	public Network(String filename, 
+	public Network(File file, 
 			boolean isDirected, boolean removeSelfLoops) {
 		
-		this(filename, isDirected, removeSelfLoops, false, 0);
+		this(file, isDirected, removeSelfLoops, false, 0);
 	}
 
 	
 	// ----------------------------------------------------------------------------
 
 	/** Load the Network */
-	public void loadNetwork(String filename) {
+	public void loadNetwork(File file) {
 				
 		// Create graph_
-		filename_ = filename;
+		this.file_ = file;
 		loadGraph();
 		// Remove super-hubs
 		removeSuperHubs();
@@ -200,10 +201,10 @@ public class Network {
 	// ----------------------------------------------------------------------------
 
 	/** Load the set of reference nodes */
-	public void loadRefNodes(String filename) {
+	public void loadRefNodes(File file) {
 		
 		// Open the file
-		FileParser parser = new FileParser(filename);
+		FileParser parser = new FileParser(file);
 		String[] nextLine = parser.readLine();
 		refNodeIndexMap_ = new DualHashBidiMap<Node,Integer>();
 		
@@ -455,7 +456,7 @@ public class Network {
 			graph_ = new UndirectedSparseGraph<Node, Edge>();
 		
 		// Open the file
-		FileParser parser = new FileParser(filename_);
+		FileParser parser = new FileParser(file_);
 		if (Magnum.set.networkFileDelim_.equalsIgnoreCase("TAB"))
 			parser.setSeparator("\t");
 		else if (Magnum.set.networkFileDelim_.equalsIgnoreCase("SPACE"))
@@ -643,7 +644,7 @@ public class Network {
 	// ============================================================================
 	// SETTERS AND GETTERS
 	
-	public String getFilename() { return filename_; }
+	public File getFile() { return file_; }
 	
 	public int getNumRegulators() {
 		if (!isDirected_)

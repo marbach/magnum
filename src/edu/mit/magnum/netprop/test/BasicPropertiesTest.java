@@ -27,6 +27,8 @@ package edu.mit.magnum.netprop.test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+
 import org.junit.*;
 
 import edu.mit.magnum.Magnum;
@@ -40,7 +42,7 @@ import edu.mit.magnum.netprop.*;
 public class BasicPropertiesTest {
 	
 	/** Test network */
-	private String ppiNetFile_ = "src/edu/mit/magnum/netprop/test/ppi.txt";
+	private File ppiNetFile_ = new File("src/edu/mit/magnum/netprop/test/ppi.txt");
 
 	// ============================================================================
 	// SETUP
@@ -63,7 +65,7 @@ public class BasicPropertiesTest {
 	public void testDegree() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/degreeTestNet.txt", false, true);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, true);
 		BasicProperties test = new BasicProperties(testNet);
 
 		// Check number of nodes and edges
@@ -109,7 +111,7 @@ public class BasicPropertiesTest {
 	public void testDegreesDirected() {
 		
 		// Load directed network with self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/degreeTestNet.txt", true, false);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
 		BasicProperties test = new BasicProperties(testNet);
 
 		// Check number of nodes and edges
@@ -157,7 +159,7 @@ public class BasicPropertiesTest {
 	public void testBetweenness() {
 		
 		// Load undirected network without self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/degreeTestNet.txt", false, false);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
 		BasicProperties test = new BasicProperties(testNet);
 
 		// Compute betweenness
@@ -182,7 +184,7 @@ public class BasicPropertiesTest {
 	public void testBetweennessDirected() {
 		
 		// Load directed network with self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/degreeTestNet.txt", true, false);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
 		BasicProperties test = new BasicProperties(testNet);
 
 		// Compute betweenness
@@ -207,7 +209,7 @@ public class BasicPropertiesTest {
 	public void testClusteringCoeff() {
 		
 		// Load undirected network with self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/degreeTestNet.txt", false, false);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
 		BasicProperties test = new BasicProperties(testNet);
 
 		// Compute betweenness
@@ -232,7 +234,7 @@ public class BasicPropertiesTest {
 	public void testClusteringCoeffDirected() {
 		
 		// Load undirected network with self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/degreeTestNet.txt", true, false);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
 		BasicProperties test = new BasicProperties(testNet);
 
 		// Compute betweenness

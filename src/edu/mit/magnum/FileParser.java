@@ -26,6 +26,7 @@ THE SOFTWARE.
 package edu.mit.magnum;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -57,14 +58,24 @@ public class FileParser {
 	    
 	/** Constructor */
 	public FileParser(String filename) {
+		this(new File(filename));
+	}
+	
+	
+	/** Constructor */
+	public FileParser(File file) {
 
 		try {
+			String filename = file.getPath();
 			Magnum.log.println("Reading file: " + filename);
+			if (!file.exists())
+				throw new RuntimeException("File not found: " + filename);
+
 			if (filename.endsWith(" "))
 				Magnum.log.println("WARNING: Filename ends with a space (' ')");
 
 			if (filename.endsWith(".gz")) {
-				InputStream fileStream = new FileInputStream(filename);
+				InputStream fileStream = new FileInputStream(file);
 				InputStream gzipStream = new GZIPInputStream(fileStream);
 				Reader decoder = new InputStreamReader(gzipStream);
 				reader_ = new BufferedReader(decoder);
@@ -72,7 +83,7 @@ public class FileParser {
 				//FileInputStream fstream = new FileInputStream(filename);
 				//DataInputStream in = new DataInputStream(fstream);
 				//reader_ = new BufferedReader(new InputStreamReader(in));
-				reader_ = new BufferedReader(new FileReader(filename));
+				reader_ = new BufferedReader(new FileReader(file));
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);

@@ -25,6 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.enrich;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,8 +66,8 @@ public class FunctionalData {
 	// PUBLIC METHODS
 
 	/** Constructor */
-	public FunctionalData(String functionalDataFile,
-			String excludedGenePairsFile,
+	public FunctionalData(File functionalDataFile,
+			File excludedGenePairsFile,
 			ArrayList<Integer> functionalDataCols, ArrayList<Gene> geneScores) {
 
 		functDataColIndexes_ = functionalDataCols;
@@ -77,7 +78,7 @@ public class FunctionalData {
 	// PRIVATE METHODS
 
 	/** Load genes and their properties */
-	private void load(String functionalDataFile, String excludedGenePairsFile, ArrayList<Gene> geneScores) {
+	private void load(File functionalDataFile, File excludedGenePairsFile, ArrayList<Gene> geneScores) {
 
 		// A hashmap with all genes that have scores
 		HashMap<String, Gene> genesWithScores = new HashMap<String, Gene>();
@@ -102,7 +103,7 @@ public class FunctionalData {
 	 * Initialize genes_ with the set of overlapping genes between the
 	 * functional data and the gene scores
 	 */
-	private void loadGenes(String functionalDataFile, HashMap<String, Gene> genesWithScores) {
+	private void loadGenes(File functionalDataFile, HashMap<String, Gene> genesWithScores) {
 
 		// A hashmap with the overlapping genes and their index, in the order in
 		// which they occur in the funct data file
@@ -157,7 +158,7 @@ public class FunctionalData {
 	 * Load the gene pairs that should be excluded from enrichment analysis, set
 	 * corresponding data entries to NaN
 	 */
-	private void loadExcludedGenePairs(String excludedGenePairsFile) {
+	private void loadExcludedGenePairs(File excludedGenePairsFile) {
 
 		if (!isPairwiseData_ || excludedGenePairsFile == null
 				|| excludedGenePairsFile.length() == 0)
@@ -278,7 +279,7 @@ public class FunctionalData {
 	 * Initialize genes_ with the set of overlapping genes between the
 	 * functional data and the gene scores
 	 */
-	private void loadData(String functionalDataFile) {
+	private void loadData(File functionalDataFile) {
 
 		// Open the file
 		FileParser parser = new FileParser(functionalDataFile);

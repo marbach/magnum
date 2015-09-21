@@ -25,6 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -38,6 +39,9 @@ public class MagnumOptionParser extends MagnumSettings {
 
 	/** The option parser */
 	OptionParser parser_ = null;
+	/** The options */
+	OptionSet options = null;
+	
 
 	// ============================================================================
 	// PUBLIC METHODS
@@ -55,7 +59,7 @@ public class MagnumOptionParser extends MagnumSettings {
 	public void parse(String[] args) {
 
 		// (1) Parse the options
-		OptionSet options = null;
+		options = null;
 		try {
 			options = parser_.parse(args);
 		} catch (Exception e) {
@@ -68,13 +72,10 @@ public class MagnumOptionParser extends MagnumSettings {
 			displayHelp();
 			System.exit(0);
 		}
-		// verbose
-		if (options.has("verbose"))
-			verbose_ = true;
 
 		// (2-3) Set and load the settings file
 		if (options.has("set"))
-			loadSettings((String) options.valueOf("set"));
+			loadSettings((String) options.valueOf("set"), false);
 
 		// (4) Set command-line options (override settings in loaded settings file)
 		
@@ -83,14 +84,12 @@ public class MagnumOptionParser extends MagnumSettings {
 			mode_ = (Integer) options.valueOf("mode");
 		if (options.has("seed"))
 			setRandomSeed((Integer) options.valueOf("seed"));
-		if (options.has("verbose"))
-			verbose_ = true;
 		if (options.has("outdir"))
-			outputDirectory_ = (String) options.valueOf("outdir");
+			outputDirectory_ = getFileOption("outdir"); 
 		if (options.has("netdir"))
-			networkDir_ = (String) options.valueOf("netdir");				
+			networkDir_ = getFileOption("netdir");				
 		if (options.has("net"))
-			networkFile_ = (String) options.valueOf("net");
+			networkFile_ = getFileOption("net");
 		if (options.has("directed"))
 			isDirected_ = true;
 		if (options.has("weighted"))
@@ -120,13 +119,13 @@ public class MagnumOptionParser extends MagnumSettings {
 		
 		// MODE 3
 		if (options.has("genes"))
-			geneCoordFile_ = (String) options.valueOf("genes");				
+			geneCoordFile_ = getFileOption("genes");				
 		if (options.has("scores"))
-			geneScoreFile_ = (String) options.valueOf("scores");				
+			geneScoreFile_ = getFileOption("scores");				
 		if (options.has("cmatrix"))
-			functionalDataFile_ = (String) options.valueOf("cmatrix");				
+			functionalDataFile_ = getFileOption("cmatrix");				
 		if (options.has("excl"))
-			excludedGenesFile_ = (String) options.valueOf("excl");				
+			excludedGenesFile_ = getFileOption("excl");				
 		if (options.has("neighbors"))
 			excludedGenesDistance_ = (Double) options.valueOf("neighbors");
 		if (options.has("bins"))
@@ -177,7 +176,6 @@ public class MagnumOptionParser extends MagnumSettings {
 		Magnum.log.println("3. GENERAL OPTIONS");
 		Magnum.log.println("------------------");
 		Magnum.log.println("   --help | -h     Display help");
-		Magnum.log.println("   --verbose       Use verbose output (useful for debugging)");
 		Magnum.log.println("   --mode <int>    Select the mode (REQUIRED):");
 		Magnum.log.println("                      1 = Compute network properties (diffusion kernels,");
 		Magnum.log.println("                          shortest paths, clustering coefficients)");
@@ -264,8 +262,6 @@ public class MagnumOptionParser extends MagnumSettings {
 		// settingsFile_
 		parser_.accepts("set").withRequiredArg();
 		
-		// verbose_
-		parser_.accepts("verbose");
 		// mode_
 		parser_.accepts("mode").withRequiredArg().ofType(Integer.class);
 		// randomSeed_
@@ -321,6 +317,19 @@ public class MagnumOptionParser extends MagnumSettings {
 
 		// Example
 		// parser_.accepts("cut").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
+	}
+	
+	
+	// ----------------------------------------------------------------------------
+    
+    /** Get a file / directory saved as a string, throw exception if the name is empty */
+	private File getFileOption(String param) {
+		
+		String filename = (String) options.valueOf(param);
+    	if (filename.isEmpty() || filename.equals(" "))
+    		throw new RuntimeException("Option '" + param + "': file/directory name is empty or has trailing whitespace");
+    	
+		return new File(filename);
 	}
 
 }

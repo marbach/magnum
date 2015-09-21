@@ -25,6 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.netops;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -40,7 +41,7 @@ import edu.mit.magnum.net.Network;
 public class GroupNetworks {
 
 	/** The network directory */
-	String networkDir_ = null;
+	File networkDir_ = null;
 	/** The prefix of the network files */
 	String networkFilesPrefix_ = null;
 	/** Each entry gives the name and the files of a network set */
@@ -51,7 +52,7 @@ public class GroupNetworks {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public GroupNetworks(String networkDir, String networkGroupFile, String networkFilesPrefix) {
+	public GroupNetworks(File networkDir, File networkGroupFile, String networkFilesPrefix) {
 		
 		networkDir_ = networkDir;
 		networkFilesPrefix_ = networkFilesPrefix;
@@ -65,13 +66,13 @@ public class GroupNetworks {
 	public void run() {
 		
 		for (String name : networkSets_.keySet()) {
-			ArrayList<String> files = networkSets_.get(name);
-			Magnum.log.println("- " + name + " (" + files.size() + " networks)\n");
+			ArrayList<String> filenames = networkSets_.get(name);
+			Magnum.log.println("- " + name + " (" + filenames.size() + " networks)\n");
 			
-			Union union = new Union(networkDir_, files);
+			Union union = new Union(networkDir_, filenames);
 			Network net = union.run();
 			
-			String filename = Magnum.set.outputDirectory_ + "/" + networkFilesPrefix_ + name + ".txt";
+			String filename = new File(Magnum.set.outputDirectory_, networkFilesPrefix_ + name + ".txt").getPath();
 			net.write(filename);
 		}
 	}
@@ -81,14 +82,14 @@ public class GroupNetworks {
 	// PRIVATE METHODS
 
 	/** Initialize the sets of network files for which the union will be computed */
-	private void initialize(String networkGroupFile) {
+	private void initialize(File networkGroupFile) {
 		
 		networkSets_ = new HashMap<String, ArrayList<String>>();
 		
-		if (networkGroupFile == null || networkGroupFile.isEmpty()) {
-			ArrayList<String> files = MagnumUtils.listFiles(networkDir_);
-			networkSets_.put("_networkUnion", files);
-			Magnum.log.println("- " + files.size() + " files in network directory");
+		if (networkGroupFile == null) {
+			ArrayList<String> filenames = MagnumUtils.listFiles(networkDir_);
+			networkSets_.put("_networkUnion", filenames);
+			Magnum.log.println("- " + filenames.size() + " files in network directory");
 			return;
 		}
 

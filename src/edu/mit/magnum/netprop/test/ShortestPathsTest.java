@@ -26,6 +26,8 @@ THE SOFTWARE.
 package edu.mit.magnum.netprop.test;
 
 import static org.junit.Assert.*;
+
+import java.io.File;
 import java.util.ArrayList;
 import org.junit.*;
 import cern.colt.matrix.DoubleMatrix2D;
@@ -63,7 +65,7 @@ public class ShortestPathsTest {
 	public void testUndirected() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/degreeTestNet.txt", false, false);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
 		
 		// Test that prior nodes work by setting them in arbitrary order
 		ArrayList<Node> priorNodes = new ArrayList<Node>();
@@ -127,7 +129,7 @@ public class ShortestPathsTest {
 	public void testUndirectedWithPriors() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/degreeTestNet.txt", false, false);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
 		
 		// Test that prior nodes work by setting them in arbitrary order
 		ArrayList<Node> priors = new ArrayList<Node>();
@@ -188,7 +190,7 @@ public class ShortestPathsTest {
 	public void testDirected() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/degreeTestNet.txt", true, false);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
 		
 		// Test that prior nodes work by setting them in arbitrary order
 		ArrayList<Node> priorNodes = new ArrayList<Node>();
@@ -252,7 +254,7 @@ public class ShortestPathsTest {
 	public void testDirectedWithPriors() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network("src/edu/mit/magnum/netprop/test/degreeTestNet.txt", true, false);
+		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
 		
 		// Test that prior nodes work by setting them in arbitrary order
 		ArrayList<Node> priors = new ArrayList<Node>();

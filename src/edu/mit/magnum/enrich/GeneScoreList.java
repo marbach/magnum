@@ -25,6 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.enrich;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -59,7 +60,7 @@ public class GeneScoreList {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public GeneScoreList(String geneScoreFile, String excludedGenesFile) {
+	public GeneScoreList(File geneScoreFile, File excludedGenesFile) {
 			
 		// Load genes to be excluded
 		loadExcludedGenes(excludedGenesFile);
@@ -130,7 +131,7 @@ public class GeneScoreList {
 	// PRIVATE METHODS
 		
 	/** Load the gene scores, initialize excludedGenes_ */
-	private void loadExcludedGenes(String excludedGenesFile) {
+	private void loadExcludedGenes(File excludedGenesFile) {
 		
 		excludedGenes_ = new HashSet<String>();
 		GeneIdMapping idMapping = GeneIdMapping.getInstance();
@@ -167,7 +168,7 @@ public class GeneScoreList {
 	 * Removes genes in excludedGenes_. 
 	 * Translates the gene score ids to the idTypeFunctionalData if necessary. 
 	 */
-	private void loadGeneScores(String geneScoreFile) {
+	private void loadGeneScores(File geneScoreFile) {
 		
 		GeneIdMapping idMapping = GeneIdMapping.getInstance();
 		boolean translateToEntrez = Magnum.set.idTypeFunctionalData_.equalsIgnoreCase("entrez");

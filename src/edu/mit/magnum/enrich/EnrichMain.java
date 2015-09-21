@@ -56,9 +56,7 @@ public class EnrichMain {
 	
 	/** Constructor */
 	public EnrichMain() {
-		
-		name_ = extractName(Magnum.set.geneScoreFile_, Magnum.set.functionalDataFile_);
-		
+				
 		// Initialize gene mapping
 		if (!Magnum.set.idTypeFunctionalData_.equalsIgnoreCase(Magnum.set.idTypeGeneScores_))
 			GeneIdMapping.getInstance().load(Magnum.set.geneIdMappingFile_);
@@ -68,17 +66,19 @@ public class EnrichMain {
 		//LinkageDisequilibrium.exportNeighboringGeneWindows(geneScores_.getGenes());
 
 		// Compute similarity network (kernel / tanimoto)
-		String functionalDataFile = Magnum.set.functionalDataFile_;
-		if (Magnum.set.functionalDataFile_ == null || Magnum.set.functionalDataFile_.equals(""))
+		File functionalDataFile = Magnum.set.functionalDataFile_;
+		if (Magnum.set.functionalDataFile_ == null || !Magnum.set.functionalDataFile_.exists())
 			functionalDataFile = computeSimilarityNetwork();
 		
+		name_ = extractName(Magnum.set.geneScoreFile_, functionalDataFile);
+
 		// Loads the functional data, removes all genes that have no scores or no functional data
 		functData_ = new FunctionalData(functionalDataFile, Magnum.set.excludedGenePairsFile_, Magnum.set.functionalDataCols_, geneScores_.getGenes());
 		
 		// Delete temporary file
 		if (Magnum.set.functionalDataFile_ == null || Magnum.set.functionalDataFile_.equals("")) {
 			Magnum.log.println("Deleting file: " + functionalDataFile);
-			new File(functionalDataFile).delete();
+			functionalDataFile.delete();
 		}
 		
 		// The genes that were not loaded because they have no scores
@@ -156,10 +156,14 @@ public class EnrichMain {
 	// PRIVATE METHODS
 		
 	/** Compute kernel / tanimoto similarity network (when no precomputed similarity matrix is given) */
-	private String computeSimilarityNetwork() {
+	private File computeSimilarityNetwork() {
 		
 		// Load the input network
-		String filename = Magnum.set.networkDir_ + "/" + Magnum.set.networkFile_;
+		File file; 
+		if (Magnum.set.networkDir_ != null)
+			file = new File(Magnum.set.networkDir_, Magnum.set.networkFile_.getPath());
+		else
+			file = Magnum.set.networkFile_;
 		
 		// Write only K, not node centralities
 		Magnum.set.compressFiles_ = true;
@@ -176,7 +180,7 @@ public class EnrichMain {
 				throw new RuntimeException("Specify only one pstepKernelP when computing kernels on the fly within enrichment analysis");
 			
 			// Load network: p-step kernel only defined for undirected networks without self-loops
-			network = new Network(filename, false, true, Magnum.set.isWeighted_, Magnum.set.threshold_);
+			network = new Network(file, false, true, Magnum.set.isWeighted_, Magnum.set.threshold_);
 			// Initialize
 			netprop = new PstepKernel(network, Magnum.set.pstepKernelAlpha_, Magnum.set.pstepKernelP_, Magnum.set.pstepKernelNormalize_, false);
 		
@@ -188,9 +192,9 @@ public class EnrichMain {
 		netprop.run();
 		
 		// filename where K was written
-		filename = MagnumUtils.extractBasicFilename(network.getFilename(), false);
-		filename = Magnum.set.outputDirectory_ + "/" + filename + "_" + netprop.getName() + ".txt.gz";
-		return filename;
+		String filename = MagnumUtils.extractBasicFilename(network.getFile().getName(), false);
+		File kfile = new File(Magnum.set.outputDirectory_, filename + "_" + netprop.getName() + ".txt.gz");
+		return kfile;
 	}
 
 
@@ -211,7 +215,7 @@ public class EnrichMain {
 
 			// Save results
 			String col = colNames.get(i).replace("_weighted", "");
-			String filename = Magnum.set.outputDirectory_ + "/" + name_ + "_" + col + "_bin" + Magnum.set.numBins_;
+			String filename = new File(Magnum.set.outputDirectory_, name_ + "_" + col + "_bin" + Magnum.set.numBins_).getPath();
 			if (geneScoreIndex > 0)
 				filename += "." + geneScoreIndex;
 			enrichment_.save(filename);
@@ -235,7 +239,7 @@ public class EnrichMain {
 		enrichment_.printPvals();
 		
 		// Save results
-		String filename = Magnum.set.outputDirectory_ + "/" + name_;
+		String filename = new File(Magnum.set.outputDirectory_, name_).getPath();
 		if (geneScoreIndex > 0)
 			filename += "." + geneScoreIndex;
 		enrichment_.save(filename);
@@ -246,10 +250,10 @@ public class EnrichMain {
 	// ----------------------------------------------------------------------------
 	
 	/** Extract the name for this run from the snp and functional data files */
-	private String extractName(String geneScoreFile, String functDataFile) {
+	private String extractName(File geneScoreFile, File functDataFile) {
 		
-		String gwasName = MagnumUtils.extractBasicFilename(geneScoreFile, false);
-		String functName = MagnumUtils.extractBasicFilename(functDataFile, false);
+		String gwasName = MagnumUtils.extractBasicFilename(geneScoreFile.getName(), false);
+		String functName = MagnumUtils.extractBasicFilename(functDataFile.getName(), false);
 		
 		functName = functName.replace("_nodeProperties", "");
 		functName = functName.replace("_undir", "");

@@ -25,6 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.netprop;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -113,10 +114,9 @@ public abstract class PairwiseProperties extends NetworkProperties {
 			throw new RuntimeException("Ref nodes implementation incomplete");
 		
 		// Add suffix to filename
-		String filename = Magnum.set.outputDirectory_ + "/" + basicFilename + "_" + name_ + ".txt"; //+ (isDirected_? "_dir.txt" : "_undir.txt");
-
+		File file = new File(Magnum.set.outputDirectory_, basicFilename + "_" + name_ + ".txt"); //+ (isDirected_? "_dir.txt" : "_undir.txt");
 		// The file writer
-		FileExport writer = new FileExport(filename, Magnum.set.compressFiles_);
+		FileExport writer = new FileExport(file.getPath(), Magnum.set.compressFiles_);
 
 		// Write the header
 		//writer.print("node");

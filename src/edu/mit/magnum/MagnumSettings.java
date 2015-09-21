@@ -45,11 +45,6 @@ import org.apache.commons.math3.random.Well19937c;
  */
 public class MagnumSettings extends Settings {	
 	
-	/** The configuration file with the settings (set null for default settings) */
-	public String settingsFile = null;
-	/** Flag indicates whether the parser should expect the settings file to be complete */
-	public boolean requireAllOptions = false;
-
 	/** Colt Mersenne Twister random engine (should be used by all other random number generators) */
 	public MersenneTwister mersenneTwisterRng_ = null;
 	/** Apache Commons random engine */
@@ -64,10 +59,8 @@ public class MagnumSettings extends Settings {
 	public int mode_ = 0;
 	/** PRIVATE, NEEDS TO BE SET WITH setRandomSeed(), which initializes the random number generators. Set to -1 to use current time */
 	private int randomSeed_ = 42;
-	/** Set true to use verbose mode (print more information) */
-	public boolean verbose_ = false;
 	/** Output directory to save stuff */
-	public String outputDirectory_ = ".";
+	public File outputDirectory_ = new File(System.getProperty("user.dir"));
 	/** Output filename */
 	public String outputFilename_ = "";
 	/** Compress output files (gzip) */
@@ -78,9 +71,9 @@ public class MagnumSettings extends Settings {
 
 	// INPUT NETWORK
 	/** Directory containing the networks */
-	public String networkDir_ = null;
+	public File networkDir_ = null;
 	/** The input network file */
-	public String networkFile_ = null;
+	public File networkFile_ = null;
 	/** Delimiter used to separate columns (default 'tab' */
 	public String networkFileDelim_ = "TAB";  
 	/** Defines if the network should be interpreted as directed or undirected */
@@ -94,19 +87,19 @@ public class MagnumSettings extends Settings {
 	/** Exclude "super-hubs" that connect to more than the given fraction of genes (set 1 to include all) */
 	public double superHubThreshold_ = 0;
 	/** Optional file specifying a set of reference nodes */
-	public String refNodesFile_ = null;
+	public File refNodesFile_ = null;
 
 	// NETWORKOPS
 	/** Take union (max edge) over all networks in networkDir or the sets specified in the file below */
 	public boolean computeUnion_ = false;
 	/** Define the network sets that should be combined (leave empty to combine all networks) */
-	public String networkGroupFile_ = null;
+	public File networkGroupFile_ = null;
 	/** Prefix of the files in the network dir */
 	public String networkFilePrefix_ = null;
 	/** Add networks of the same cell type */
 	public boolean computePairwiseSum_ = false;
 	/** The network directory of the second networks */
-	public String networkDir2_ = null;
+	public File networkDir2_ = null;
 	
 	// BASIC NETWORK PROPERTIES
 	/** Node degree (directed networks, also indegree and outdegree) */
@@ -154,9 +147,9 @@ public class MagnumSettings extends Settings {
 	public boolean ignoreAllosomes_ = true;
 
 	/** The file with the gencode annotation */
-	public String gencodeAnnotationFile_ = null;
+	public File gencodeAnnotationFile_ = null;
 	/** UCSC genome browser annotation (use for Entrez IDs) */ 
-	public String ucscAnnotationFile_ = null;
+	public File ucscAnnotationFile_ = null;
 	/** Set true to load only protein-coding genes */
 	public boolean loadOnlyProteinCodingGenes_ = true;
 
@@ -168,23 +161,23 @@ public class MagnumSettings extends Settings {
 	
 	// INPUT
 	/** The gene coordinates (custom annotation) */
-	public String geneCoordFile_ = null;
+	public File geneCoordFile_ = null;
 	/** The gene scores */
-	public String geneScoreFile_ = null;
+	public File geneScoreFile_ = null;
 	/** Cutoff for genome-wide significance of gene scores */
 	public double genomeWideSignificanceThreshold_ = 1e-6;
 	/** Exclude genome-wide significant genes (below threshold) */
 	public boolean excludeGenomeWideSignificantGenes_ = false;
 
 	/** The file with the functional data, e.g. network kernels (cols: gene id, property 1, property 2, ...) */ 
-	public String functionalDataFile_ = null; 
+	public File functionalDataFile_ = null; 
 	/** Specify which columns should be loaded (-1: all columns; 1: first gene property column) */
 	public ArrayList<Integer> functionalDataCols_ = null;
 
 	/** Genes to be excluded from enrichment analysis (e.g., MHC region) */
-	public String excludedGenesFile_ = null;
+	public File excludedGenesFile_ = null;
 	/** Gene pairs to be excluded from enrichment analysis (e.g., genes in LD) */
-	public String excludedGenePairsFile_ = null;
+	public File excludedGenePairsFile_ = null;
 	/** Exclude gene pairs with windows smaller than the given distance apart (given in megabases; -1: no exclusion; 1000000: all genes on same chromosome) */
 	public double excludedGenesDistance_ = 1; 
 
@@ -244,15 +237,11 @@ public class MagnumSettings extends Settings {
 	/** Set default values for all settings */
 	public void resetToDefaults() {
 		
-		settingsFile = null;
-		requireAllOptions = false;
-
 		// Initializes the RNGs
 		setRandomSeed(42);
 
 		mode_ = 0;
-		verbose_ = false;
-		outputDirectory_ = ".";
+		outputDirectory_ = new File(System.getProperty("user.dir"));
 		outputFilename_ = "";
 		compressFiles_ = true;
 
@@ -342,11 +331,11 @@ public class MagnumSettings extends Settings {
 	// ----------------------------------------------------------------------------
 	
 	/** Load settings from given file */
-	public void loadSettings(String settingsFile) {
+	public void loadSettings(String settingsFile, boolean requireAll) {
 		
-		Magnum.log.printlnVerbose("SETTINGS FILE");
-		Magnum.log.printlnVerbose("-------------\n");
-		
+		Magnum.log.println("SETTINGS FILE");
+		Magnum.log.println("-------------\n");
+				
 		try {
 			// Open the input stream
 			//InputStream in = MagnumSettings.class.getClassLoader().getResourceAsStream("edu/mit/magnum/settings.txt");
@@ -366,27 +355,12 @@ public class MagnumSettings extends Settings {
 			prop.load(new InputStreamReader(in));
 			
 			// Get the param values
-			setParameterValues();
+			setParameterValues(requireAll);
 			
 		} catch (Exception e) {
 			Magnum.log.warning(e.getMessage());
 			Magnum.log.error("Failed to load settings file (a parameter may be missing or malformed): " + settingsFile);
 		}		
-	}
-	
-	
-	// ----------------------------------------------------------------------------
-	
-	/**
-	 * Set the user path. Could be with or without "/" terminal.
-	 * @param absPath Absolute path
-	 */
-	public void setOutputDirectory(String absPath) {
-		
-		outputDirectory_ = absPath;
-		String sep = System.getProperty("file.separator");
-		if (outputDirectory_.charAt(outputDirectory_.length()-1) != sep.charAt(0))
-			outputDirectory_ += sep;
 	}
 	
 	
@@ -415,114 +389,178 @@ public class MagnumSettings extends Settings {
 	// PRIVATE METHODS
 
 	/** Set ngsea parameters based on the loaded properties */
-	private void setParameterValues() throws Exception {
+	private void setParameterValues(boolean requireAll) throws Exception {
 
 		// VARIOUS
-		mode_ = getSettingInt("mode");
-		setRandomSeed(getSettingInt("randomSeed"));
-		verbose_ = getSettingBoolean("verbose");
-		outputDirectory_ = getSetting("outputDirectory");
-		if (outputDirectory_.equals("")) 
-			outputDirectory_ = System.getProperty("user.dir");
-		outputFilename_ = getSetting("outputFilename");
+		if (requireAll || prop.containsKey("mode"))
+			mode_ = getSettingInt("mode");
+		if (requireAll || prop.containsKey("randomSeed"))
+			setRandomSeed(getSettingInt("randomSeed"));
+		if (requireAll || prop.containsKey("outputDirectory")) {
+			outputDirectory_ = getFileSetting("outputDirectory");
+			if (outputDirectory_.equals("")) 
+				outputDirectory_ = new File(System.getProperty("user.dir"));
+		}
+		if (requireAll || prop.containsKey("outputFilename"))
+			outputFilename_ = getSetting("outputFilename");
 		
 		// INPUT NETWORK
-		networkDir_ = getSetting("networkDir");
-		networkFile_ = getSetting("networkFile");
-		networkFileDelim_ = getSetting("networkFileDelim");
-		isDirected_ = getSettingBoolean("isDirected");
-		removeSelfLoops_ = getSettingBoolean("removeSelfLoops");
-		isWeighted_ = getSettingBoolean("isWeighted");
-		threshold_ = getSettingDouble("threshold");
-		superHubThreshold_ = getSettingDouble("superHubThreshold");
-		refNodesFile_ = getSetting("refNodesFile");
+		if (requireAll || prop.containsKey("networkDir"))
+			networkDir_ = getFileSetting("networkDir");
+		if (requireAll || prop.containsKey("networkFile"))
+			networkFile_ = getFileSetting("networkFile");
+		if (requireAll || prop.containsKey("networkFileDelim"))
+			networkFileDelim_ = getSetting("networkFileDelim");
+		if (requireAll || prop.containsKey("isDirected"))
+			isDirected_ = getSettingBoolean("isDirected");
+		if (requireAll || prop.containsKey("removeSelfLoops"))
+			removeSelfLoops_ = getSettingBoolean("removeSelfLoops");
+		if (requireAll || prop.containsKey("isWeighted"))
+			isWeighted_ = getSettingBoolean("isWeighted");
+		if (requireAll || prop.containsKey("threshold"))
+			threshold_ = getSettingDouble("threshold");
+		if (requireAll || prop.containsKey("superHubThreshold"))
+			superHubThreshold_ = getSettingDouble("superHubThreshold");
+		if (requireAll || prop.containsKey("refNodesFile"))
+			refNodesFile_ = getFileSetting("refNodesFile");
 
 		// OUTPUT FILES
-		outputSuffix_ = getSetting("outputSuffix");
-		exportPairwiseNodeProperties_ = getSettingBoolean("exportPairwiseNodeProperties");
-		exportNodeProperties_ = getSettingBoolean("exportNodeProperties");
-		compressFiles_ = getSettingBoolean("compressFiles");
-		
+		if (requireAll || prop.containsKey("outputSuffix"))
+			outputSuffix_ = getSetting("outputSuffix");
+		if (requireAll || prop.containsKey("exportPairwiseNodeProperties"))
+			exportPairwiseNodeProperties_ = getSettingBoolean("exportPairwiseNodeProperties");
+		if (requireAll || prop.containsKey("exportNodeProperties"))
+			exportNodeProperties_ = getSettingBoolean("exportNodeProperties");
+		if (requireAll || prop.containsKey("compressFiles"))
+			compressFiles_ = getSettingBoolean("compressFiles");
+
 		// NETWORKOPS
-		computeUnion_ = getSettingBoolean("computeUnion");
-		networkGroupFile_ = getSetting("networkGroupFile");
-		networkFilePrefix_ = getSetting("networkFilePrefix");
-		computePairwiseSum_ = getSettingBoolean("computePairwiseSum");
-		networkDir2_ = getSetting("networkDir2");
-		
+		if (requireAll || prop.containsKey("computeUnion"))
+			computeUnion_ = getSettingBoolean("computeUnion");
+		if (requireAll || prop.containsKey("networkGroupFile"))
+			networkGroupFile_ = getFileSetting("networkGroupFile");
+		if (requireAll || prop.containsKey("networkFilePrefix"))
+			networkFilePrefix_ = getSetting("networkFilePrefix");
+		if (requireAll || prop.containsKey("computePairwiseSum"))
+			computePairwiseSum_ = getSettingBoolean("computePairwiseSum");
+		if (requireAll || prop.containsKey("networkDir2"))
+			networkDir2_ = getFileSetting("networkDir2");
+
 		// BASIC NETWORK PROPERTIES
-		computeDegree_ = getSettingBoolean("computeDegree");
-		computeBetweenness_ = getSettingBoolean("computeBetweenness");
-		computeClusteringCoefficient_ = getSettingBoolean("computeClusteringCoefficient");
-		
+		if (requireAll || prop.containsKey("computeDegree"))
+			computeDegree_ = getSettingBoolean("computeDegree");
+		if (requireAll || prop.containsKey("computeBetweenness"))
+			computeBetweenness_ = getSettingBoolean("computeBetweenness");
+		if (requireAll || prop.containsKey("computeClusteringCoefficient"))
+			computeClusteringCoefficient_ = getSettingBoolean("computeClusteringCoefficient");
+
 		// SHORTEST PATHS
-		computeShortestPathLengths_ = getSettingBoolean("computeShortestPathLengths");
+		if (requireAll || prop.containsKey("computeShortestPathLengths"))
+			computeShortestPathLengths_ = getSettingBoolean("computeShortestPathLengths");
 
 		// KERNELS
-		computePstepKernel_ = getSettingBoolean("computePstepKernel");
-		pstepKernelAlpha_ = getSettingDouble("pstepKernelAlpha");
-		pstepKernelP_ = getSettingIntArray("pstepKernelP", true);
-		pstepKernelNormalize_ = getSettingBoolean("pstepKernelNormalize");
-		
+		if (requireAll || prop.containsKey("computePstepKernel"))
+			computePstepKernel_ = getSettingBoolean("computePstepKernel");
+		if (requireAll || prop.containsKey("pstepKernelAlpha"))
+			pstepKernelAlpha_ = getSettingDouble("pstepKernelAlpha");
+		if (requireAll || prop.containsKey("pstepKernelP"))
+			pstepKernelP_ = getSettingIntArray("pstepKernelP", true);
+		if (requireAll || prop.containsKey("pstepKernelNormalize"))
+			pstepKernelNormalize_ = getSettingBoolean("pstepKernelNormalize");
+
 		// TANIMOTO
-		computeTargetTanimoto_ = getSettingBoolean("computeTargetTanimoto");
-		computeTfTanimoto_ = getSettingBoolean("computeTfTanimoto");
-		
+		if (requireAll || prop.containsKey("computeTargetTanimoto"))
+			computeTargetTanimoto_ = getSettingBoolean("computeTargetTanimoto");
+		if (requireAll || prop.containsKey("computeTfTanimoto"))
+			computeTfTanimoto_ = getSettingBoolean("computeTfTanimoto");
+
 		// ----------------------------------------------------------------------------
 		// GENOME ANNOTATION
-		
-		genesToBeLoadedFile_ = getSetting("genesToBeLoadedFile");
-		chromosome_ = getSetting("chromosome");
-		ignoreAllosomes_ = getSettingBoolean("ignoreAllosomes");
-		gencodeAnnotationFile_ = getSetting("genecodeAnnotationFile");
-		ucscAnnotationFile_ = getSetting("ucscAnnotationFile");
-		loadOnlyProteinCodingGenes_ = getSettingBoolean("loadOnlyProteinCodingGenes");
-		geneIdMappingFile_ = getSetting("geneIdMappingFile");
-		
+
+		if (requireAll || prop.containsKey("genesToBeLoadedFile"))
+			genesToBeLoadedFile_ = getSetting("genesToBeLoadedFile");
+		if (requireAll || prop.containsKey("chromosome"))
+			chromosome_ = getSetting("chromosome");
+		if (requireAll || prop.containsKey("ignoreAllosomes"))
+			ignoreAllosomes_ = getSettingBoolean("ignoreAllosomes");
+		if (requireAll || prop.containsKey("genecodeAnnotationFile"))
+			gencodeAnnotationFile_ = getFileSetting("genecodeAnnotationFile");
+		if (requireAll || prop.containsKey("ucscAnnotationFile"))
+			ucscAnnotationFile_ = getFileSetting("ucscAnnotationFile");
+		if (requireAll || prop.containsKey("loadOnlyProteinCodingGenes"))
+			loadOnlyProteinCodingGenes_ = getSettingBoolean("loadOnlyProteinCodingGenes");
+		if (requireAll || prop.containsKey("geneIdMappingFile"))
+			geneIdMappingFile_ = getSetting("geneIdMappingFile");
+
 		// ----------------------------------------------------------------------------
 		// ENRICHMENT ANALYSIS
 
-		geneCoordFile_ = getSetting("geneCoordFile");
-		if (!geneCoordFile_.equals("")) {
+		if (requireAll || prop.containsKey("geneCoordFile")) {
+			geneCoordFile_ = getFileSetting("geneCoordFile");
 			idTypeFunctionalData_ = "custom";
 			idTypeGeneScores_ = "custom";
 		}
 
-		geneScoreFile_ = getSetting("geneScoreFile");
-		genomeWideSignificanceThreshold_ = getSettingDouble("genomeWideSignificanceThreshold");
-		excludeGenomeWideSignificantGenes_ = getSettingBoolean("excludeGenomeWideSignificantGenes");
+		if (requireAll || prop.containsKey("geneScoreFile"))
+			geneScoreFile_ = getFileSetting("geneScoreFile");
+		if (requireAll || prop.containsKey("genomeWideSignificanceThreshold"))
+			genomeWideSignificanceThreshold_ = getSettingDouble("genomeWideSignificanceThreshold");
+		if (requireAll || prop.containsKey("excludeGenomeWideSignificantGenes"))
+			excludeGenomeWideSignificantGenes_ = getSettingBoolean("excludeGenomeWideSignificantGenes");
 
-		functionalDataFile_ = getSetting("functionalDataFile"); 
-		functionalDataCols_ = getSettingIntArray("functionalDataCols", true);		
-		
-		excludedGenesFile_ = getSetting("excludedGenesFile");
-		excludedGenePairsFile_ = getSetting("excludedGenePairsFile");
-		excludedGenesDistance_ = getSettingInt("excludedGenesDistance");
-		
-		idTypeGeneScores_ = getSetting("idTypeGeneScores");
-		idTypeFunctionalData_ = getSetting("idTypeFunctionalData");
-		
+		if (requireAll || prop.containsKey("functionalDataFile"))
+			functionalDataFile_ = getFileSetting("functionalDataFile"); 
+		if (requireAll || prop.containsKey("functionalDataCols"))
+			functionalDataCols_ = getSettingIntArray("functionalDataCols", true);		
+
+		if (requireAll || prop.containsKey("excludedGenesFile"))
+			excludedGenesFile_ = getFileSetting("excludedGenesFile");
+		if (requireAll || prop.containsKey("excludedGenePairsFile"))
+			excludedGenePairsFile_ = getFileSetting("excludedGenePairsFile");
+		if (requireAll || prop.containsKey("excludedGenesDistance"))
+			excludedGenesDistance_ = getSettingInt("excludedGenesDistance");
+
+		if (requireAll || prop.containsKey("idTypeGeneScores"))
+			idTypeGeneScores_ = getSetting("idTypeGeneScores");
+		if (requireAll || prop.containsKey("idTypeFunctionalData"))
+			idTypeFunctionalData_ = getSetting("idTypeFunctionalData");
+
 		// ENRICHMENT
-		numPermutations_ = getSettingInt("numPermutations");
-		numBins_ = getSettingInt("numBins");
-		scaleKernel_ = getSettingBoolean("scaleKernel");
+		if (requireAll || prop.containsKey("numPermutations"))
+			numPermutations_ = getSettingInt("numPermutations");
+		if (requireAll || prop.containsKey("numBins"))
+			numBins_ = getSettingInt("numBins");
+		if (requireAll || prop.containsKey("scaleKernel"))
+			scaleKernel_ = getSettingBoolean("scaleKernel");
 
-		constCurveResolution_ = getSettingInt("constCurveResolution");
-		varCurveResolution_ = getSettingInt("varCurveResolution");
-		curveCutoff_ = getSettingDouble("curveCutoff");
-		slidingWindowSize_ = getSettingInt("slidingWindowSize");
-		
-		numPermutationsExport_ = getSettingInt("numPermutationsExport");
-		if (numPermutationsExport_ > numPermutations_)
-			throw new IllegalArgumentException("Invalid settings: 'numPermutationsExport' must be smaller or equal 'numPermutations'");
-		pval_ = getSettingDoubleArray("pval", true);
-		twoSidedTest_ = getSettingBoolean("twoSidedTest");
-		controlFDR_ = getSettingBoolean("controlFDR");
-		FDRStart_ = getSettingInt("FDRStart");
-		AUCStart_ = getSettingInt("AUCStart");
-		geneScoreIndexStart_ = getSettingInt("geneScoreIndexStart");
-		geneScoreIndexEnd_ = getSettingInt("geneScoreIndexEnd");
-		
+		if (requireAll || prop.containsKey("constCurveResolution"))
+			constCurveResolution_ = getSettingInt("constCurveResolution");
+		if (requireAll || prop.containsKey("varCurveResolution"))
+			varCurveResolution_ = getSettingInt("varCurveResolution");
+		if (requireAll || prop.containsKey("curveCutoff"))
+			curveCutoff_ = getSettingDouble("curveCutoff");
+		if (requireAll || prop.containsKey("slidingWindowSize"))
+			slidingWindowSize_ = getSettingInt("slidingWindowSize");
+
+		if (requireAll || prop.containsKey("numPermutationsExport")) {
+			numPermutationsExport_ = getSettingInt("numPermutationsExport");
+			if (numPermutationsExport_ > numPermutations_)
+				throw new IllegalArgumentException("Invalid settings: 'numPermutationsExport' must be smaller or equal 'numPermutations'");
+		}
+		if (requireAll || prop.containsKey("pval"))
+			pval_ = getSettingDoubleArray("pval", true);
+		if (requireAll || prop.containsKey("twoSidedTest"))
+			twoSidedTest_ = getSettingBoolean("twoSidedTest");
+		if (requireAll || prop.containsKey("controlFDR"))
+			controlFDR_ = getSettingBoolean("controlFDR");
+		if (requireAll || prop.containsKey("FDRStart"))
+			FDRStart_ = getSettingInt("FDRStart");
+		if (requireAll || prop.containsKey("AUCStart"))
+			AUCStart_ = getSettingInt("AUCStart");
+		if (requireAll || prop.containsKey("geneScoreIndexStart"))
+			geneScoreIndexStart_ = getSettingInt("geneScoreIndexStart");
+		if (requireAll || prop.containsKey("geneScoreIndexEnd"))
+			geneScoreIndexEnd_ = getSettingInt("geneScoreIndexEnd");
 	}
 	
 	

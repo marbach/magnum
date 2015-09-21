@@ -27,6 +27,8 @@ package edu.mit.magnum.net.test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+
 import org.junit.*;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
@@ -49,7 +51,7 @@ import edu.mit.magnum.net.*;
 public class NetworkTest {
 	
 	/** Test network */
-	private String ppiNetFile_ = "src/edu/mit/magnum/netprop/test/ppi.txt";
+	private File ppiNetFile_ = new File("src/edu/mit/magnum/netprop/test/ppi.txt");
 	
 	/** Network properties of test network */
 	private int ppiNumNodes_ = 13942;
@@ -96,7 +98,7 @@ public class NetworkTest {
 	public void testWeightedLoad() {
 
 		// Create undirected network without self-loops
-		Network net = new Network("src/edu/mit/magnum/netprop/test/hierarchicalScaleFreeLevel1.txt", false, true, true, 0.5);		
+		Network net = new Network(new File("src/edu/mit/magnum/netprop/test/hierarchicalScaleFreeLevel1.txt"), false, true, true, 0.5);		
 		assertEquals(net.getNumNodes(), 4);
 		assertEquals(net.getNumEdges(), 3);	
 		
@@ -109,7 +111,7 @@ public class NetworkTest {
 		assertEquals(0.96, net.getEdge("3", "0").w_, epsilon);
 
 		// Create directed network without self-loops
-		net = new Network("src/edu/mit/magnum/netprop/test/hierarchicalScaleFreeLevel1.txt", true, true, true, 0.5);		
+		net = new Network(new File("src/edu/mit/magnum/netprop/test/hierarchicalScaleFreeLevel1.txt"), true, true, true, 0.5);		
 		assertEquals(net.getNumNodes(), 4);
 		assertEquals(net.getNumEdges(), 4);	
 		
@@ -128,7 +130,7 @@ public class NetworkTest {
 	@Test
 	public void testComputeLaplacian() {
 		
-		Network net = new Network("src/edu/mit/magnum/netprop/test/simpleNet.txt", false, true);
+		Network net = new Network(new File("src/edu/mit/magnum/netprop/test/simpleNet.txt"), false, true);
 		SparseDoubleMatrix2D L = net.computeLaplacian();
 		
 		double[][] L_expected = {
@@ -152,7 +154,7 @@ public class NetworkTest {
 	@Test
 	public void testComputeNormalizedLaplacian() {
 		
-		Network net = new Network("src/edu/mit/magnum/netprop/test/simpleNet.txt", false, true);
+		Network net = new Network(new File("src/edu/mit/magnum/netprop/test/simpleNet.txt"), false, true);
 		SparseDoubleMatrix2D L = net.computeNormalizedLaplacian();
 		
 		double[][] L_expected = {
