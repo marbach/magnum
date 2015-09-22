@@ -287,10 +287,10 @@ public class MagnumSettings extends Settings {
 		gencodeAnnotationFile_ = null;
 		ucscAnnotationFile_ = null;
 		loadOnlyProteinCodingGenes_ = true;
-
 		geneIdMappingFile_ = null;
-			
+		
 		geneCoordFile_ = null;
+
 		geneScoreFile_ = null;
 		genomeWideSignificanceThreshold_ = 1e-6;
 		excludeGenomeWideSignificantGenes_ = false;

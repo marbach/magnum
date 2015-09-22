@@ -114,7 +114,7 @@ public abstract class PairwiseProperties extends NetworkProperties {
 			throw new RuntimeException("Ref nodes implementation incomplete");
 		
 		// Add suffix to filename
-		File file = new File(Magnum.set.outputDirectory_, basicFilename + "_" + name_ + ".txt"); //+ (isDirected_? "_dir.txt" : "_undir.txt");
+		File file = new File(Magnum.set.outputDirectory_, basicFilename + "_" + name_ + ".txt");
 		// The file writer
 		FileExport writer = new FileExport(file.getPath(), Magnum.set.compressFiles_);
 

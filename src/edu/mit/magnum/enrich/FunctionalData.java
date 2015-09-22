@@ -25,7 +25,10 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.enrich;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +38,7 @@ import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import edu.mit.magnum.*;
 import edu.mit.magnum.gene.*;
+import edu.mit.magnum.net.Network;
 
 
 /**
@@ -42,6 +46,13 @@ import edu.mit.magnum.gene.*;
  */
 public class FunctionalData {
 
+	/** The original data matrix TODO delete and clean memory */
+	private DoubleMatrix2D unfilteredData;
+	/** The rows of the original data matrix */
+	private ArrayList<String> unfilteredDataRows;
+	/** The cols of the original data matrix */
+	private ArrayList<String> unfilteredDataCols;
+	
 	/** The data matrix (genes in rows) */
 	private DoubleMatrix2D data_ = null;
 	/** The number of genes (rows) */
@@ -54,7 +65,7 @@ public class FunctionalData {
 	private boolean isPairwiseData_ = false;
 
 	/** The number of genes in the functional data file */
-	private int functDataNumGenes_ = -1;
+	//private int unfilteredDataNumGenes_ = -1;
 	/** The indexes of the columns that were loaded in data_ */
 	private ArrayList<Integer> functDataColIndexes_ = null;
 
@@ -66,19 +77,35 @@ public class FunctionalData {
 	// PUBLIC METHODS
 
 	/** Constructor */
-	public FunctionalData(File functionalDataFile,
-			File excludedGenePairsFile,
+	public FunctionalData(Network network, DoubleMatrix2D kernel,
+			File excludedGenePairsFile,	ArrayList<Gene> geneScores) {
+		
+		this.unfilteredData = kernel;
+		
+		// Get the row/col names of the kernel matrix from the network
+		unfilteredDataRows = new ArrayList<String>(network.getNumNodes());
+		for (int i=0; i<network.getNumNodes(); i++)
+			unfilteredDataRows.add(network.getNode(i).getId());
+		unfilteredDataCols = unfilteredDataRows;
+		
+		initialize(excludedGenePairsFile, geneScores);
+	}
+	
+	/** Constructor */
+	public FunctionalData(File functionalDataFile, File excludedGenePairsFile,
 			ArrayList<Integer> functionalDataCols, ArrayList<Gene> geneScores) {
 
+		// Load the kernel from the file
 		functDataColIndexes_ = functionalDataCols;
-		load(functionalDataFile, excludedGenePairsFile, geneScores);
+		loadUnfilteredData(functionalDataFile);			
+		initialize(excludedGenePairsFile, geneScores);
 	}
 
 	// ============================================================================
 	// PRIVATE METHODS
 
 	/** Load genes and their properties */
-	private void load(File functionalDataFile, File excludedGenePairsFile, ArrayList<Gene> geneScores) {
+	private void initialize(File excludedGenePairsFile, ArrayList<Gene> geneScores) {
 
 		// A hashmap with all genes that have scores
 		HashMap<String, Gene> genesWithScores = new HashMap<String, Gene>();
@@ -87,9 +114,9 @@ public class FunctionalData {
 
 		// Initialize genes_ with the set of overlapping genes between the
 		// functional data and the gene scores
-		loadGenes(functionalDataFile, genesWithScores);
+		initializeGenes(genesWithScores);
 		// Load the data for the overlapping genes
-		loadData(functionalDataFile);
+		initializeData();
 		// Normalize by row/col sums to adjust for hubs
 		if (Magnum.set.scaleKernel_)
 			scaleKernel();
@@ -97,60 +124,124 @@ public class FunctionalData {
 		loadExcludedGenePairs(excludedGenePairsFile);
 	}
 
+//	/** Load genes and their properties */
+//	private void load(File functionalDataFile, File excludedGenePairsFile, ArrayList<Gene> geneScores) {
+//
+//		// A hashmap with all genes that have scores
+//		HashMap<String, Gene> genesWithScores = new HashMap<String, Gene>();
+//		for (Gene g : geneScores)
+//			genesWithScores.put(g.id_, g);
+//
+//		// Initialize genes_ with the set of overlapping genes between the
+//		// functional data and the gene scores
+//		loadGenes(functionalDataFile, genesWithScores);
+//		// Load the data for the overlapping genes
+//		loadData(functionalDataFile);
+//		// Normalize by row/col sums to adjust for hubs
+//		if (Magnum.set.scaleKernel_)
+//			scaleKernel();
+//		// Load the gene pairs that should be excluded from enrichment analysis, set corresponding data entries to NaN
+//		loadExcludedGenePairs(excludedGenePairsFile);
+//	}
+
 	// ----------------------------------------------------------------------------
 
 	/**
 	 * Initialize genes_ with the set of overlapping genes between the
 	 * functional data and the gene scores
 	 */
-	private void loadGenes(File functionalDataFile, HashMap<String, Gene> genesWithScores) {
+	private void initializeGenes(HashMap<String, Gene> genesWithScores) {
 
 		// A hashmap with the overlapping genes and their index, in the order in
 		// which they occur in the funct data file
 		genes_ = new LinkedHashMap<String, Integer>();
 		ArrayList<Integer> colIndexes = new ArrayList<Integer>();
-
-		// Open the functional data file
-		FileParser parser = new FileParser(functionalDataFile);
-		// Read the header
-		int numCols = parser.readLine().length;
+		colNames_ = new ArrayList<String>();
+		genesMissingScores_ = new ArrayList<String>();
 		int count = 0;
+		
+		for (int i=0; i<unfilteredDataRows.size(); i++) {
+			String id = unfilteredDataRows.get(i);
 
-		while (true) {
-			// Read next line
-			String[] nextLine = parser.readLine();
-			if (nextLine == null)
-				break;
-
-			// Check number of columns
-			if (nextLine.length != numCols)
-				throw new RuntimeException("Line " + parser.getLineCounter() + " has " + nextLine.length + " columns (not same as header)");
-
-			// Add this gene if it has a score
-			String id = nextLine[0];
+			// Add this gene if it has a score			
 			if (genesWithScores.containsKey(id)) {
 				// Check that the gene doesn't exist already
 				if (genes_.containsKey(id))
 					throw new RuntimeException("Gene '" + id + "' is listed twice");
 
 				genes_.put(id, count++);
-				colIndexes.add(parser.getLineCounter() - 1);
+				colIndexes.add(i);
+				colNames_.add(id);
+				
+			} else {
+				genesMissingScores_.add(id);
 			}
 		}
-		parser.close();
 
 		numGenes_ = genes_.size();
 		assert colIndexes.size() == numGenes_;
-		functDataNumGenes_ = parser.getLineCounter() - 2;
 
 		// Check if it's a gene x gene matrix (kernel)
-		if (numCols - 1 == functDataNumGenes_) {
+		if (unfilteredData.columns() == unfilteredData.rows()) {
 			isPairwiseData_ = true;
 			functDataColIndexes_ = colIndexes;
 		} else {
 			isPairwiseData_ = false;
 		}
 	}
+
+//	/**
+//	 * Initialize genes_ with the set of overlapping genes between the
+//	 * functional data and the gene scores
+//	 */
+//	private void loadGenes(File functionalDataFile, HashMap<String, Gene> genesWithScores) {
+//
+//		// A hashmap with the overlapping genes and their index, in the order in
+//		// which they occur in the funct data file
+//		genes_ = new LinkedHashMap<String, Integer>();
+//		ArrayList<Integer> colIndexes = new ArrayList<Integer>();
+//
+//		// Open the functional data file
+//		FileParser parser = new FileParser(functionalDataFile);
+//		// Read the header
+//		int numCols = parser.readLine().length;
+//		int count = 0;
+//
+//		while (true) {
+//			// Read next line
+//			String[] nextLine = parser.readLine();
+//			if (nextLine == null)
+//				break;
+//
+//			// Check number of columns
+//			if (nextLine.length != numCols)
+//				throw new RuntimeException("Line " + parser.getLineCounter() + " has " + nextLine.length + " columns (not same as header)");
+//
+//			// Add this gene if it has a score
+//			String id = nextLine[0];
+//			if (genesWithScores.containsKey(id)) {
+//				// Check that the gene doesn't exist already
+//				if (genes_.containsKey(id))
+//					throw new RuntimeException("Gene '" + id + "' is listed twice");
+//
+//				genes_.put(id, count++);
+//				colIndexes.add(parser.getLineCounter() - 1);
+//			}
+//		}
+//		parser.close();
+//
+//		numGenes_ = genes_.size();
+//		assert colIndexes.size() == numGenes_;
+//		functDataNumGenes_ = parser.getLineCounter() - 2;
+//
+//		// Check if it's a gene x gene matrix (kernel)
+//		if (numCols - 1 == functDataNumGenes_) {
+//			isPairwiseData_ = true;
+//			functDataColIndexes_ = colIndexes;
+//		} else {
+//			isPairwiseData_ = false;
+//		}
+//	}
 
 	// ----------------------------------------------------------------------------
 
@@ -276,58 +367,141 @@ public class FunctionalData {
 	// ----------------------------------------------------------------------------
 
 	/**
-	 * Initialize genes_ with the set of overlapping genes between the
-	 * functional data and the gene scores
+	 * 
 	 */
-	private void loadData(File functionalDataFile) {
+	private void initializeData() {
+
+		// Read header -- this initializes colNames_, which are relevant for data that is not pairwise
+		//parseGenePropertiesHeader(parser.readLine());
+
+		// Initialize matrix
+		if (isPairwiseData_) {
+			data_ = new DenseDoubleMatrix2D(numGenes_, numGenes_);
+		} else {
+			throw new RuntimeException("Initialization of not pairwise FunctionalData not implemented without loading from file");
+			//data_ = new DenseDoubleMatrix2D(numGenes_, colNames_.size());
+		}
+
+		assert genes_.size() == numGenes_;
+		assert functDataColIndexes_.size() == numGenes_;
+		assert colNames_.size() == numGenes_;
+		assert data_.rows() == numGenes_;
+		assert data_.columns() == numGenes_;
+		
+		for (int i=0; i<numGenes_; i++) {
+			String id = colNames_.get(i);
+			int kernelIndex = functDataColIndexes_.get(i);
+			assert genes_.get(id) == i;
+			
+			// Copy the row to the filtered kernel
+			for (int j=0; j<numGenes_; j++)
+				// TODO make it quick
+				data_.set(i, j, unfilteredData.get(kernelIndex, functDataColIndexes_.get(j)));
+		}
+	}
+
+//	/**
+//	 * Initialize genes_ with the set of overlapping genes between the
+//	 * functional data and the gene scores
+//	 */
+//	private void loadData(File functionalDataFile) {
+//
+//		// Open the file
+//		FileParser parser = new FileParser(functionalDataFile);
+//		// Read header
+//		parseGenePropertiesHeader(parser.readLine());
+//
+//		// Initialize matrix
+//		if (isPairwiseData_)
+//			data_ = new DenseDoubleMatrix2D(numGenes_, numGenes_);
+//		else
+//			data_ = new DenseDoubleMatrix2D(numGenes_, colNames_.size());
+//
+//		genesMissingScores_ = new ArrayList<String>();
+//
+//		while (true) {
+//			// Read next line
+//			String[] nextLine = parser.readLine();
+//			if (nextLine == null)
+//				break;
+//
+//			// The gene and its index
+//			String id = nextLine[0];
+//			Integer index = genes_.get(id);
+//			// If the gene is not part of the gene score data, skip
+//			if (index == null) {
+//				genesMissingScores_.add(id);
+//				continue;
+//			}
+//
+//			// Parse properties
+//			for (int i = 0; i < functDataColIndexes_.size(); i++)
+//				data_.set(index, i, Double
+//						.parseDouble(nextLine[functDataColIndexes_.get(i)]));
+//		}
+//		parser.close();
+//	}
+
+	
+	// ----------------------------------------------------------------------------
+
+	/** Parse the header of a gene property file, return number of columns */
+	private void loadUnfilteredData(File functionalDataFile) {
+		
+		// Count the lines
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(functionalDataFile));
+			int lines = 0;
+			while (reader.readLine() != null) 
+				lines++;
+
+			reader.close();
+			numGenes_ =  lines - 1;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} 
 
 		// Open the file
 		FileParser parser = new FileParser(functionalDataFile);
-		// Read header
+		// Read header (sets unfilteredDataCols)
 		parseGenePropertiesHeader(parser.readLine());
 
 		// Initialize matrix
-		if (isPairwiseData_)
-			data_ = new DenseDoubleMatrix2D(numGenes_, numGenes_);
-		else
-			data_ = new DenseDoubleMatrix2D(numGenes_, colNames_.size());
-
-		genesMissingScores_ = new ArrayList<String>();
-
+		unfilteredData = new DenseDoubleMatrix2D(numGenes_, unfilteredDataCols.size());
+		unfilteredDataRows = new ArrayList<String>();
+		
+		int i = 0;
 		while (true) {
 			// Read next line
 			String[] nextLine = parser.readLine();
 			if (nextLine == null)
 				break;
 
-			// The gene and its index
-			String id = nextLine[0];
-			Integer index = genes_.get(id);
-			// If the gene is not part of the gene score data, skip
-			if (index == null) {
-				genesMissingScores_.add(id);
-				continue;
-			}
-
+			// Add the gene id
+			unfilteredDataRows.add(nextLine[0]);
 			// Parse properties
-			for (int i = 0; i < functDataColIndexes_.size(); i++)
-				data_.set(index, i, Double
-						.parseDouble(nextLine[functDataColIndexes_.get(i)]));
+			for (int j=1; j<unfilteredDataCols.size(); j++)
+				// TODO make quick
+				unfilteredData.set(i, j-1, Double.parseDouble(nextLine[j]));
+			i++;
 		}
 		parser.close();
+
 	}
 
+	
 	// ----------------------------------------------------------------------------
 
 	/** Parse the header of a gene property file, return number of columns */
 	private void parseGenePropertiesHeader(String[] header) {
 
 		if (header.length < 2)
-			throw new RuntimeException(
-					"Gene property files must have at least two tab-separated columns");
+			throw new RuntimeException("Gene property files must have at least two tab-separated columns");
 
-		// Test if this is a header by trying to parse the second column as
-		// number, which should fail
+		// Is the data matrix square?
+		isPairwiseData_ = (numGenes_ == header.length - 1);
+		
+		// Test if this is a header by trying to parse the second column as number, which should fail
 		if (!isPairwiseData_) {
 			boolean hasHeader = false;
 			try {
@@ -336,38 +510,13 @@ public class FunctionalData {
 				hasHeader = true;
 			}
 			if (!hasHeader)
-				throw new RuntimeException(
-						"File has no header (column names cannot be numbers)");
+				throw new RuntimeException("File has no header (column names cannot be numbers)");
 		}
 
 		// Parse the gene property names
-		colNames_ = new ArrayList<String>();
-
-		// Pairwise data: col indexes were defined by loadGenes()
-		if (isPairwiseData_) {
-			for (Integer index : functDataColIndexes_)
-				colNames_.add(header[index]);
-
-			// Gene properties: if no cols were specified, add all
-		} else if (functDataColIndexes_ == null
-				|| functDataColIndexes_.size() == 0) {
-			functDataColIndexes_ = new ArrayList<Integer>();
-			for (int i = 1; i < header.length; i++) {
-				functDataColIndexes_.add(i);
-				colNames_.add(header[i]);
-			}
-
-			// Gene properties with cols specified
-		} else {
-			for (int i = 0; i < functDataColIndexes_.size(); i++) {
-				if (functDataColIndexes_.get(i) > header.length - 1)
-					throw new IllegalArgumentException(
-							"The column specified in settings (functDataCol="
-									+ functDataColIndexes_.get(i)
-									+ ") does not exist");
-				colNames_.add(header[functDataColIndexes_.get(i)]);
-			}
-		}
+		unfilteredDataCols = new ArrayList<String>(header.length);
+		for (int i = 1; i < header.length; i++)
+			unfilteredDataCols.add(header[i]);
 	}
 
 	// ----------------------------------------------------------------------------

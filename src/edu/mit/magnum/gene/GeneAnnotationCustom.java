@@ -55,7 +55,11 @@ public class GeneAnnotationCustom extends GeneAnnotation {
 		genes_ = new LinkedHashMap<String, Gene>();
 		
 		// Open the file
-		FileParser parser = new FileParser(annotationFile_);
+		FileParser parser;
+		if (annotationFile_ == null)
+			parser = new FileParser(MagnumSettings.class.getClassLoader().getResourceAsStream("edu/mit/magnum/gene/rsc/gene_coord.bed"));
+		else
+			parser = new FileParser(annotationFile_);
 						
 		while (true) {
 			// Read next line

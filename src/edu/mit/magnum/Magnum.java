@@ -43,9 +43,6 @@ import edu.mit.magnum.enrich.*;
  * (superhero theme)
  */
 public class Magnum {
-
-	/** The settings */
-	public static MagnumOptionParser set = new MagnumOptionParser();
 	
 	
 	// ============================================================================
@@ -53,7 +50,9 @@ public class Magnum {
 	
 	/** The logger -- a different logger can be plugged in for custom logging */
 	static public MagnumLogger log = new MagnumLogger();
-	
+	/** The settings (needs to be after log so that we can print stuff!) */
+	public static MagnumOptionParser set = new MagnumOptionParser();
+
 	/** Main function */
 	static public void main(String[] args) {
 
@@ -100,7 +99,7 @@ public class Magnum {
 	public Magnum(String[] args) {
 
 		// Print magnum version
-		Magnum.log.println("magnum " + set.magnumVersion + "\n");
+		Magnum.log.println("Magnum v" + set.magnumVersion + "\n");
 		
 		// Parse command-line arguments and initialize settings
 		if (args != null)
@@ -220,13 +219,6 @@ public class Magnum {
 	/** Analyze enrichment */
 	public void runEnrichmentAnalysis() {
 
-		// Compute kernel if it was not specified
-		// TODO check if it's already available in the kernel dir
-		if (set.functionalDataFile_ == null) {
-			set.computePstepKernel_ = true;
-			runNetworkAnalysis();
-		}
-		
 		// Load input files
 		Magnum.log.println("LOADING INPUT FILES");
 		Magnum.log.println("-------------------\n");

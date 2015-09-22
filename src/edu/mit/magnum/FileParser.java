@@ -91,6 +91,20 @@ public class FileParser {
 	}
 	
 	
+	/** Constructor */
+	public FileParser(InputStream in) {
+
+		try {
+			Magnum.log.println("Reading input stream: " + in.toString());
+			Reader decoder = new InputStreamReader(in);
+			reader_ = new BufferedReader(decoder);
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	
     // ----------------------------------------------------------------------------
 
 	/** Read and return the next line, split using the separator_. Returns null if there is no more line to read. */
@@ -105,8 +119,8 @@ public class FileParser {
 		
 		if (nextLine_ == null)
 			return null;
-
-		return nextLine_.split(separator_, -1);
+		else
+			return nextLine_.split(separator_, -1);
 	}
 	
 

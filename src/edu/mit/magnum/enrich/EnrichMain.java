@@ -28,6 +28,7 @@ package edu.mit.magnum.enrich;
 import java.io.File;
 import java.util.ArrayList;
 
+import cern.colt.matrix.DoubleMatrix2D;
 import edu.mit.magnum.*;
 import edu.mit.magnum.gene.GeneIdMapping;
 import edu.mit.magnum.net.Network;
@@ -48,7 +49,12 @@ public class EnrichMain {
 	protected LabelPermuter permuter_ = null;	
 
 	/** The enrichment analyzer */
-	Enrichment enrichment_ = null;
+	private Enrichment enrichment_ = null;
+	
+	/** The network */
+	private Network network;
+	/** The corresponding kernel (as is before any filtering for genes with scores) */
+	private DoubleMatrix2D kernel;
 	
 	
 	// ============================================================================
@@ -65,20 +71,17 @@ public class EnrichMain {
 		geneScores_ = new GeneScoreList(Magnum.set.geneScoreFile_, Magnum.set.excludedGenesFile_);
 		//LinkageDisequilibrium.exportNeighboringGeneWindows(geneScores_.getGenes());
 
-		// Compute similarity network (kernel / tanimoto)
+		// Initialize functional data (kernel) -- compute it or load from file
 		File functionalDataFile = Magnum.set.functionalDataFile_;
-		if (Magnum.set.functionalDataFile_ == null || !Magnum.set.functionalDataFile_.exists())
-			functionalDataFile = computeSimilarityNetwork();
-		
-		name_ = extractName(Magnum.set.geneScoreFile_, functionalDataFile);
+		if (Magnum.set.functionalDataFile_ == null || !Magnum.set.functionalDataFile_.exists()) {
+			// Compute kernel
+			computeSimilarityNetwork();
+			functData_ = new FunctionalData(network, kernel, Magnum.set.excludedGenePairsFile_, geneScores_.getGenes());
+			name_ = extractName(Magnum.set.geneScoreFile_, Magnum.set.networkFile_);
 
-		// Loads the functional data, removes all genes that have no scores or no functional data
-		functData_ = new FunctionalData(functionalDataFile, Magnum.set.excludedGenePairsFile_, Magnum.set.functionalDataCols_, geneScores_.getGenes());
-		
-		// Delete temporary file
-		if (Magnum.set.functionalDataFile_ == null || Magnum.set.functionalDataFile_.equals("")) {
-			Magnum.log.println("Deleting file: " + functionalDataFile);
-			functionalDataFile.delete();
+		} else {
+			functData_ = new FunctionalData(functionalDataFile, Magnum.set.excludedGenePairsFile_, Magnum.set.functionalDataCols_, geneScores_.getGenes());
+			name_ = extractName(Magnum.set.geneScoreFile_, functionalDataFile);
 		}
 		
 		// The genes that were not loaded because they have no scores
@@ -156,45 +159,41 @@ public class EnrichMain {
 	// PRIVATE METHODS
 		
 	/** Compute kernel / tanimoto similarity network (when no precomputed similarity matrix is given) */
-	private File computeSimilarityNetwork() {
+	private void computeSimilarityNetwork() {
 		
 		// Load the input network
-		File file; 
+		File networkFile; 
 		if (Magnum.set.networkDir_ != null)
-			file = new File(Magnum.set.networkDir_, Magnum.set.networkFile_.getPath());
+			networkFile = new File(Magnum.set.networkDir_, Magnum.set.networkFile_.getPath());
 		else
-			file = Magnum.set.networkFile_;
+			networkFile = Magnum.set.networkFile_;
 		
-		// Write only K, not node centralities
-		Magnum.set.compressFiles_ = true;
-		Magnum.set.exportPairwiseNodeProperties_ = true;
+		// TODO make this a setting in the app
+		//Magnum.set.exportPairwiseNodeProperties_ = true;
+		Magnum.set.exportPairwiseNodeProperties_ = false;
 		Magnum.set.exportNodeProperties_ = false;
+		Magnum.set.compressFiles_ = true;
 
-		// Initialize netprop
-		Network network;
-		PairwiseProperties netprop;		
-		
-		if (Magnum.set.computePstepKernel_) {
-			// Doesn't make sense to save more than one step
-			if (Magnum.set.pstepKernelP_.size() != 1)
-				throw new RuntimeException("Specify only one pstepKernelP when computing kernels on the fly within enrichment analysis");
+		// Doesn't make sense to save more than one step
+		if (Magnum.set.pstepKernelP_.size() != 1)
+			throw new RuntimeException("Specify only one pstepKernelP when computing kernels on the fly within enrichment analysis");
 			
-			// Load network: p-step kernel only defined for undirected networks without self-loops
-			network = new Network(file, false, true, Magnum.set.isWeighted_, Magnum.set.threshold_);
-			// Initialize
-			netprop = new PstepKernel(network, Magnum.set.pstepKernelAlpha_, Magnum.set.pstepKernelP_, Magnum.set.pstepKernelNormalize_, false);
-		
-		} else {
-			throw new RuntimeException("No similarity metric specified (computePstepKernel)");
-		}
+		// Load network: p-step kernel only defined for undirected networks without self-loops
+		Magnum.log.println();
+		network = new Network(networkFile, false, true, Magnum.set.isWeighted_, Magnum.set.threshold_);
+
+		Magnum.log.println("COMPUTING RANDOM-WALK KERNEL");
+		Magnum.log.println("----------------------------\n");
 		
 		// Compute and save K
+		PairwiseProperties netprop = new PstepKernel(network, Magnum.set.pstepKernelAlpha_, Magnum.set.pstepKernelP_, Magnum.set.pstepKernelNormalize_, false);
 		netprop.run();
+		kernel = netprop.getK();
 		
 		// filename where K was written
-		String filename = MagnumUtils.extractBasicFilename(network.getFile().getName(), false);
-		File kfile = new File(Magnum.set.outputDirectory_, filename + "_" + netprop.getName() + ".txt.gz");
-		return kfile;
+		//String filename = MagnumUtils.extractBasicFilename(network.getFile().getName(), false);
+		//File kfile = new File(Magnum.set.outputDirectory_, filename + "_" + netprop.getName() + ".txt.gz");
+		//return kfile;
 	}
 
 
@@ -256,7 +255,7 @@ public class EnrichMain {
 		String functName = MagnumUtils.extractBasicFilename(functDataFile.getName(), false);
 		
 		functName = functName.replace("_nodeProperties", "");
-		functName = functName.replace("_undir", "");
+		//functName = functName.replace("_undir", "");
 		
 		return gwasName + "--" + functName;
 	}
