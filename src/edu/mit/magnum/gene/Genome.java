@@ -59,7 +59,7 @@ public class Genome {
 		
 		for (int i=1; i<=22; i++)
 			chromosomes_.put("chr" + i, new Chromosome());
-		if (!Magnum.set.ignoreAllosomes_) {
+		if (!Magnum.set.excludeXYChromosomes_) {
 			chromosomes_.put("chrX", new Chromosome());
 			chromosomes_.put("chrY", new Chromosome());
 		}

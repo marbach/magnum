@@ -449,17 +449,14 @@ public class FunctionalData {
 	private void loadUnfilteredData(File functionalDataFile) {
 		
 		// Count the lines
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(functionalDataFile));
-			int lines = 0;
-			while (reader.readLine() != null) 
-				lines++;
-
-			reader.close();
-			numGenes_ =  lines - 1;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} 
+		FileParser reader = new FileParser(functionalDataFile);
+		int lines = -1;
+		while (reader.skipLine());
+		lines = reader.getLineCounter();
+		reader.close();
+		
+		assert lines > 0;
+		numGenes_ =  lines - 2; // header, the file counter counts the last null as well
 
 		// Open the file
 		FileParser parser = new FileParser(functionalDataFile);
@@ -467,7 +464,8 @@ public class FunctionalData {
 		parseGenePropertiesHeader(parser.readLine());
 
 		// Initialize matrix
-		unfilteredData = new DenseDoubleMatrix2D(numGenes_, unfilteredDataCols.size());
+		int numCols = unfilteredDataCols.size();
+		unfilteredData = new DenseDoubleMatrix2D(numGenes_, numCols);
 		unfilteredDataRows = new ArrayList<String>();
 		
 		int i = 0;

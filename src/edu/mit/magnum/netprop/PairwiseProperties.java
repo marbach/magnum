@@ -50,13 +50,13 @@ public abstract class PairwiseProperties extends NetworkProperties {
 	protected boolean computeCentrality_ = false;
 	/** Flag indicating that K_ and centrality_ have been exported to a file */
 	protected boolean saved_ = false;
-	
+
 	/** The name of the distance/similarity measure (e.g., 'kstepKernel', 'shortestPath', etc.) */
 	protected String name_ = null;
 	/** The name of the centrality measure (e.g., 'kstepKernelCentrality', 'closenessCentrality', etc.) */
 	protected String nameCentrality_ = null;
 	
-	
+
 	// ============================================================================
 	// PUBLIC METHODS
 	
@@ -104,7 +104,8 @@ public abstract class PairwiseProperties extends NetworkProperties {
 	// ----------------------------------------------------------------------------
 
 	/** Export distance / similiarity matrix K_ (if saved_ is not true) */
-	public void saveK(String basicFilename) {
+	@Override
+	public void saveK() {
 		
 		if (saved_)
 			return;
@@ -113,10 +114,19 @@ public abstract class PairwiseProperties extends NetworkProperties {
 		if (network_.getUseRefNodes())
 			throw new RuntimeException("Ref nodes implementation incomplete");
 		
-		// Add suffix to filename
-		File file = new File(Magnum.set.outputDirectory_, basicFilename + "_" + name_ + ".txt");
+		// The directory
+		File kernelDir;
+		if (Magnum.set.networkKernelDir != null)
+			kernelDir = Magnum.set.networkKernelDir;
+		else
+			kernelDir = Magnum.set.outputDirectory_;
+		
+		// The file
+		String networkName = MagnumUtils.extractBasicFilename(network_.getFile().getName(), false);
+		File file = new File(kernelDir, networkName + "_" + name_ + ".txt.gz");
+
 		// The file writer
-		FileExport writer = new FileExport(file.getPath(), Magnum.set.compressFiles_);
+		FileExport writer = new FileExport(file, true);
 
 		// Write the header
 		//writer.print("node");
@@ -183,7 +193,6 @@ public abstract class PairwiseProperties extends NetworkProperties {
 	// ============================================================================
 	// SETTERS AND GETTERS
 
-	public String getName() { return name_; }
 	public DoubleMatrix2D getK() { return K_; }
 	public Double[] getCentrality() { return centrality_; }
 	

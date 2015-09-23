@@ -34,8 +34,7 @@ import edu.mit.magnum.*;
 /**
  * Custom gene annotation (bed file)
  */
-public class GeneAnnotationCustom extends GeneAnnotation {
-
+public class GeneAnnotationCustom extends GeneAnnotation {	
 	
 	// ============================================================================
 	// PUBLIC METHODS
@@ -57,7 +56,7 @@ public class GeneAnnotationCustom extends GeneAnnotation {
 		// Open the file
 		FileParser parser;
 		if (annotationFile_ == null)
-			parser = new FileParser(MagnumSettings.class.getClassLoader().getResourceAsStream("edu/mit/magnum/gene/rsc/gene_coord.bed"));
+			parser = new FileParser(Magnum.class.getClassLoader().getResourceAsStream(Magnum.set.annotationRsc));
 		else
 			parser = new FileParser(annotationFile_);
 						

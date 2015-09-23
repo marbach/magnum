@@ -69,21 +69,39 @@ public class EnrichMain {
 		
 		// Load the gene scores, excluding genes from the excludedGenesFile
 		geneScores_ = new GeneScoreList(Magnum.set.geneScoreFile_, Magnum.set.excludedGenesFile_);
-		//LinkageDisequilibrium.exportNeighboringGeneWindows(geneScores_.getGenes());
-
+		
 		// Initialize functional data (kernel) -- compute it or load from file
 		File functionalDataFile = Magnum.set.functionalDataFile_;
-		if (Magnum.set.functionalDataFile_ == null || !Magnum.set.functionalDataFile_.exists()) {
-			// Compute kernel
-			computeSimilarityNetwork();
-			functData_ = new FunctionalData(network, kernel, Magnum.set.excludedGenePairsFile_, geneScores_.getGenes());
-			name_ = extractName(Magnum.set.geneScoreFile_, Magnum.set.networkFile_);
-
-		} else {
+		if (functionalDataFile == null) {
+			// Change output dir to kernel dir (used to check if kernels are present or to export them)
+			File outDirBkp = Magnum.set.outputDirectory_;
+			if (Magnum.set.networkKernelDir != null)
+				Magnum.set.outputDirectory_ = Magnum.set.networkKernelDir;
+			else
+				Magnum.set.outputDirectory_ = new File(outDirBkp, "network_kernels");
+			
+			// The default file
+			File defaultFile = PstepKernel.getKFile();
+			// If it exists, load it
+			if (defaultFile.exists() && Magnum.set.usePrecomputedKernels) {
+				functionalDataFile = defaultFile;
+			
+			// Else, compute kernel
+			} else {
+				computeSimilarityNetwork();
+				functData_ = new FunctionalData(network, kernel, Magnum.set.excludedGenePairsFile_, geneScores_.getGenes());
+				name_ = extractName(Magnum.set.geneScoreFile_, Magnum.set.networkFile_);
+			}
+			// Change the output dir back
+			Magnum.set.outputDirectory_ = outDirBkp;
+		}
+		if (functionalDataFile != null) {
+			if (!functionalDataFile.exists())
+				throw new RuntimeException("File not found: " + functionalDataFile.getPath());
 			functData_ = new FunctionalData(functionalDataFile, Magnum.set.excludedGenePairsFile_, Magnum.set.functionalDataCols_, geneScores_.getGenes());
 			name_ = extractName(Magnum.set.geneScoreFile_, functionalDataFile);
 		}
-		
+
 		// The genes that were not loaded because they have no scores
 		ArrayList<String> genesMissingScores = functData_.getGenesMissingScores();
 		// Remove gene scores that are not in the funct data
@@ -168,11 +186,13 @@ public class EnrichMain {
 		else
 			networkFile = Magnum.set.networkFile_;
 		
-		// TODO make this a setting in the app
-		//Magnum.set.exportPairwiseNodeProperties_ = true;
-		Magnum.set.exportPairwiseNodeProperties_ = false;
+		Magnum.set.exportPairwiseNodeProperties_ = Magnum.set.exportKernels;
 		Magnum.set.exportNodeProperties_ = false;
 		Magnum.set.compressFiles_ = true;
+		
+		// Create kernel dir
+		if (Magnum.set.exportKernels)
+			Magnum.set.outputDirectory_.mkdirs();
 
 		// Doesn't make sense to save more than one step
 		if (Magnum.set.pstepKernelP_.size() != 1)

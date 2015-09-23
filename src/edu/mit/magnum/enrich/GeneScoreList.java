@@ -26,6 +26,7 @@ THE SOFTWARE.
 package edu.mit.magnum.enrich;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,6 +55,8 @@ public class GeneScoreList {
 	private int numGenomeWideSignificant_ = -1;
 	/** Number of scores per gene */
 	private int numScoresPerGene_ = -1;
+	/** Flag indicates if HLA genes have been excluded */
+	private boolean excludingHlaGenes_ = false;
 
 	
 	// ============================================================================
@@ -134,12 +137,28 @@ public class GeneScoreList {
 	private void loadExcludedGenes(File excludedGenesFile) {
 		
 		excludedGenes_ = new HashSet<String>();
+		excludingHlaGenes_ = false;
 		GeneIdMapping idMapping = GeneIdMapping.getInstance();
 		
-		if (excludedGenesFile == null || excludedGenesFile.length() == 0)
-			return;
+		FileParser parser;
+		if (excludedGenesFile == null) {
+			// Use default
+			if (Magnum.set.geneCoordFile_ != null)
+				return;
+			
+			InputStream in;
+			// TODO maybe allow also for no genes excluded
+			if (Magnum.set.excludeHlaGenes_) {
+				excludingHlaGenes_ = true;
+				in = Magnum.class.getClassLoader().getResourceAsStream(Magnum.set.hlaTfsRsc);
+			} else {
+				in = Magnum.class.getClassLoader().getResourceAsStream(Magnum.set.tfsRsc);
+			}
+			parser = new FileParser(in);
 		
-		FileParser parser = new FileParser(excludedGenesFile);
+		} else {
+			parser = new FileParser(excludedGenesFile);
+		}
 
 		// Parse header
 		String[] header = parser.readLine();
@@ -249,7 +268,7 @@ public class GeneScoreList {
 				continue;
 				//gencodeGene = new Gene(null);
 			}
-			if (Magnum.set.ignoreAllosomes_ && geneAnnot.isAllosome(gencodeGene.chr_))
+			if (Magnum.set.excludeXYChromosomes_ && geneAnnot.isAllosome(gencodeGene.chr_))
 				continue;
 			
 			// Exclude genome-wide significant genes
@@ -280,10 +299,12 @@ public class GeneScoreList {
 		}
 		sortGeneList(0);
 		
-		if (Magnum.set.ignoreAllosomes_)
-			Magnum.log.println("- Excluding genes on allosomes");
-		if (numExcluded > 0)
-			Magnum.log.println("- " + numExcluded + " genes excluded");
+		if (Magnum.set.excludeXYChromosomes_)
+			Magnum.log.println("- Excluding genes on X, Y chromosomes");
+		if (excludingHlaGenes_)
+			Magnum.log.println("- Excluding HLA genes");
+		//if (numExcluded > 0)
+		//	Magnum.log.println("- " + numExcluded + " genes excluded");
 		if (numNoScore > 0)
 			Magnum.log.println("- " + numNoScore + " genes with NA score");
 		if (numNoAnnot > 0)

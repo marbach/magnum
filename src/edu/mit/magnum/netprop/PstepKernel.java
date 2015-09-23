@@ -25,6 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.netprop;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -68,7 +69,7 @@ public class PstepKernel extends PairwiseProperties {
 	private final Algebra alg_ = new Algebra();
 	/** Colt basic linear algebra system */
 	private final Blas blas_ = SeqBlas.seqBlas;
-
+	
 	
 	// ============================================================================
 	// PUBLIC METHODS
@@ -139,7 +140,7 @@ public class PstepKernel extends PairwiseProperties {
 		blas_.dcopy(B, K_);
 
 		saved_ = false;
-		saveStep(1, alpha_);
+		saveStep(1);
 
 		// K = B^p
 		for (int i=2; i<=p_.get(p_.size()-1); i++) {
@@ -159,7 +160,7 @@ public class PstepKernel extends PairwiseProperties {
 			//Ngsea.println("Run time: " + NgseaUtils.chronometer(t1-t0));
 
 			// Save step, also computes centrality
-			saveStep(i, alpha_);
+			saveStep(i);
 		}		
 		
 		// Delete Laplacian
@@ -179,11 +180,27 @@ public class PstepKernel extends PairwiseProperties {
 	}
 
 	
+	// ----------------------------------------------------------------------------
+
+	/** Return a file path for the default kernel file based on the input network */
+	static public File getKFile() {
+		
+		int numSteps = Magnum.set.pstepKernelP_.get(Magnum.set.pstepKernelP_.size()-1);
+		double alpha = Magnum.set.pstepKernelAlpha_;
+
+		String name = numSteps + "stepKernel" + "_alpha" + alpha + (Magnum.set.isWeighted_ ? "_weighted" : "");
+		String network = MagnumUtils.extractBasicFilename(Magnum.set.networkFile_.getName(), false);
+		File file = new File(Magnum.set.outputDirectory_, network + "_" + name + ".txt.gz");
+		
+		return file;
+	}
+
+	
 	// ============================================================================
 	// PRIVATE METHODS
 
 	/** Save step i if it is specified in p_ (also normalizes K_ if normalize_ is set) */
-	private void saveStep(int i, double alpha) {
+	private void saveStep(int i) {
 		
 		// Return if this step should not be saved
 		if (!p_.contains(i))
@@ -191,13 +208,13 @@ public class PstepKernel extends PairwiseProperties {
 		
 		if (normalize_)
 			normalizeSym(K_);
-		
-		String suffix = "_alpha" + alpha + (network_.getIsWeighted() ? "_weighted" : "");
+
+		String suffix = "_alpha" + alpha_ + (network_.getIsWeighted() ? "_weighted" : "");
 		name_ = i + "stepKernel" + suffix;
 		nameCentrality_ = i + "stepKernelCentrality" + suffix;
 		
 		if (Magnum.set.exportPairwiseNodeProperties_)
-			saveK(MagnumUtils.extractBasicFilename(network_.getFile().getName(), false));
+			saveK();
 		
 		if (computeCentrality_) {
 			computeCentrality();

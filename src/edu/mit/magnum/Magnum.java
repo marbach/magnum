@@ -74,7 +74,6 @@ public class Magnum {
 
 	/** Gets and resets the interrupted flag (same behaviour as Thread.interrupted() */
 	static public boolean interrupted() {
-		
 		boolean returnValue = interrupted_;
 		interrupted_ = false;
 		return returnValue;
@@ -83,6 +82,23 @@ public class Magnum {
 	/** Set interrupted flag true */
 	static public void setInterrupted() {
 		interrupted_ = true;
+	}
+
+	/** Throws a runtime exception if the thread has been interrupted */
+	static public void exitOnInterrupt() {
+		// Throw exception on interrupt
+		if (Thread.interrupted()) {
+			interrupted_ = true;
+			throw new RuntimeException();
+		}
+	}
+	
+	/** Checks if there has been an interrupt, useful if cleanup has to be done before exciting */
+	static public boolean checkInterrupt() {
+		// Return true on interrupt
+		if (Thread.interrupted())
+			interrupted_ = true;
+		return interrupted_;
 	}
 
 	
@@ -252,7 +268,7 @@ public class Magnum {
 //		// LinkCommViz.visualize(linkComm);
 	}
 
-	
+		
 	// ============================================================================
 	// PRIVATE METHODS
 

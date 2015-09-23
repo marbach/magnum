@@ -122,7 +122,7 @@ genesToBeLoadedFile =
 # The chromosome to be considered (chr1, ..., chr22, chrX, chrY), leave empty for all chromosomes 
 chromosome = 
 # Ignore sex chromosomes
-ignoreAllosomes = 1
+excludeXYChromosomes = 1
 # Gencode annotation (use for ENSEMBL gene IDs)
 genecodeAnnotationFile = data/annotation/gencode/gencode.v18.annotation.genes.gtf
 # UCSC genome browser annotation (use for Entrez IDs) 
@@ -166,6 +166,13 @@ excludedGenesDistance = 1
 idTypeGeneScores = custom
 # Gene IDs used in functionalDataFile
 idTypeFunctionalData = custom
+
+# Use precomputed network kernels if available in networkKernelDir
+usePrecomputedKernels = true
+# Directory for network kernels (default: <outputDir>/network_kernels/)
+networkKernelDir = 
+# Save network kernels for use in subsequent runs (takes a lot of disk space!)
+exportKernels = false
 
 # ========================================================================
 # PARAMETERS

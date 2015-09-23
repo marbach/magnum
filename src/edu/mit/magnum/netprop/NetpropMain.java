@@ -94,15 +94,12 @@ public class NetpropMain {
 	/** Export all results to text files */
 	public void saveAll() {
 		
-		// Construct the output filename (remove path and file extension from input filename)
-		String basicFilename = MagnumUtils.extractBasicFilename(network_.getFile().getName(), false);
-		
 		// Collect node properties from the analyzers and save together in one file
-		saveNodeProperties(basicFilename);
+		saveNodeProperties();
 		
 		// Save other results
 		for (int i=0; i<analyzers_.size(); i++)
-			analyzers_.get(i).saveK(basicFilename);
+			analyzers_.get(i).saveK();
 	}
 
 	
@@ -110,7 +107,9 @@ public class NetpropMain {
 	// PRIVATE METHODS
 
 	/** Collect node properties from the analyzers and save together in one file */
-	private void saveNodeProperties(String basicFilename) {
+	private void saveNodeProperties() {
+		
+		String basicFilename = MagnumUtils.extractBasicFilename(network_.getFile().getName(), false);
 		
 		// Collect node properties from analyzers
 		LinkedHashMap<String,Number[]> nodeProperties = new LinkedHashMap<String,Number[]>();

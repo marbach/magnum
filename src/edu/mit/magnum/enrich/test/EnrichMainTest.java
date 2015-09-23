@@ -81,7 +81,7 @@ public class EnrichMainTest {
 		Magnum.set.functionalDataFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_testKernel.txt");
 		Magnum.set.excludedGenesFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_excludedGenes.txt");
 		Magnum.set.excludedGenePairsFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_excludedGenePairs.txt");
-		Magnum.set.ignoreAllosomes_ = false;
+		Magnum.set.excludeXYChromosomes_ = false;
 		Magnum.set.excludedGenesDistance_ = -1;
 		
 		// Run enrichment analysis
@@ -147,7 +147,7 @@ public class EnrichMainTest {
 		Magnum.set.functionalDataFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_testKernel.txt");
 		Magnum.set.excludedGenesFile_ = null;
 		Magnum.set.excludedGenePairsFile_ = null;
-		Magnum.set.ignoreAllosomes_ = true;
+		Magnum.set.excludeXYChromosomes_ = true;
 		Magnum.set.excludedGenesDistance_ = 1;
 		
 		// Run enrichment analysis
@@ -202,7 +202,7 @@ public class EnrichMainTest {
 		Magnum.set.isWeighted_ = false;
 		Magnum.set.excludedGenesFile_ = null;
 		Magnum.set.excludedGenePairsFile_ = null;
-		Magnum.set.ignoreAllosomes_ = true;
+		Magnum.set.excludeXYChromosomes_ = true;
 		Magnum.set.excludedGenesDistance_ = 1;
 		Magnum.set.computePstepKernel_ = true;
 		Magnum.set.pstepKernelP_ = new ArrayList<Integer>();

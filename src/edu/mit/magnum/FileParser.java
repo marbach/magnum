@@ -95,7 +95,7 @@ public class FileParser {
 	public FileParser(InputStream in) {
 
 		try {
-			Magnum.log.println("Reading input stream: " + in.toString());
+			//Magnum.log.println("Reading input stream...");
 			Reader decoder = new InputStreamReader(in);
 			reader_ = new BufferedReader(decoder);
 
@@ -123,6 +123,24 @@ public class FileParser {
 			return nextLine_.split(separator_, -1);
 	}
 	
+	
+    // ----------------------------------------------------------------------------
+
+	/** Skips a single line, updates the line counter */
+	public boolean skipLine() {
+		
+		try {
+			lineCounter_++;
+			if (reader_.readLine() == null)
+				return false;
+			else
+				return true;
+			
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 
     // ----------------------------------------------------------------------------
 

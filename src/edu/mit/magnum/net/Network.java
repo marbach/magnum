@@ -56,6 +56,8 @@ public class Network {
 
 	/** The file from which this network was loaded */
 	protected File file_ = null;
+	/** The name (=filename without extension) */
+	protected String name;
 	
 	/** The JUNG graph */
 	protected AbstractTypedGraph<Node, Edge> graph_ = null;
@@ -142,8 +144,9 @@ public class Network {
 	/** Load the Network */
 	public void loadNetwork(File file) {
 				
-		// Create graph_
 		this.file_ = file;
+		this.name = MagnumUtils.extractBasicFilename(file.getName(), false);
+		// Create graph_		
 		loadGraph();
 		// Remove super-hubs
 		removeSuperHubs();
@@ -539,13 +542,6 @@ public class Network {
 				numRemovedMultiEdges_++;
 			}
 			
-			// Return if thread was interrupted
-			if (Thread.interrupted()) {
-				parser.close();
-				Magnum.setInterrupted();
-				throw new RuntimeException();
-			}
-			
 			// Read the next line
 			nextLine = parser.readLine();
 		}
@@ -645,6 +641,7 @@ public class Network {
 	// SETTERS AND GETTERS
 	
 	public File getFile() { return file_; }
+	public String getName() { return name; }
 	
 	public int getNumRegulators() {
 		if (!isDirected_)

@@ -25,6 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.netprop;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -63,8 +64,8 @@ public abstract class NetworkProperties {
 	/** Add the computed node properties of this analyzer to the given map */
 	public void addNodeProperties(LinkedHashMap<String,Number[]> map) { }
 
-	/** Save all pairwise node properties of this subclass using saveNodeProperty() */
-	public void saveK(String basicFilename) { }
+	/** Save all pairwise node properties of this subclass */
+	public void saveK() { }
 
 	
 	// ============================================================================

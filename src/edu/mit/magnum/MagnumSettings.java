@@ -30,7 +30,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.Random;
 
@@ -45,182 +44,198 @@ import org.apache.commons.math3.random.Well19937c;
  */
 public class MagnumSettings extends Settings {	
 	
+	/** The annotation file (default file included in jar) */
+	public final String annotationRsc = "edu/mit/magnum/gene/rsc/gene_coord.bed";
+	/** The HLA+TF genes file (default file included in jar) */
+	public final String hlaTfsRsc = "edu/mit/magnum/gene/rsc/tfs_mhc.txt";
+	/** The TF genes file (default file included in jar) */
+	public final String tfsRsc = "edu/mit/magnum/gene/rsc/tfs.txt";
+
 	/** Colt Mersenne Twister random engine (should be used by all other random number generators) */
-	public MersenneTwister mersenneTwisterRng_ = null;
+	public MersenneTwister mersenneTwisterRng_;
 	/** Apache Commons random engine */
-	public Well19937c wellRng_ = null;
+	public Well19937c wellRng_;
 	/** Java random engine */
-	public Random jdkRng_ = null;
+	public Random jdkRng_;
 
 	// ----------------------------------------------------------------------------
 	// VARIOUS
 	
 	/** Mode: 1 => Network analysis; 2 => Enrichment analysis */
-	public int mode_ = 0;
+	public int mode_;
 	/** PRIVATE, NEEDS TO BE SET WITH setRandomSeed(), which initializes the random number generators. Set to -1 to use current time */
-	private int randomSeed_ = 42;
+	private int randomSeed_;
 	/** Output directory to save stuff */
-	public File outputDirectory_ = new File(System.getProperty("user.dir"));
+	public File outputDirectory_;
 	/** Output filename */
-	public String outputFilename_ = "";
+	public String outputFilename_;
 	/** Compress output files (gzip) */
-	public boolean compressFiles_ = true;
+	public boolean compressFiles_;
 
 	// ----------------------------------------------------------------------------
 	// NETWORK PROPERTIES
 
 	// INPUT NETWORK
 	/** Directory containing the networks */
-	public File networkDir_ = null;
+	public File networkDir_;
 	/** The input network file */
-	public File networkFile_ = null;
+	public File networkFile_;
 	/** Delimiter used to separate columns (default 'tab' */
-	public String networkFileDelim_ = "TAB";  
+	public String networkFileDelim_;  
 	/** Defines if the network should be interpreted as directed or undirected */
-	public boolean isDirected_ = true;
+	public boolean isDirected_;
 	/** Defines if self loops should be removed from the network */
-	public boolean removeSelfLoops_ = true;
+	public boolean removeSelfLoops_;
 	/** Set true to treat the network as weighted */
-	public boolean isWeighted_ = true;
+	public boolean isWeighted_;
 	/** Threshold for including weighted edges */
-	public double threshold_ = 0;
+	public double threshold_;
 	/** Exclude "super-hubs" that connect to more than the given fraction of genes (set 1 to include all) */
-	public double superHubThreshold_ = 0;
+	public double superHubThreshold_;
 	/** Optional file specifying a set of reference nodes */
-	public File refNodesFile_ = null;
+	public File refNodesFile_;
 
 	// NETWORKOPS
 	/** Take union (max edge) over all networks in networkDir or the sets specified in the file below */
-	public boolean computeUnion_ = false;
+	public boolean computeUnion_;
 	/** Define the network sets that should be combined (leave empty to combine all networks) */
-	public File networkGroupFile_ = null;
+	public File networkGroupFile_;
 	/** Prefix of the files in the network dir */
-	public String networkFilePrefix_ = null;
+	public String networkFilePrefix_;
 	/** Add networks of the same cell type */
-	public boolean computePairwiseSum_ = false;
+	public boolean computePairwiseSum_;
 	/** The network directory of the second networks */
-	public File networkDir2_ = null;
+	public File networkDir2_;
 	
 	// BASIC NETWORK PROPERTIES
 	/** Node degree (directed networks, also indegree and outdegree) */
-	public boolean computeDegree_ = false;
+	public boolean computeDegree_;
 	/** Node betweenness centrality (edge directionality observed for directed networks) */
-	public boolean computeBetweenness_ = false;
+	public boolean computeBetweenness_;
 	/** Node clustering coefficient (edge directionality observed for directed networks) */
-	public boolean computeClusteringCoefficient_ = false;
+	public boolean computeClusteringCoefficient_;
 	/** For each node, distance to all other nodes (or all reference nodes) and closeness centrality */
-	public boolean computeShortestPathLengths_ = false;
+	public boolean computeShortestPathLengths_;
 
 	// KERNELS
 	/** P-step random walk kernel (Smola & Kondor, 2003) */
-	public boolean computePstepKernel_ = false;
+	public boolean computePstepKernel_;
 	/** alpha parameter of p-step random walk kernel (alpha >= 2) */
-	public double pstepKernelAlpha_ = 2;
+	public double pstepKernelAlpha_;
 	/** Number of steps p of random walk kernel (p >= 1) */
-	public ArrayList<Integer> pstepKernelP_ = new ArrayList<Integer>(Arrays.asList(4));
+	public ArrayList<Integer> pstepKernelP_;
 	/** Normalize the kernel matrix (divide by the max) */
-	public boolean pstepKernelNormalize_ = true;
+	public boolean pstepKernelNormalize_;
 	
 	// TANIMOTO COEFFICIENT
 	/** Tanimoto coefficient between target genes */
-	public boolean computeTargetTanimoto_ = false;
+	public boolean computeTargetTanimoto_;
 	/** Tanimoto coefficient between regulators */
-	public boolean computeTfTanimoto_ = false;
+	public boolean computeTfTanimoto_;
 
 	// OUTPUT FILES
 	/** A suffix/ending that is appended to all output files for this run (use to distinguish output files from multiple runs) */
 	public String outputSuffix_ = "";
 	/** Export all computed pairwise node properties (e.g., similarity, distance matrices) */
-	public boolean exportPairwiseNodeProperties_ = true;
+	public boolean exportPairwiseNodeProperties_;
 	/** Export all computed node properties (e.g., avg. similarity, distance for each node) */
-	public boolean exportNodeProperties_ = true;
+	public boolean exportNodeProperties_;
 
 	// ----------------------------------------------------------------------------
 	// GENOME ANNOTATION
 
 	/** Set of genes to be considered (leave empty to use all genes from the annotation file) */
-	public String genesToBeLoadedFile_ = null;
+	public String genesToBeLoadedFile_;
 
 	/** The chromosome to be considered (chr1, ..., chr22, chrX, chrY), leave empty for all chromosomes */ 
-	public String chromosome_ = null;
+	public String chromosome_;
 	/** Ignore sex chromosomes */
-	public boolean ignoreAllosomes_ = true;
-
+	public boolean excludeXYChromosomes_;
+	/** Ignore HLA genes (only works for default annotation, custom annotations need to provide their own excludedGenesFile) */
+	public boolean excludeHlaGenes_;
+	
 	/** The file with the gencode annotation */
-	public File gencodeAnnotationFile_ = null;
+	public File gencodeAnnotationFile_;
 	/** UCSC genome browser annotation (use for Entrez IDs) */ 
-	public File ucscAnnotationFile_ = null;
+	public File ucscAnnotationFile_;
 	/** Set true to load only protein-coding genes */
-	public boolean loadOnlyProteinCodingGenes_ = true;
+	public boolean loadOnlyProteinCodingGenes_;
 
 	/** Mapping file to convert Entrez IDs, ENSEMBL IDs and gene symbols */
-	public String geneIdMappingFile_ = null;
+	public String geneIdMappingFile_;
 		
 	// ----------------------------------------------------------------------------
 	// ENRICHMENT CURVES
 	
 	// INPUT
 	/** The gene coordinates (custom annotation) */
-	public File geneCoordFile_ = null;
+	public File geneCoordFile_;
 	/** The gene scores */
-	public File geneScoreFile_ = null;
+	public File geneScoreFile_;
 	/** Cutoff for genome-wide significance of gene scores */
-	public double genomeWideSignificanceThreshold_ = 1e-6;
+	public double genomeWideSignificanceThreshold_;
 	/** Exclude genome-wide significant genes (below threshold) */
-	public boolean excludeGenomeWideSignificantGenes_ = false;
+	public boolean excludeGenomeWideSignificantGenes_;
 
 	/** The file with the functional data, e.g. network kernels (cols: gene id, property 1, property 2, ...) */ 
-	public File functionalDataFile_ = null; 
+	public File functionalDataFile_; 
 	/** Specify which columns should be loaded (-1: all columns; 1: first gene property column) */
-	public ArrayList<Integer> functionalDataCols_ = null;
+	public ArrayList<Integer> functionalDataCols_;
 
 	/** Genes to be excluded from enrichment analysis (e.g., MHC region) */
-	public File excludedGenesFile_ = null;
+	public File excludedGenesFile_;
 	/** Gene pairs to be excluded from enrichment analysis (e.g., genes in LD) */
-	public File excludedGenePairsFile_ = null;
+	public File excludedGenePairsFile_;
 	/** Exclude gene pairs with windows smaller than the given distance apart (given in megabases; -1: no exclusion; 1000000: all genes on same chromosome) */
-	public double excludedGenesDistance_ = 1; 
+	public double excludedGenesDistance_; 
 
 	/** Gene IDs used in geneScoreFile, excludedGenesFile, excludedGenePairsFile ('ensembl', 'entrez', 'hugo') */
-	public String idTypeGeneScores_ = "custom";
+	public String idTypeGeneScores_;
 	/** Gene IDs used in functionalDataFile */
-	public String idTypeFunctionalData_ = "custom";
+	public String idTypeFunctionalData_;
+
+	/** Use precomputed network kernels if available in networkKernelDir */
+	public boolean usePrecomputedKernels = true;
+	/** Directory for network kernels (default: <outputDir>/network_kernels/) */
+	public File networkKernelDir;
+	/** Save network kernels for use in subsequent runs (takes a lot of disk space!) */
+	public boolean exportKernels;
 
 	// PARAMETERS
 	/** Number of random permutations to compute confidence intervals */
-	public int numPermutations_ = 10000;
+	public int numPermutations_;
 	/** The number of bins for within-degree permutation */
-	public int numBins_ = 100;
+	public int numBins_;
 	/** Scale kernels: K'(i,j) = K(i,j)/sqrt(rowSums(K)[i] * colSums(K)[j]) */
-	public boolean scaleKernel_ = false;
+	public boolean scaleKernel_;
 
 	/** Equidistant curve resolution, e.g., set 10 to compute every 10th point on the curves */
-	public int constCurveResolution_ = 10;
+	public int constCurveResolution_;
 	/** Varying curve resolution, e.g., set 2 to compute points: 2, 6, 12, 20, 30, 42, ... (takes precedence over constCurveResolution, set -1 to disable) */
-	public int varCurveResolution_ = -1;
+	public int varCurveResolution_;
 	/** Compute curves only for the top part of the list (e.g., 0.1 for top 10%) */
-	public double curveCutoff_ = 0.2;
+	public double curveCutoff_;
 	/** Sliding window size */
-	public int slidingWindowSize_ = -1;
+	public int slidingWindowSize_;
 
 	/** Draw boundaries for given p-values (e.g., set 0.05 to draw the upper/lower boundary where only 5% of random curves above/below) */ 
-	public ArrayList<Double> pval_ = new ArrayList<Double>(Arrays.asList(0.01, 0.05));
+	public ArrayList<Double> pval_;
 	/** Indicates whether the boundaries are one-sided or two-sided (equivalent to dividing pval by two) */
-	public boolean twoSidedTest_ = false;
+	public boolean twoSidedTest_;
 	/** Control FDR over all points of the curve together (i.e., correct for multiple hypothesis testing across curve) */
-	public boolean controlFDR_ = false;
+	public boolean controlFDR_;
 	/** The top X snps will be ignored for FDR control (too noisy at start of the list) */
-	public int FDRStart_ = 100;
+	public int FDRStart_;
 	/** Start to integrate the AUC only at k=10 (reduce noise at the start of the list) */
-	public int AUCStart_ = 10;
+	public int AUCStart_;
 	/** Index of gene scores for which enrichment is to be computed, e.g., (0,9) for the first ten gene scores */ 
-	public int geneScoreIndexStart_ = 0;
-	public int geneScoreIndexEnd_ = 0;
+	public int geneScoreIndexStart_;
+	public int geneScoreIndexEnd_;
 
 	
 	// OUTPUT FILES
 	/** Number of random permutations for which enrichment curves are exported (smaller or equal numPermutations) */
-	public int numPermutationsExport_ = 0;
+	public int numPermutationsExport_;
 
 	
 	// ============================================================================
@@ -282,8 +297,9 @@ public class MagnumSettings extends Settings {
 		genesToBeLoadedFile_ = null;
 
 		chromosome_ = null;
-		ignoreAllosomes_ = true;
-
+		excludeXYChromosomes_ = true;
+		excludeHlaGenes_ = true;
+		
 		gencodeAnnotationFile_ = null;
 		ucscAnnotationFile_ = null;
 		loadOnlyProteinCodingGenes_ = true;
@@ -304,6 +320,10 @@ public class MagnumSettings extends Settings {
 
 		idTypeGeneScores_ = "custom";
 		idTypeFunctionalData_ = "custom";
+
+		usePrecomputedKernels = true;
+		networkKernelDir = null;
+		exportKernels = false;
 
 		numPermutations_ = 10000;
 		numBins_ = 100;
@@ -481,8 +501,10 @@ public class MagnumSettings extends Settings {
 			genesToBeLoadedFile_ = getSetting("genesToBeLoadedFile");
 		if (requireAll || prop.containsKey("chromosome"))
 			chromosome_ = getSetting("chromosome");
-		if (requireAll || prop.containsKey("ignoreAllosomes"))
-			ignoreAllosomes_ = getSettingBoolean("ignoreAllosomes");
+		if (requireAll || prop.containsKey("excludeXYChromosomes"))
+			excludeXYChromosomes_ = getSettingBoolean("excludeXYChromosomes");
+		if (requireAll || prop.containsKey("excludeHlaGenes"))
+			excludeHlaGenes_ = getSettingBoolean("excludeHlaGenes");
 		if (requireAll || prop.containsKey("genecodeAnnotationFile"))
 			gencodeAnnotationFile_ = getFileSetting("genecodeAnnotationFile");
 		if (requireAll || prop.containsKey("ucscAnnotationFile"))
@@ -525,6 +547,13 @@ public class MagnumSettings extends Settings {
 		if (requireAll || prop.containsKey("idTypeFunctionalData"))
 			idTypeFunctionalData_ = getSetting("idTypeFunctionalData");
 
+		if (requireAll || prop.containsKey("usePrecomputedKernels"))
+			usePrecomputedKernels = getSettingBoolean("usePrecomputedKernels");
+		if (requireAll || prop.containsKey("networkKernelDir"))
+			networkKernelDir = getFileSetting("networkKernelDir");
+		if (requireAll || prop.containsKey("exportKernels"))
+			exportKernels = getSettingBoolean("exportKernels");
+		
 		// ENRICHMENT
 		if (requireAll || prop.containsKey("numPermutations"))
 			numPermutations_ = getSettingInt("numPermutations");
