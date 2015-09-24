@@ -37,6 +37,9 @@ import edu.mit.magnum.Magnum;
  */
 public class GeneIdMapping {
 
+	/** The magnum instance */
+	private Magnum mag;
+
 	/** The unique instance of the mapping (Singleton design pattern) */
 	static private GeneIdMapping instance_ = null;
 	
@@ -47,11 +50,15 @@ public class GeneIdMapping {
 	// ============================================================================
 	// PUBLIC METHODS
 	
+	private GeneIdMapping(Magnum mag) {
+		this.mag = mag;
+	}
+	
 	/** Get the unique instance */
-	public static GeneIdMapping getInstance() {
+	public static GeneIdMapping getInstance(Magnum mag) {
 	
 		if (instance_ == null)
-			instance_ = new GeneIdMapping();
+			instance_ = new GeneIdMapping(mag);
 		
 		return instance_;
 	}
@@ -72,12 +79,12 @@ public class GeneIdMapping {
 	public void load(String filename) {
 		
 		if (ensembl2entrez_ != null) {
-			Magnum.log.warning("Gene mapping already loaded");
+			mag.log.warning("Gene mapping already loaded");
 			return;
 		}
 		
 		ensembl2entrez_ = new HashMap<String, HashSet<String>>();
-		FileParser parser = new FileParser(filename);
+		FileParser parser = new FileParser(mag, filename);
 		
 		while(true) {
 			// Read next line
@@ -87,12 +94,12 @@ public class GeneIdMapping {
 			
 			// Check number of columns
 			if (nextLine.length != 3)
-				Magnum.log.error("Expected three columns (ensembl id, entrez id, gene symbol)");
+				mag.log.error("Expected three columns (ensembl id, entrez id, gene symbol)");
 			
 			// Parse ensembl id
 			String ensg = nextLine[0];
 			if (!(ensg.length() > 4 && ensg.substring(0, 4).equals("ENSG")))
-				Magnum.log.error("Invalid ENSEMBL gene ID (expected 'ENSG...'): " + ensg);
+				mag.log.error("Invalid ENSEMBL gene ID (expected 'ENSG...'): " + ensg);
 			ensg = removeEnsemblVersion(ensg);
 
 			// Parse entrez id
@@ -101,7 +108,7 @@ public class GeneIdMapping {
 				try {
 					Integer.valueOf(entrez);
 				} catch (NumberFormatException e) {
-					Magnum.log.error("Invalid Entrez gene ID (expected an integer number): " + entrez);
+					mag.log.error("Invalid Entrez gene ID (expected an integer number): " + entrez);
 				}
 			}
 			

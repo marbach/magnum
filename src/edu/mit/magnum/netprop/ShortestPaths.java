@@ -45,9 +45,9 @@ public class ShortestPaths extends PairwiseProperties {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public ShortestPaths(Network network, boolean computeCentrality) {
+	public ShortestPaths(Magnum mag, Network network, boolean computeCentrality) {
 		
-		super(network, "shortestPaths", "closenessCentrality", computeCentrality);
+		super(mag, network, "shortestPaths", "closenessCentrality", computeCentrality);
 	}
 	
 	
@@ -56,7 +56,7 @@ public class ShortestPaths extends PairwiseProperties {
 	/** Compute the degree for every node */
 	public void computeK() {
 		
-		Magnum.log.println("Computing shortest paths...");
+		mag.log.println("Computing shortest paths...");
 		
 		// Dijkstra distance
 		K_ = new DenseDoubleMatrix2D(numNodes_, numRefNodes_);
@@ -81,7 +81,7 @@ public class ShortestPaths extends PairwiseProperties {
 		//DijkstraShortestPath<Node,Edge> distance = new DijkstraShortestPath<Node,Edge>(graph_, cached);
 
 		// Print status after doing 'freq' regulators
-		ProgressMonitor progress = new ProgressMonitor(numNodes_);
+		ProgressMonitor progress = new ProgressMonitor(mag, numNodes_);
 
 		for (int i=0; i<numNodes_; i++) {
 			// Print progress

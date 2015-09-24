@@ -32,6 +32,9 @@ package edu.mit.magnum;
  */
 public class ProgressMonitor {
 	
+	/** The magnum instance */
+	private Magnum mag;
+
 	/** Total iterations */
 	private int totalIterations_ = 0;
 	/** Output frequency */
@@ -46,8 +49,9 @@ public class ProgressMonitor {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public ProgressMonitor(int totalIterations) {
-
+	public ProgressMonitor(Magnum mag, int totalIterations) {
+		
+		this.mag = mag;
 		totalIterations_ = totalIterations;
 		
 		freq_ = totalIterations / 40;
@@ -60,14 +64,14 @@ public class ProgressMonitor {
 		
 		t0_ = System.currentTimeMillis();
 		
-		Magnum.log.println("|-------------- Progress --------------|");
+		mag.log.println("|-------------- Progress --------------|");
 	}
 	
 	
 	/** Constructor */
-	public ProgressMonitor(int totalIterations, int freq) {
+	public ProgressMonitor(Magnum mag, int totalIterations, int freq) {
 		
-		this(totalIterations);
+		this(mag, totalIterations);
 		freq_ = freq;
 	}
 
@@ -78,7 +82,7 @@ public class ProgressMonitor {
 	public void iteration(int i) {
 		
 		if (i % freq_ == 0)
-			Magnum.log.print(asterisks_);
+			mag.log.print(asterisks_);
 	}
 	
 	
@@ -88,7 +92,7 @@ public class ProgressMonitor {
 	public void estimatedTotalRuntime(int i) {
 		if (i % freq_ == 0) {
 			long t1 = System.currentTimeMillis();
-			Magnum.log.println(i + "\tERT: \t" + MagnumUtils.chronometer(totalIterations_*(t1-t0_)/i));
+			mag.log.println(i + "\tERT: \t" + mag.utils.chronometer(totalIterations_*(t1-t0_)/i));
 		}
 	
 	}
@@ -98,7 +102,7 @@ public class ProgressMonitor {
 
 	/** Print progress */
 	public void done() {
-		Magnum.log.print("\n\n");
+		mag.log.print("\n\n");
 	}
 
 }

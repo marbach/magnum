@@ -56,9 +56,9 @@ public class GeneAnnotationGencode extends GeneAnnotation {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public GeneAnnotationGencode(String chromosomeToBeLoaded, boolean loadProteinCodingOnly) {
+	public GeneAnnotationGencode(Magnum mag, String chromosomeToBeLoaded, boolean loadProteinCodingOnly) {
 		
-		super(Magnum.set.gencodeAnnotationFile_, chromosomeToBeLoaded, loadProteinCodingOnly);
+		super(mag, mag.set.gencodeAnnotationFile_, chromosomeToBeLoaded, loadProteinCodingOnly);
 	}
 	
 
@@ -72,8 +72,8 @@ public class GeneAnnotationGencode extends GeneAnnotation {
 		//HashSet<String> geneType = new HashSet<String>();
 		
 		// Open the file
-		FileParser parser = new FileParser(annotationFile_);
-		GeneIdMapping mapping = GeneIdMapping.getInstance();
+		FileParser parser = new FileParser(mag, annotationFile_);
+		GeneIdMapping mapping = GeneIdMapping.getInstance(mag);
 		
 		// Skip the first 5 lines (start with #)
 		String[] nextLine = parser.readLine();
@@ -165,7 +165,7 @@ public class GeneAnnotationGencode extends GeneAnnotation {
 		
 		int start = keyValueList.indexOf(key + " \"");
 		if (start == -1)
-			Magnum.log.error("Key not found: '" + key + "\"");
+			mag.log.error("Key not found: '" + key + "\"");
 		
 		start = start + key.length() + 2;
 		int end = keyValueList.indexOf("\"", start);

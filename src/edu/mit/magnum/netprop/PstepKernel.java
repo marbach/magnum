@@ -36,7 +36,6 @@ import cern.colt.matrix.linalg.Algebra;
 import cern.colt.matrix.linalg.Blas;
 import cern.colt.matrix.linalg.SeqBlas;
 import edu.mit.magnum.Magnum;
-import edu.mit.magnum.MagnumUtils;
 import edu.mit.magnum.net.*;
 
 
@@ -75,9 +74,9 @@ public class PstepKernel extends PairwiseProperties {
 	// PUBLIC METHODS
 	
 	/** Constructor (network must be undirected) */
-	public PstepKernel(Network network, double alpha, ArrayList<Integer> p, boolean normalize, boolean computeCentrality) {
+	public PstepKernel(Magnum mag, Network network, double alpha, ArrayList<Integer> p, boolean normalize, boolean computeCentrality) {
 		
-		super(network, "pstepKernel", "pstepKernel", computeCentrality);
+		super(mag, network, "pstepKernel", "pstepKernel", computeCentrality);
 		alpha_ = alpha;
 		p_ = p;
 		numSteps_ = p_.get(p_.size()-1);
@@ -87,13 +86,13 @@ public class PstepKernel extends PairwiseProperties {
 		if (alpha_ < 2)
 			throw new IllegalArgumentException("Alpha must be greater or equal 2");
 		
-		if (!MagnumUtils.posIntIncreasing(p_))
+		if (!mag.utils.posIntIncreasing(p_))
 			throw new RuntimeException("p must be and ordered list of positive integers, given in increasing order");
 		
 		if (isDirected_)
 			throw new IllegalArgumentException("P-step kernels are not implemented for directed networks");
 		if (numRefNodes_ != numNodes_)
-			Magnum.log.warning("Specified reference nodes will be ignored by p-step kernel");
+			mag.log.warning("Specified reference nodes will be ignored by p-step kernel");
 		// We now explicitly check for self-loops and abort if there are, because it screws up the degrees
 		//if (!Settings.removeSelfLoops_)
 			//Ngsea.warning("Self-loops will be ignored by p-step kernel");
@@ -101,9 +100,9 @@ public class PstepKernel extends PairwiseProperties {
 	
 	
 	/** Constructor using default alpha (network must be undirected) */
-	public PstepKernel(Network network, ArrayList<Integer> p) {
+	public PstepKernel(Magnum mag, Network network, ArrayList<Integer> p) {
 		
-		this(network, Magnum.set.pstepKernelAlpha_, p, Magnum.set.pstepKernelNormalize_, Magnum.set.exportNodeProperties_);
+		this(mag, network, mag.set.pstepKernelAlpha_, p, mag.set.pstepKernelNormalize_, mag.set.exportNodeProperties_);
 	}
 
 
@@ -112,11 +111,11 @@ public class PstepKernel extends PairwiseProperties {
 	/** Compute the p-step kernel matrix. Matrix multiplication could be done more efficiently by exploiting symmetry. */
 	public void computeK() {
 
-		Magnum.log.println("Computing normalized Laplacian...");		
+		mag.log.println("Computing normalized Laplacian...");		
 		normalizedLaplacian_ = network_.computeNormalizedLaplacian();
 		
-		Magnum.log.println("Computing " + numSteps_ + "-step kernel with alpha=" + alpha_ + ":");
-		Magnum.log.println("Step 1...");
+		mag.log.println("Computing " + numSteps_ + "-step kernel with alpha=" + alpha_ + ":");
+		mag.log.println("Step 1...");
 
 		// K = (a*I - L)^p ,  with a >= 2
 		// B := a*I - L
@@ -144,7 +143,7 @@ public class PstepKernel extends PairwiseProperties {
 
 		// K = B^p
 		for (int i=2; i<=p_.get(p_.size()-1); i++) {
-			Magnum.log.println("Step " + i + "...");
+			mag.log.println("Step " + i + "...");
 			saved_ = false;
 
 			//long t0 = System.currentTimeMillis();
@@ -183,14 +182,14 @@ public class PstepKernel extends PairwiseProperties {
 	// ----------------------------------------------------------------------------
 
 	/** Return a file path for the default kernel file based on the input network */
-	static public File getKFile() {
+	static public File getKFile(Magnum mag) {
 		
-		int numSteps = Magnum.set.pstepKernelP_.get(Magnum.set.pstepKernelP_.size()-1);
-		double alpha = Magnum.set.pstepKernelAlpha_;
+		int numSteps = mag.set.pstepKernelP_.get(mag.set.pstepKernelP_.size()-1);
+		double alpha = mag.set.pstepKernelAlpha_;
 
-		String name = numSteps + "stepKernel" + "_alpha" + alpha + (Magnum.set.isWeighted_ ? "_weighted" : "");
-		String network = MagnumUtils.extractBasicFilename(Magnum.set.networkFile_.getName(), false);
-		File file = new File(Magnum.set.outputDirectory_, network + "_" + name + ".txt.gz");
+		String name = numSteps + "stepKernel" + "_alpha" + alpha + (mag.set.isWeighted_ ? "_weighted" : "");
+		String network = mag.utils.extractBasicFilename(mag.set.networkFile_.getName(), false);
+		File file = new File(mag.set.outputDirectory_, network + "_" + name + ".txt.gz");
 		
 		return file;
 	}
@@ -213,7 +212,7 @@ public class PstepKernel extends PairwiseProperties {
 		name_ = i + "stepKernel" + suffix;
 		nameCentrality_ = i + "stepKernelCentrality" + suffix;
 		
-		if (Magnum.set.exportPairwiseNodeProperties_)
+		if (mag.set.exportPairwiseNodeProperties_)
 			saveK();
 		
 		if (computeCentrality_) {

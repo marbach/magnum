@@ -41,29 +41,31 @@ import edu.mit.magnum.gene.*;
  */
 public class EnrichMainTest {
 	
-	
+	/** The magnum instance */
+	private static Magnum mag = new Magnum();
+
 	// ============================================================================
 	// SETUP
 	
 	@BeforeClass
 	public static void testSetup() {
 		
-		Magnum.set.resetToDefaults();		
-		Magnum.set.geneScoreFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_genescores.txt");
-		Magnum.set.constCurveResolution_ = 1;
-		Magnum.set.varCurveResolution_ = -1;
-		Magnum.set.curveCutoff_ = 1;
-		Magnum.set.functionalDataCols_ = null;
-		Magnum.set.numPermutations_ = 10;
-		Magnum.set.numPermutationsExport_ = 10;
-		Magnum.set.numBins_ = 1;
-		Magnum.set.setRandomSeed(1);
-		Magnum.set.pval_ = new ArrayList<Double>();
-		Magnum.set.pval_.add(0.2);
-		Magnum.set.geneCoordFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_geneCoords.bed");
-		Magnum.set.idTypeFunctionalData_ = "custom";
-		Magnum.set.idTypeGeneScores_ = "custom";
-		Magnum.set.excludeGenomeWideSignificantGenes_ = false;
+		mag.set.resetToDefaults();
+		mag.set.geneScoreFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_genescores.txt");
+		mag.set.constCurveResolution_ = 1;
+		mag.set.varCurveResolution_ = -1;
+		mag.set.curveCutoff_ = 1;
+		mag.set.functionalDataCols_ = null;
+		mag.set.numPermutations_ = 10;
+		mag.set.numPermutationsExport_ = 10;
+		mag.set.numBins_ = 1;
+		mag.set.setRandomSeed(1);
+		mag.set.pval_ = new ArrayList<Double>();
+		mag.set.pval_.add(0.2);
+		mag.set.geneCoordFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_geneCoords.bed");
+		mag.set.idTypeFunctionalData_ = "custom";
+		mag.set.idTypeGeneScores_ = "custom";
+		mag.set.excludeGenomeWideSignificantGenes_ = false;
 	}
 
 	@AfterClass
@@ -78,14 +80,14 @@ public class EnrichMainTest {
 	public void testPairwiseEnrichment_loadExcludedFromFiles() {
 
 		// Settings
-		Magnum.set.functionalDataFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_testKernel.txt");
-		Magnum.set.excludedGenesFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_excludedGenes.txt");
-		Magnum.set.excludedGenePairsFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_excludedGenePairs.txt");
-		Magnum.set.excludeXYChromosomes_ = false;
-		Magnum.set.excludedGenesDistance_ = -1;
+		mag.set.functionalDataFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_testKernel.txt");
+		mag.set.excludedGenesFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_excludedGenes.txt");
+		mag.set.excludedGenePairsFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_excludedGenePairs.txt");
+		mag.set.excludeXYChromosomes_ = false;
+		mag.set.excludedGenesDistance_ = -1;
 		
 		// Run enrichment analysis
-		EnrichMain enrichMain = new EnrichMain();
+		EnrichMain enrichMain = new EnrichMain(mag);
 		enrichMain.run();
 
 		// TEST INITIALIZATION OF CENTRALITIES BY PERMUTER
@@ -144,14 +146,14 @@ public class EnrichMainTest {
 	public void testPairwiseEnrichment_excludeBasedOnCoords() {
 
 		// Settings
-		Magnum.set.functionalDataFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_testKernel.txt");
-		Magnum.set.excludedGenesFile_ = null;
-		Magnum.set.excludedGenePairsFile_ = null;
-		Magnum.set.excludeXYChromosomes_ = true;
-		Magnum.set.excludedGenesDistance_ = 1;
+		mag.set.functionalDataFile_ = new File("src/edu/mit/magnum/enrich/test/simpleNet_testKernel.txt");
+		mag.set.excludedGenesFile_ = null;
+		mag.set.excludedGenePairsFile_ = null;
+		mag.set.excludeXYChromosomes_ = true;
+		mag.set.excludedGenesDistance_ = 1;
 		
 		// Run enrichment analysis
-		EnrichMain enrichMain = new EnrichMain();
+		EnrichMain enrichMain = new EnrichMain(mag);
 		enrichMain.run();
 
 		// TEST INITIALIZATION OF CENTRALITIES BY PERMUTER
@@ -195,22 +197,22 @@ public class EnrichMainTest {
 	public void testPairwiseEnrichment_computeKernel() {
 
 		// Settings
-		Magnum.set.functionalDataFile_ = null;
-		Magnum.set.networkDir_ = new File(".");
-		Magnum.set.networkFile_ = new File("src/edu/mit/magnum/netprop/test/simpleNet.txt");
-		Magnum.set.isDirected_ = false;
-		Magnum.set.isWeighted_ = false;
-		Magnum.set.excludedGenesFile_ = null;
-		Magnum.set.excludedGenePairsFile_ = null;
-		Magnum.set.excludeXYChromosomes_ = true;
-		Magnum.set.excludedGenesDistance_ = 1;
-		Magnum.set.computePstepKernel_ = true;
-		Magnum.set.pstepKernelP_ = new ArrayList<Integer>();
-		Magnum.set.pstepKernelP_.add(4);
-		Magnum.set.pstepKernelAlpha_ = 2;
+		mag.set.functionalDataFile_ = null;
+		mag.set.networkDir_ = new File(".");
+		mag.set.networkFile_ = new File("src/edu/mit/magnum/netprop/test/simpleNet.txt");
+		mag.set.isDirected_ = false;
+		mag.set.isWeighted_ = false;
+		mag.set.excludedGenesFile_ = null;
+		mag.set.excludedGenePairsFile_ = null;
+		mag.set.excludeXYChromosomes_ = true;
+		mag.set.excludedGenesDistance_ = 1;
+		mag.set.computePstepKernel_ = true;
+		mag.set.pstepKernelP_ = new ArrayList<Integer>();
+		mag.set.pstepKernelP_.add(4);
+		mag.set.pstepKernelAlpha_ = 2;
 
 		// Run enrichment analysis
-		EnrichMain enrichMain = new EnrichMain();
+		EnrichMain enrichMain = new EnrichMain(mag);
 		enrichMain.run();
 
 		// TEST INITIALIZATION OF CENTRALITIES BY PERMUTER

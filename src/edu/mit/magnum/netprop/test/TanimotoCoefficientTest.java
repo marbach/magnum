@@ -44,14 +44,16 @@ import edu.mit.magnum.netprop.*;
  */
 public class TanimotoCoefficientTest {
 	
-	
+	/** The magnum instance */
+	private static Magnum mag = new Magnum();
+
 	// ============================================================================
 	// SETUP
 	
 	@BeforeClass
 	public static void testSetup() {
-		Magnum.set.resetToDefaults();
-		Magnum.set.superHubThreshold_ = 0;
+		mag.set.resetToDefaults();
+		mag.set.superHubThreshold_ = 0;
 	}
 
 	@AfterClass
@@ -66,9 +68,9 @@ public class TanimotoCoefficientTest {
 	public void testTargetTanimoto() {
 
 		// Load directed, weighted network with self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/tanimotoTestNet.txt"), true, false, true, 0);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/tanimotoTestNet.txt"), true, false, true, 0);
 		// Initialize
-		TanimotoCoefficient tanimoto = new TanimotoCoefficient(testNet, true, false);
+		TanimotoCoefficient tanimoto = new TanimotoCoefficient(mag, testNet, true, false);
 		// Compute tanimoto similarity matrix and corresponding node centrality
 		tanimoto.run();
 
@@ -111,9 +113,9 @@ public class TanimotoCoefficientTest {
 	public void testRegulatorTanimoto() {
 
 		// Load directed, weighted network with self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/tanimotoTestNet.txt"), true, false, true, 0);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/tanimotoTestNet.txt"), true, false, true, 0);
 		// Initialize
-		TanimotoCoefficient tanimoto = new TanimotoCoefficient(testNet, false, false);
+		TanimotoCoefficient tanimoto = new TanimotoCoefficient(mag, testNet, false, false);
 		// Compute tanimoto similarity matrix and corresponding node centrality
 		tanimoto.run();
 

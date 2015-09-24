@@ -35,12 +35,18 @@ import java.util.Properties;
  */
 public class Settings {	
 	
+	/** Magnum instance */
+	protected Magnum mag;
 	/** The properties (settings file) */
 	protected Properties prop = null;
 	
-	/** Current version */
-	public String magnumVersion = "1.0";
+	// ============================================================================
+	// PUBLIC METHODS
 
+	public Settings(Magnum mag) {
+		this.mag = mag;
+	}
+	
 	
 	// ============================================================================
 	// PROTECTED METHODS
@@ -50,7 +56,7 @@ public class Settings {
 		
 		String value = prop.getProperty(param);
 		if (value == null)
-			Magnum.log.error("Parameter not found in setting file: " + param);
+			mag.log.error("Parameter not found in setting file: " + param);
 		
 		return value; 
 	}
@@ -98,8 +104,8 @@ public class Settings {
 		for (int i=0; i<propStr.length; i++)
 			prop.add(Integer.valueOf(propStr[i]));
 			
-		if (positiveSorted && !MagnumUtils.posIntIncreasing(prop))
-			Magnum.log.error("Error parsing settings file, " + name + " has to be an ordered list of positive integers, given in increasing order");
+		if (positiveSorted && !mag.utils.posIntIncreasing(prop))
+			mag.log.error("Error parsing settings file, " + name + " has to be an ordered list of positive integers, given in increasing order");
 		
 		return prop;
 	}
@@ -119,8 +125,8 @@ public class Settings {
 		for (int i=0; i<propStr.length; i++)
 			prop.add(Double.valueOf(propStr[i]));
 			
-		if (positiveSorted && !MagnumUtils.posDoubleIncreasing(prop))
-			Magnum.log.error("Error parsing settings file, " + name + " has to be an ordered list of positive numbers, given in increasing order");
+		if (positiveSorted && !mag.utils.posDoubleIncreasing(prop))
+			mag.log.error("Error parsing settings file, " + name + " has to be an ordered list of positive numbers, given in increasing order");
 		
 		return prop;
 	}

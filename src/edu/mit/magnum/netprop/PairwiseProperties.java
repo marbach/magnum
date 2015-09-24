@@ -32,7 +32,6 @@ import java.util.LinkedHashMap;
 import cern.colt.matrix.DoubleMatrix2D;
 import edu.mit.magnum.FileExport;
 import edu.mit.magnum.Magnum;
-import edu.mit.magnum.MagnumUtils;
 import edu.mit.magnum.net.*;
 
 
@@ -61,9 +60,9 @@ public abstract class PairwiseProperties extends NetworkProperties {
 	// PUBLIC METHODS
 	
 	/** Constructor (network must be undirected) */
-	public PairwiseProperties(Network network, String name, String nameCentrality, boolean computeCentrality) {
+	public PairwiseProperties(Magnum mag, Network network, String name, String nameCentrality, boolean computeCentrality) {
 		
-		super(network);
+		super(mag, network);
 		name_ = name;
 		nameCentrality_ = nameCentrality;
 		computeCentrality_ = computeCentrality;
@@ -78,7 +77,7 @@ public abstract class PairwiseProperties extends NetworkProperties {
 		long t0 = System.currentTimeMillis();
 		computeK();
 		long t1 = System.currentTimeMillis();
-		Magnum.log.println("Run time: " + MagnumUtils.chronometer(t1-t0));
+		mag.log.println("Run time: " + mag.utils.chronometer(t1-t0));
 
 		if (computeCentrality_)
 			computeCentrality();
@@ -116,17 +115,17 @@ public abstract class PairwiseProperties extends NetworkProperties {
 		
 		// The directory
 		File kernelDir;
-		if (Magnum.set.networkKernelDir != null)
-			kernelDir = Magnum.set.networkKernelDir;
+		if (mag.set.networkKernelDir != null)
+			kernelDir = mag.set.networkKernelDir;
 		else
-			kernelDir = Magnum.set.outputDirectory_;
+			kernelDir = mag.set.outputDirectory_;
 		
 		// The file
-		String networkName = MagnumUtils.extractBasicFilename(network_.getFile().getName(), false);
+		String networkName = mag.utils.extractBasicFilename(network_.getFile().getName(), false);
 		File file = new File(kernelDir, networkName + "_" + name_ + ".txt.gz");
 
 		// The file writer
-		FileExport writer = new FileExport(file, true);
+		FileExport writer = new FileExport(mag, file, true);
 
 		// Write the header
 		//writer.print("node");
@@ -141,7 +140,7 @@ public abstract class PairwiseProperties extends NetworkProperties {
 
 			// Shortest paths
 			for (int j=0; j<numRefNodes_; j++)
-				writer.print("\t" + MagnumUtils.toStringScientific10(K_.get(i, j)));
+				writer.print("\t" + mag.utils.toStringScientific10(K_.get(i, j)));
 			writer.print("\n");
 		}
 		// Close writer

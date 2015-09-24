@@ -41,16 +41,18 @@ import edu.mit.magnum.netprop.*;
  */
 public class ShortestPathsTest {
 	
-	
+	/** The magnum instance */
+	private static Magnum mag = new Magnum();
+
 	// ============================================================================
 	// SETUP
 	
 	@BeforeClass
 	public static void testSetup() {
-		Magnum.set.resetToDefaults();
-		Magnum.set.superHubThreshold_ = 0;
-		Magnum.set.computeShortestPathLengths_ = true;
-		Magnum.set.exportNodeProperties_ = true;
+		mag.set.resetToDefaults();
+		mag.set.superHubThreshold_ = 0;
+		mag.set.computeShortestPathLengths_ = true;
+		mag.set.exportNodeProperties_ = true;
 	}
 
 	@AfterClass
@@ -65,7 +67,7 @@ public class ShortestPathsTest {
 	public void testUndirected() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
 		
 		// Test that prior nodes work by setting them in arbitrary order
 		ArrayList<Node> priorNodes = new ArrayList<Node>();
@@ -78,7 +80,7 @@ public class ShortestPathsTest {
 		priorNodes.add(testNet.getNode(3));
 		testNet.setRefNodes(priorNodes);
 		
-		ShortestPaths test = new ShortestPaths(testNet, true);
+		ShortestPaths test = new ShortestPaths(mag, testNet, true);
 		
 		// Compute distance matrix and closeness centrality
 		test.run();
@@ -129,7 +131,7 @@ public class ShortestPathsTest {
 	public void testUndirectedWithPriors() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
 		
 		// Test that prior nodes work by setting them in arbitrary order
 		ArrayList<Node> priors = new ArrayList<Node>();
@@ -138,7 +140,7 @@ public class ShortestPathsTest {
 		priors.add(testNet.getNode("7"));
 		testNet.setRefNodes(priors);
 		
-		ShortestPaths test = new ShortestPaths(testNet, true);
+		ShortestPaths test = new ShortestPaths(mag, testNet, true);
 		
 		// Compute distance matrix and closeness centrality
 		test.run();
@@ -190,7 +192,7 @@ public class ShortestPathsTest {
 	public void testDirected() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
 		
 		// Test that prior nodes work by setting them in arbitrary order
 		ArrayList<Node> priorNodes = new ArrayList<Node>();
@@ -203,7 +205,7 @@ public class ShortestPathsTest {
 		priorNodes.add(testNet.getNode(3));
 		testNet.setRefNodes(priorNodes);
 		
-		ShortestPaths test = new ShortestPaths(testNet, true);
+		ShortestPaths test = new ShortestPaths(mag, testNet, true);
 		
 		// Compute distance matrix and closeness centrality
 		test.run();
@@ -254,7 +256,7 @@ public class ShortestPathsTest {
 	public void testDirectedWithPriors() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
 		
 		// Test that prior nodes work by setting them in arbitrary order
 		ArrayList<Node> priors = new ArrayList<Node>();
@@ -263,7 +265,7 @@ public class ShortestPathsTest {
 		priors.add(testNet.getNode("7"));
 		testNet.setRefNodes(priors);
 		
-		ShortestPaths test = new ShortestPaths(testNet, true);
+		ShortestPaths test = new ShortestPaths(mag, testNet, true);
 		
 		// Compute distance matrix and closeness centrality
 		test.run();

@@ -25,7 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.enrich;
 
-
+import edu.mit.magnum.Magnum;
 
 /**
  * 
@@ -40,9 +40,9 @@ public class EnrichmentIndividual extends Enrichment {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public EnrichmentIndividual(FunctionalData functData, GeneScoreList geneScores, LabelPermuter permuter, int genePropertyIndex) {
+	public EnrichmentIndividual(Magnum mag, FunctionalData functData, GeneScoreList geneScores, LabelPermuter permuter, int genePropertyIndex) {
 
-		super(functData, geneScores, permuter);
+		super(mag, functData, geneScores, permuter);
 		genePropertyIndex_ = genePropertyIndex;
 	}
 

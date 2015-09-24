@@ -58,9 +58,8 @@ public class BasicProperties extends NetworkProperties {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public BasicProperties(Network network) {
-		
-		super(network);
+	public BasicProperties(Magnum mag, Network network) {
+		super(mag, network);
 	}
 	
 	
@@ -70,11 +69,11 @@ public class BasicProperties extends NetworkProperties {
 	public ArrayList<Double> run() {
 		
 		// Compute all metrics
-		if (Magnum.set.computeDegree_)
+		if (mag.set.computeDegree_)
 			computeDegree();
-		if (Magnum.set.computeBetweenness_)
+		if (mag.set.computeBetweenness_)
 			computeBetweenness();
-		if (Magnum.set.computeClusteringCoefficient_)
+		if (mag.set.computeClusteringCoefficient_)
 			computeClusteringCoefficient();
 		
 		ArrayList<Double> networkMeans = new ArrayList<Double>();
@@ -106,7 +105,7 @@ public class BasicProperties extends NetworkProperties {
 	/** Compute the degree for every node */
 	public void computeDegree() {
 		
-		Magnum.log.println("Computing node degrees...");
+		mag.log.println("Computing node degrees...");
 		
 		// Degree
 		degree_ = new Integer[numNodes_];
@@ -138,7 +137,7 @@ public class BasicProperties extends NetworkProperties {
 	/** Compute the betweenness for every node */
 	public void computeBetweenness() {
 		
-		Magnum.log.println("Computing betweenness centrality...");
+		mag.log.println("Computing betweenness centrality...");
 
 		// Compute betweenness
 		BetweennessCentrality<Node, Edge> betweennessScorer = new BetweennessCentrality<Node, Edge>(graph_);
@@ -161,7 +160,7 @@ public class BasicProperties extends NetworkProperties {
 	/** Compute the clustering coefficient for every node */
 	public void computeClusteringCoefficient() {
 		
-		Magnum.log.println("Computing clustering coefficient...");
+		mag.log.println("Computing clustering coefficient...");
 
 		// Compute clustering coefficient
 		//Map<Node, Double> clust = Metrics.clusteringCoefficients(graph_);

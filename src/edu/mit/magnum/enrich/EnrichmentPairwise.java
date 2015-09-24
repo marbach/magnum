@@ -39,9 +39,9 @@ public class EnrichmentPairwise extends Enrichment {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public EnrichmentPairwise(FunctionalData functData, GeneScoreList geneScores, LabelPermuter permuter) {
+	public EnrichmentPairwise(Magnum mag, FunctionalData functData, GeneScoreList geneScores, LabelPermuter permuter) {
 
-		super(functData, geneScores, permuter);
+		super(mag, functData, geneScores, permuter);
 		
 		// Check that functional data indexes of genes are within bounds of functional data
 		// so that we can use getQuick() later on
@@ -99,7 +99,7 @@ public class EnrichmentPairwise extends Enrichment {
 		if (N <= 1)
 			return 0;
 
-		int windowStart = Math.max(0, currentK_ - Magnum.set.slidingWindowSize_+1);
+		int windowStart = Math.max(0, currentK_ - mag.set.slidingWindowSize_+1);
 		double sum = 0;
 		int count = 0;
 		

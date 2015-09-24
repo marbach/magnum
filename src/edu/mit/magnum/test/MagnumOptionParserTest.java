@@ -39,13 +39,15 @@ import edu.mit.magnum.Magnum;
  */
 public class MagnumOptionParserTest {
 	
+	/** The magnum instance */
+	private static Magnum mag = new Magnum();
 
 	// ============================================================================
 	// SETUP
 	
 	@BeforeClass
 	public static void testSetup() {
-		Magnum.set.resetToDefaults();
+		mag.set.resetToDefaults();
 	}
 
 	@AfterClass
@@ -84,34 +86,34 @@ public class MagnumOptionParserTest {
 				"--curve", "0.8"
 				}; 
 		
-		Magnum.set.parse(args);
+		mag.set.parse(args);
 		
-		assertEquals(22, Magnum.set.mode_);
-		assertEquals(23, Magnum.set.getRandomSeed());
-		assertEquals(new File("myOutdir"), Magnum.set.outputDirectory_);
+		assertEquals(22, mag.set.mode_);
+		assertEquals(23, mag.set.getRandomSeed());
+		assertEquals(new File("myOutdir"), mag.set.outputDirectory_);
 
-		assertEquals(new File("myNetdir"), Magnum.set.networkDir_);
-		assertEquals(new File("myNet"), Magnum.set.networkFile_);
-		assertEquals(true, Magnum.set.isDirected_);
-		assertEquals(true, Magnum.set.isWeighted_);
-		assertEquals(0.42, Magnum.set.threshold_, 1e-12);
+		assertEquals(new File("myNetdir"), mag.set.networkDir_);
+		assertEquals(new File("myNet"), mag.set.networkFile_);
+		assertEquals(true, mag.set.isDirected_);
+		assertEquals(true, mag.set.isWeighted_);
+		assertEquals(0.42, mag.set.threshold_, 1e-12);
 		
-		assertEquals(true, Magnum.set.computePstepKernel_);
-		assertEquals(5, (int)Magnum.set.pstepKernelP_.get(0));
-		assertEquals(true, Magnum.set.computeDegree_);
-		assertEquals(true, Magnum.set.computeBetweenness_);
-		assertEquals(true, Magnum.set.computeClusteringCoefficient_);
-		assertEquals(true, Magnum.set.computeShortestPathLengths_);
-		assertEquals(true, Magnum.set.computeUnion_);
+		assertEquals(true, mag.set.computePstepKernel_);
+		assertEquals(5, (int)mag.set.pstepKernelP_.get(0));
+		assertEquals(true, mag.set.computeDegree_);
+		assertEquals(true, mag.set.computeBetweenness_);
+		assertEquals(true, mag.set.computeClusteringCoefficient_);
+		assertEquals(true, mag.set.computeShortestPathLengths_);
+		assertEquals(true, mag.set.computeUnion_);
 
-		assertEquals(new File("myGenes"), Magnum.set.geneCoordFile_);
-		assertEquals(new File("myScores"), Magnum.set.geneScoreFile_);
-		assertEquals(new File("myCmatrix"), Magnum.set.functionalDataFile_);
-		assertEquals(new File("myExcl"), Magnum.set.excludedGenesFile_);
-		assertEquals(5.0, Magnum.set.excludedGenesDistance_, 1e-12);
-		assertEquals(6, Magnum.set.numBins_);
-		assertEquals(7, Magnum.set.numPermutations_);
-		assertEquals(0.8, Magnum.set.curveCutoff_, 1e-12);
+		assertEquals(new File("myGenes"), mag.set.geneCoordFile_);
+		assertEquals(new File("myScores"), mag.set.geneScoreFile_);
+		assertEquals(new File("myCmatrix"), mag.set.functionalDataFile_);
+		assertEquals(new File("myExcl"), mag.set.excludedGenesFile_);
+		assertEquals(5.0, mag.set.excludedGenesDistance_, 1e-12);
+		assertEquals(6, mag.set.numBins_);
+		assertEquals(7, mag.set.numPermutations_);
+		assertEquals(0.8, mag.set.curveCutoff_, 1e-12);
 		
 	}
 

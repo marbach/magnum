@@ -42,17 +42,19 @@ import edu.mit.magnum.netprop.*;
  */
 public class PstepKernelTest {
 	
-	
+	/** The magnum instance */
+	private static Magnum mag = new Magnum();
+
 	// ============================================================================
 	// SETUP
 	
 	@BeforeClass
 	public static void testSetup() {
-		Magnum.set.resetToDefaults();
-		Magnum.set.superHubThreshold_ = 0;
-		Magnum.set.computePstepKernel_ = true;
-		Magnum.set.exportNodeProperties_ = true;
-		Magnum.set.pstepKernelNormalize_ = true;
+		mag.set.resetToDefaults();
+		mag.set.superHubThreshold_ = 0;
+		mag.set.computePstepKernel_ = true;
+		mag.set.exportNodeProperties_ = true;
+		mag.set.pstepKernelNormalize_ = true;
 	}
 
 	@AfterClass
@@ -67,14 +69,14 @@ public class PstepKernelTest {
 	public void testComputeK() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/simpleNet.txt"), false, false);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/simpleNet.txt"), false, false);
 		
 		ArrayList<Integer> numSteps = new ArrayList<Integer>();
 		numSteps.add(1);
 		numSteps.add(3);
 		numSteps.add(4); 
 		double alpha = 2.0;
-		PstepKernel test = new PstepKernel(testNet, alpha, numSteps, true, false);
+		PstepKernel test = new PstepKernel(mag, testNet, alpha, numSteps, true, false);
 		
 		// Compute pstep kernel and corresponding node centrality
 		test.run();

@@ -41,7 +41,6 @@ import cern.colt.matrix.linalg.SeqBlas;
 import edu.mit.magnum.FileExport;
 import edu.mit.magnum.FileParser;
 import edu.mit.magnum.Magnum;
-import edu.mit.magnum.MagnumUtils;
 import edu.uci.ics.jung.algorithms.util.Indexer;
 import edu.uci.ics.jung.graph.AbstractTypedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
@@ -53,6 +52,9 @@ import edu.uci.ics.jung.graph.util.Pair;
  * Encapsulates a JUNG graph
  */
 public class Network {
+
+	/** The magnum instance */
+	private Magnum mag;
 
 	/** The file from which this network was loaded */
 	protected File file_ = null;
@@ -104,12 +106,15 @@ public class Network {
 	// PUBLIC METHODS
 	
 	/** Default constructor */
-	public Network() { }
+	public Network(Magnum mag) { 
+		this.mag = mag;
+	}
 
 	/** Constructor loading network from file */
-	public Network(File file, 
+	public Network(Magnum mag, File file, 
 			boolean isDirected, boolean removeSelfLoops, boolean isWeighted, double threshold) {
 		
+		this(mag);
 		isDirected_ = isDirected;
 		removeSelfLoops_ = removeSelfLoops;
 		isWeighted_ = isWeighted;
@@ -120,10 +125,10 @@ public class Network {
 	}
 
 	/** Constructor loading network from file and specifying a set of reference nodes */
-	public Network(File file, File refNodesFile, 
+	public Network(Magnum mag, File file, File refNodesFile, 
 			boolean isDirected, boolean removeSelfLoops, boolean isWeighted, double threshold) {
 		
-		this(file, isDirected, removeSelfLoops, isWeighted, threshold);
+		this(mag, file, isDirected, removeSelfLoops, isWeighted, threshold);
 		
 		// Load the reference nodes
 		if (refNodesFile != null)
@@ -132,10 +137,10 @@ public class Network {
 
 
 	/** Constructor for unweighted networks with default threshold 0 */
-	public Network(File file, 
+	public Network(Magnum mag, File file, 
 			boolean isDirected, boolean removeSelfLoops) {
 		
-		this(file, isDirected, removeSelfLoops, false, 0);
+		this(mag, file, isDirected, removeSelfLoops, false, 0);
 	}
 
 	
@@ -145,7 +150,7 @@ public class Network {
 	public void loadNetwork(File file) {
 				
 		this.file_ = file;
-		this.name = MagnumUtils.extractBasicFilename(file.getName(), false);
+		this.name = mag.utils.extractBasicFilename(file.getName(), false);
 		// Create graph_		
 		loadGraph();
 		// Remove super-hubs
@@ -164,24 +169,24 @@ public class Network {
 		useRefNodes_ = false;
 		
 		// Print info
-		Magnum.log.println("- Treat as: " + (isDirected_ ? "DIRECTED" : "UNDIRECTED") + ", " + (isWeighted_ ? "WEIGHTED" : "UNWEIGHTED"));
-		Magnum.log.println("- Remove self-loops: " + (removeSelfLoops_ ? "YES" : "NO"));
-		Magnum.log.println("- Discard edges below threshold: " + threshold_);
-		Magnum.log.println("");
+		mag.log.println("- Treat as: " + (isDirected_ ? "DIRECTED" : "UNDIRECTED") + ", " + (isWeighted_ ? "WEIGHTED" : "UNWEIGHTED"));
+		mag.log.println("- Remove self-loops: " + (removeSelfLoops_ ? "YES" : "NO"));
+		mag.log.println("- Discard edges below threshold: " + threshold_);
+		mag.log.println("");
 		
-		Magnum.log.println("Loaded network with:");
-		Magnum.log.println("- " + graph_.getVertexCount() + " nodes");
-		Magnum.log.println("- " + graph_.getEdgeCount() + " edges");
-		Magnum.log.println("Removed:");
-		Magnum.log.println("- " + numBelowThreshold_ + " edges below threshold");			
-		Magnum.log.println("- " + numRemovedMultiEdges_ + " multi-edges" + (isWeighted_? ", taking MAX edge weight" : "") );
+		mag.log.println("Loaded network with:");
+		mag.log.println("- " + graph_.getVertexCount() + " nodes");
+		mag.log.println("- " + graph_.getEdgeCount() + " edges");
+		mag.log.println("Removed:");
+		mag.log.println("- " + numBelowThreshold_ + " edges below threshold");			
+		mag.log.println("- " + numRemovedMultiEdges_ + " multi-edges" + (isWeighted_? ", taking MAX edge weight" : "") );
 		if (removeSelfLoops_)
-			Magnum.log.println("- " + numRemovedSelfEdges_ + " self-loops");
-		if (Magnum.set.superHubThreshold_ > 0 && Magnum.set.superHubThreshold_ < 1)
-			Magnum.log.println("- " + numRemovedSuperHubs_ + " super-hubs connecting > " + 100*Magnum.set.superHubThreshold_ + "% of all genes");
+			mag.log.println("- " + numRemovedSelfEdges_ + " self-loops");
+		if (mag.set.superHubThreshold_ > 0 && mag.set.superHubThreshold_ < 1)
+			mag.log.println("- " + numRemovedSuperHubs_ + " super-hubs connecting > " + 100*mag.set.superHubThreshold_ + "% of all genes");
 		if (numRemovedIsolatedNodes_ > 0)
-			Magnum.log.println("- " + numRemovedIsolatedNodes_ + " isolated nodes (degree 0)");
-		Magnum.log.println("");
+			mag.log.println("- " + numRemovedIsolatedNodes_ + " isolated nodes (degree 0)");
+		mag.log.println("");
 	}
 
 	
@@ -190,11 +195,11 @@ public class Network {
 	/** Save the Network */
 	public void write(String filename) {
 
-		FileExport writer = new FileExport(filename, true);
+		FileExport writer = new FileExport(mag, filename, true);
 		for (Edge edge : graph_.getEdges()) {
 			String nextLine = graph_.getSource(edge).id_ + "\t" + graph_.getDest(edge).id_;
 			if (isWeighted_)
-				nextLine += "\t" + MagnumUtils.toStringScientific10(edge.w_);
+				nextLine += "\t" + mag.utils.toStringScientific10(edge.w_);
 			writer.println(nextLine);
 		}
 		writer.close();
@@ -207,7 +212,7 @@ public class Network {
 	public void loadRefNodes(File file) {
 		
 		// Open the file
-		FileParser parser = new FileParser(file);
+		FileParser parser = new FileParser(mag, file);
 		String[] nextLine = parser.readLine();
 		refNodeIndexMap_ = new DualHashBidiMap<Node,Integer>();
 		
@@ -399,7 +404,7 @@ public class Network {
 			weightedDegree[i] = weightedDegree(n);
         }
         if (isolatedNodes)
-        	Magnum.log.warning("Isolated nodes in network (degree 0)");
+        	mag.log.warning("Isolated nodes in network (degree 0)");
 
 		// Case 2
         for (Edge edge : graph_.getEdges()) {
@@ -459,10 +464,10 @@ public class Network {
 			graph_ = new UndirectedSparseGraph<Node, Edge>();
 		
 		// Open the file
-		FileParser parser = new FileParser(file_);
-		if (Magnum.set.networkFileDelim_.equalsIgnoreCase("TAB"))
+		FileParser parser = new FileParser(mag, file_);
+		if (mag.set.networkFileDelim_.equalsIgnoreCase("TAB"))
 			parser.setSeparator("\t");
-		else if (Magnum.set.networkFileDelim_.equalsIgnoreCase("SPACE"))
+		else if (mag.set.networkFileDelim_.equalsIgnoreCase("SPACE"))
 			parser.setSeparator(" ");
 		else
 			throw new IllegalArgumentException("Settings.networkFileDelim_ must be either 'tab' or 'space' (in words like this)");
@@ -555,10 +560,10 @@ public class Network {
 	/** Exclude "super-hubs" that connect to more than the given fraction of genes */
 	private void removeSuperHubs() {
 				
-		if (Magnum.set.superHubThreshold_ <= 0 || Magnum.set.superHubThreshold_ >= 1)
+		if (mag.set.superHubThreshold_ <= 0 || mag.set.superHubThreshold_ >= 1)
 			return;
 		
-		int maxDegree = (int) (Magnum.set.superHubThreshold_ * graph_.getVertexCount());
+		int maxDegree = (int) (mag.set.superHubThreshold_ * graph_.getVertexCount());
 		ArrayList<Node> superHubs = new ArrayList<Node>();
 		
 		for (Node node : graph_.getVertices())

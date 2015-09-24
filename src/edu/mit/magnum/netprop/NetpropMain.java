@@ -36,6 +36,9 @@ import java.util.LinkedHashMap;
  */
 public class NetpropMain {
 
+	/** The magnum instance */
+	private Magnum mag;
+
 	/** The network that is being analyzed */
 	Network network_ = null;
 	/** The different analyzers */
@@ -46,30 +49,31 @@ public class NetpropMain {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public NetpropMain(Network network) {
+	public NetpropMain(Magnum mag, Network network) {
 		
+		this.mag = mag;
 		network_ = network;
 		analyzers_ = new ArrayList<NetworkProperties>();
 
 		// Basic node properties
-		if (Magnum.set.computeDegree_ || Magnum.set.computeBetweenness_ || Magnum.set.computeClusteringCoefficient_)
-			analyzers_.add(new BasicProperties(network));
+		if (mag.set.computeDegree_ || mag.set.computeBetweenness_ || mag.set.computeClusteringCoefficient_)
+			analyzers_.add(new BasicProperties(mag, network));
 		
 		// Shortest paths
-		if (Magnum.set.computeShortestPathLengths_)
-			analyzers_.add(new ShortestPaths(network, Magnum.set.exportNodeProperties_));
+		if (mag.set.computeShortestPathLengths_)
+			analyzers_.add(new ShortestPaths(mag, network, mag.set.exportNodeProperties_));
 		
 		// P-step kernel
-		if (Magnum.set.computePstepKernel_)
-			analyzers_.add(new PstepKernel(network, Magnum.set.pstepKernelAlpha_, Magnum.set.pstepKernelP_, Magnum.set.pstepKernelNormalize_, Magnum.set.exportNodeProperties_));
+		if (mag.set.computePstepKernel_)
+			analyzers_.add(new PstepKernel(mag, network, mag.set.pstepKernelAlpha_, mag.set.pstepKernelP_, mag.set.pstepKernelNormalize_, mag.set.exportNodeProperties_));
 
 		// Tanimoto coefficient between TFs
-		if (Magnum.set.computeTfTanimoto_)
-			analyzers_.add(new TanimotoCoefficient(network, false, Magnum.set.exportNodeProperties_));
+		if (mag.set.computeTfTanimoto_)
+			analyzers_.add(new TanimotoCoefficient(mag, network, false, mag.set.exportNodeProperties_));
 
 		// Tanimoto coefficient between targets 
-		if (Magnum.set.computeTargetTanimoto_)
-			analyzers_.add(new TanimotoCoefficient(network, true, Magnum.set.exportNodeProperties_));
+		if (mag.set.computeTargetTanimoto_)
+			analyzers_.add(new TanimotoCoefficient(mag, network, true, mag.set.exportNodeProperties_));
 }
 	
 	
@@ -109,7 +113,7 @@ public class NetpropMain {
 	/** Collect node properties from the analyzers and save together in one file */
 	private void saveNodeProperties() {
 		
-		String basicFilename = MagnumUtils.extractBasicFilename(network_.getFile().getName(), false);
+		String basicFilename = mag.utils.extractBasicFilename(network_.getFile().getName(), false);
 		
 		// Collect node properties from analyzers
 		LinkedHashMap<String,Number[]> nodeProperties = new LinkedHashMap<String,Number[]>();
@@ -130,7 +134,7 @@ public class NetpropMain {
 		basicFilename += "_nodeProperties" + weighted + directionality + ".txt";
 
 		// The file writer
-		FileExport writer = new FileExport(basicFilename, Magnum.set.compressFiles_);
+		FileExport writer = new FileExport(mag, basicFilename, mag.set.compressFiles_);
 		
 		// Write the header
 		for (int i=0; i<ids.size(); i++)

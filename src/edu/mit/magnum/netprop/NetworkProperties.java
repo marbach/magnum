@@ -25,11 +25,11 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.netprop;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import edu.uci.ics.jung.graph.AbstractTypedGraph;
+import edu.mit.magnum.Magnum;
 import edu.mit.magnum.net.*;
 
 
@@ -38,6 +38,9 @@ import edu.mit.magnum.net.*;
  * - NodeProperties
  */
 public abstract class NetworkProperties {
+
+	/** The magnum instance */
+	protected Magnum mag;
 
 	/** The network that is being analyzed */
 	protected Network network_ = null;
@@ -72,8 +75,9 @@ public abstract class NetworkProperties {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public NetworkProperties(Network network) {
+	public NetworkProperties(Magnum mag, Network network) {
 		
+		this.mag = mag;
 		network_ = network;
 		graph_ = network.getGraph();
 		isDirected_ = network.getIsDirected();

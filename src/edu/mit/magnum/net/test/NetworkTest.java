@@ -50,6 +50,9 @@ import edu.mit.magnum.net.*;
  */
 public class NetworkTest {
 	
+	/** The magnum instance */
+	private static Magnum mag = new Magnum();
+
 	/** Test network */
 	private File ppiNetFile_ = new File("src/edu/mit/magnum/netprop/test/ppi.txt");
 	
@@ -64,8 +67,8 @@ public class NetworkTest {
 	
 	@BeforeClass
 	public static void testSetup() {
-		Magnum.set.resetToDefaults();
-		Magnum.set.superHubThreshold_ = 0;
+		mag.set.resetToDefaults();
+		mag.set.superHubThreshold_ = 0;
 	}
 
 	@AfterClass
@@ -80,12 +83,12 @@ public class NetworkTest {
 	public void testUndirectedLoad() {
 
 		// Create undirected network without self-loops
-		Network ppi = new Network(ppiNetFile_, false, true);
+		Network ppi = new Network(mag, ppiNetFile_, false, true);
 		assertEquals(ppi.getNumNodes(), ppiNumNodes_);
 		assertEquals(ppi.getNumEdges(), ppiNumUndirEdges_);
 		
 		// Create undirected network with self-loops
-		ppi = new Network(ppiNetFile_, false, false);
+		ppi = new Network(mag, ppiNetFile_, false, false);
 		assertEquals(ppi.getNumNodes(), ppiNumNodesAllowSelfLoops_);
 		assertEquals(ppi.getNumEdges(), ppiNumUndirEdgesAllowSelfLoops_);
 	}
@@ -98,7 +101,7 @@ public class NetworkTest {
 	public void testWeightedLoad() {
 
 		// Create undirected network without self-loops
-		Network net = new Network(new File("src/edu/mit/magnum/netprop/test/hierarchicalScaleFreeLevel1.txt"), false, true, true, 0.5);		
+		Network net = new Network(mag, new File("src/edu/mit/magnum/netprop/test/hierarchicalScaleFreeLevel1.txt"), false, true, true, 0.5);		
 		assertEquals(net.getNumNodes(), 4);
 		assertEquals(net.getNumEdges(), 3);	
 		
@@ -111,7 +114,7 @@ public class NetworkTest {
 		assertEquals(0.96, net.getEdge("3", "0").w_, epsilon);
 
 		// Create directed network without self-loops
-		net = new Network(new File("src/edu/mit/magnum/netprop/test/hierarchicalScaleFreeLevel1.txt"), true, true, true, 0.5);		
+		net = new Network(mag, new File("src/edu/mit/magnum/netprop/test/hierarchicalScaleFreeLevel1.txt"), true, true, true, 0.5);		
 		assertEquals(net.getNumNodes(), 4);
 		assertEquals(net.getNumEdges(), 4);	
 		
@@ -130,7 +133,7 @@ public class NetworkTest {
 	@Test
 	public void testComputeLaplacian() {
 		
-		Network net = new Network(new File("src/edu/mit/magnum/netprop/test/simpleNet.txt"), false, true);
+		Network net = new Network(mag, new File("src/edu/mit/magnum/netprop/test/simpleNet.txt"), false, true);
 		SparseDoubleMatrix2D L = net.computeLaplacian();
 		
 		double[][] L_expected = {
@@ -154,7 +157,7 @@ public class NetworkTest {
 	@Test
 	public void testComputeNormalizedLaplacian() {
 		
-		Network net = new Network(new File("src/edu/mit/magnum/netprop/test/simpleNet.txt"), false, true);
+		Network net = new Network(mag, new File("src/edu/mit/magnum/netprop/test/simpleNet.txt"), false, true);
 		SparseDoubleMatrix2D L = net.computeNormalizedLaplacian();
 		
 		double[][] L_expected = {

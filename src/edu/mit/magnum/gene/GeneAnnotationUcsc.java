@@ -42,9 +42,9 @@ public class GeneAnnotationUcsc extends GeneAnnotation {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public GeneAnnotationUcsc(String chromosomeToBeLoaded, boolean loadProteinCodingOnly) {
+	public GeneAnnotationUcsc(Magnum mag, String chromosomeToBeLoaded, boolean loadProteinCodingOnly) {
 		
-		super(Magnum.set.gencodeAnnotationFile_, chromosomeToBeLoaded, loadProteinCodingOnly);
+		super(mag, mag.set.gencodeAnnotationFile_, chromosomeToBeLoaded, loadProteinCodingOnly);
 	}
 
 	
@@ -56,10 +56,10 @@ public class GeneAnnotationUcsc extends GeneAnnotation {
 	 */
 	public LinkedHashMap<String, Gene> loadAnnotation() {
 		
-		Magnum.log.error("TBD: Check, debug, adapt so that genesToBeLoaded_ is used");
+		mag.log.error("TBD: Check, debug, adapt so that genesToBeLoaded_ is used");
 		
 		genes_ = new LinkedHashMap<String, Gene>();
-		FileParser parser = new FileParser(Magnum.set.ucscAnnotationFile_);
+		FileParser parser = new FileParser(mag, mag.set.ucscAnnotationFile_);
 		
 		// Skip the header lines (start with #)
 		String[] nextLine = parser.readLine();

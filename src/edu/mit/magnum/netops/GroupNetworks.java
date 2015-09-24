@@ -31,7 +31,6 @@ import java.util.HashMap;
 
 import edu.mit.magnum.FileParser;
 import edu.mit.magnum.Magnum;
-import edu.mit.magnum.MagnumUtils;
 import edu.mit.magnum.net.Network;
 
 
@@ -39,6 +38,9 @@ import edu.mit.magnum.net.Network;
  * Do operations on sets of networks
  */
 public class GroupNetworks {
+
+	/** The magnum instance */
+	private Magnum mag;
 
 	/** The network directory */
 	File networkDir_ = null;
@@ -52,8 +54,9 @@ public class GroupNetworks {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public GroupNetworks(File networkDir, File networkGroupFile, String networkFilesPrefix) {
+	public GroupNetworks(Magnum mag, File networkDir, File networkGroupFile, String networkFilesPrefix) {
 		
+		this.mag = mag;
 		networkDir_ = networkDir;
 		networkFilesPrefix_ = networkFilesPrefix;
 		initialize(networkGroupFile);
@@ -67,12 +70,12 @@ public class GroupNetworks {
 		
 		for (String name : networkSets_.keySet()) {
 			ArrayList<String> filenames = networkSets_.get(name);
-			Magnum.log.println("- " + name + " (" + filenames.size() + " networks)\n");
+			mag.log.println("- " + name + " (" + filenames.size() + " networks)\n");
 			
-			Union union = new Union(networkDir_, filenames);
+			Union union = new Union(mag, networkDir_, filenames);
 			Network net = union.run();
 			
-			String filename = new File(Magnum.set.outputDirectory_, networkFilesPrefix_ + name + ".txt").getPath();
+			String filename = new File(mag.set.outputDirectory_, networkFilesPrefix_ + name + ".txt").getPath();
 			net.write(filename);
 		}
 	}
@@ -87,13 +90,13 @@ public class GroupNetworks {
 		networkSets_ = new HashMap<String, ArrayList<String>>();
 		
 		if (networkGroupFile == null) {
-			ArrayList<String> filenames = MagnumUtils.listFiles(networkDir_);
+			ArrayList<String> filenames = mag.utils.listFiles(networkDir_);
 			networkSets_.put("_networkUnion", filenames);
-			Magnum.log.println("- " + filenames.size() + " files in network directory");
+			mag.log.println("- " + filenames.size() + " files in network directory");
 			return;
 		}
 
-		FileParser parser = new FileParser(networkGroupFile);
+		FileParser parser = new FileParser(mag, networkGroupFile);
 		// Skip header
 		//parser.skipLines(1);
 
@@ -124,8 +127,8 @@ public class GroupNetworks {
 			files.add(filename);	
 		}
 		parser.close();		
-		Magnum.log.println("- Initialized " + networkSets_.size() + " network sets");
-		Magnum.log.println();
+		mag.log.println("- Initialized " + networkSets_.size() + " network sets");
+		mag.log.println();
 	}
 
 	

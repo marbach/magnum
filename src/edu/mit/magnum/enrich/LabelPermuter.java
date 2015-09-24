@@ -38,6 +38,9 @@ import edu.mit.magnum.gene.Gene;
  */
 public class LabelPermuter {
 
+	/** The magnum instance */
+	private Magnum mag;
+
 	/** The functional / network data */
 	protected FunctionalData functData_ = null;
 	/** The genes sorted by centrality */
@@ -57,15 +60,16 @@ public class LabelPermuter {
 	// PUBLIC METHODS
 	
 	/** Constructor for pairwise funct data */
-	public LabelPermuter(FunctionalData functData, ArrayList<Gene> genes, int numBins) {
+	public LabelPermuter(Magnum mag, FunctionalData functData, ArrayList<Gene> genes, int numBins) {
 		
-		this(functData, genes, numBins, -1);
+		this(mag, functData, genes, numBins, -1);
 	}
 
 	
 	/** Constructor for per gene funct data, specifying which column should be used */
-	public LabelPermuter(FunctionalData functData, ArrayList<Gene> genes, int numBins, int functDataCol) {
-			
+	public LabelPermuter(Magnum mag, FunctionalData functData, ArrayList<Gene> genes, int numBins, int functDataCol) {
+		
+		this.mag = mag;
 		functData_ = functData;
 		genes_ = new ArrayList<Gene>(genes);
 		numBins_ = numBins;
@@ -87,7 +91,7 @@ public class LabelPermuter {
 		
 		// We could shuffle either the indexes or the genes, doesn't matter
 		for (int i=0; i<numBins_; i++)
-			Collections.shuffle(binnedIndexes_.get(i), Magnum.set.jdkRng_);
+			Collections.shuffle(binnedIndexes_.get(i), mag.set.jdkRng_);
 		
 		// Assign the new indexes to the genes
 		for (int i=0; i<numBins_; i++) {

@@ -41,17 +41,19 @@ import edu.mit.magnum.netops.Union;
  */
 public class UnionTest {
 	
-	
+	/** The magnum instance */
+	private static Magnum mag = new Magnum();
+
 	// ============================================================================
 	// SETUP
 	
 	@BeforeClass
 	public static void testSetup() {
-		Magnum.set.resetToDefaults();
-		Magnum.set.superHubThreshold_ = 0;
-		Magnum.set.computeUnion_ = true;
-		Magnum.set.isDirected_ = true;
-		Magnum.set.isWeighted_ = true;
+		mag.set.resetToDefaults();
+		mag.set.superHubThreshold_ = 0;
+		mag.set.computeUnion_ = true;
+		mag.set.isDirected_ = true;
+		mag.set.isWeighted_ = true;
 	}
 
 	@AfterClass
@@ -66,7 +68,7 @@ public class UnionTest {
 	public void testUnionMax() {
 
 		// Initialize netops
-		Union union = new Union(new File("src/edu/mit/magnum/netops/test/net.e"));
+		Union union = new Union(mag, new File("src/edu/mit/magnum/netops/test/net.e"));
 		// Compute union
 		Network net = union.run();
 		assertEquals(8, net.getNumEdges());

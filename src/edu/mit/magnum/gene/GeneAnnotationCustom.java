@@ -40,9 +40,9 @@ public class GeneAnnotationCustom extends GeneAnnotation {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public GeneAnnotationCustom(String chromosomeToBeLoaded) {
+	public GeneAnnotationCustom(Magnum mag, String chromosomeToBeLoaded) {
 		
-		super(Magnum.set.geneCoordFile_, chromosomeToBeLoaded, false);
+		super(mag, mag.set.geneCoordFile_, chromosomeToBeLoaded, false);
 	}
 	
 
@@ -56,9 +56,9 @@ public class GeneAnnotationCustom extends GeneAnnotation {
 		// Open the file
 		FileParser parser;
 		if (annotationFile_ == null)
-			parser = new FileParser(Magnum.class.getClassLoader().getResourceAsStream(Magnum.set.annotationRsc));
+			parser = new FileParser(Magnum.class.getClassLoader().getResourceAsStream(mag.set.annotationRsc));
 		else
-			parser = new FileParser(annotationFile_);
+			parser = new FileParser(mag, annotationFile_);
 						
 		while (true) {
 			// Read next line

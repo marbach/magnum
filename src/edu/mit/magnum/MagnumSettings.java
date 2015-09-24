@@ -242,7 +242,8 @@ public class MagnumSettings extends Settings {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public MagnumSettings() {
+	public MagnumSettings(Magnum mag) {
+		super(mag);
 		resetToDefaults();
 	}
 	
@@ -353,8 +354,8 @@ public class MagnumSettings extends Settings {
 	/** Load settings from given file */
 	public void loadSettings(String settingsFile, boolean requireAll) {
 		
-		Magnum.log.println("SETTINGS FILE");
-		Magnum.log.println("-------------\n");
+		mag.log.println("SETTINGS FILE");
+		mag.log.println("-------------\n");
 				
 		try {
 			// Open the input stream
@@ -367,7 +368,7 @@ public class MagnumSettings extends Settings {
 				throw new RuntimeException("Settings file not found: " + settingsFile);
 
 			// Open file input stream
-			Magnum.log.println("- Loading settings file: " + settingsFile + "\n");
+			mag.log.println("- Loading settings file: " + settingsFile + "\n");
 			InputStream in = new FileInputStream(settingsFile);
 
 			// Load the settings
@@ -378,8 +379,8 @@ public class MagnumSettings extends Settings {
 			setParameterValues(requireAll);
 			
 		} catch (Exception e) {
-			Magnum.log.warning(e.getMessage());
-			Magnum.log.error("Failed to load settings file (a parameter may be missing or malformed): " + settingsFile);
+			mag.log.warning(e.getMessage());
+			mag.log.error("Failed to load settings file (a parameter may be missing or malformed): " + settingsFile);
 		}		
 	}
 	

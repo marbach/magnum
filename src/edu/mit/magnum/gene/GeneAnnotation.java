@@ -41,6 +41,9 @@ import edu.mit.magnum.Magnum;
  */
 abstract public class GeneAnnotation {
 
+	/** The magnum instance */
+	protected Magnum mag;
+
 	/** The file with the genome annotation */
 	protected File annotationFile_ = null;
 	
@@ -59,8 +62,9 @@ abstract public class GeneAnnotation {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public GeneAnnotation(File annotationFile, String chromosomeToBeLoaded, boolean loadOnlyProteinCoding) {
+	public GeneAnnotation(Magnum mag, File annotationFile, String chromosomeToBeLoaded, boolean loadOnlyProteinCoding) {
 		
+		this.mag = mag;
 		annotationFile_ = annotationFile; 
 		chromosomeToBeLoaded_ = chromosomeToBeLoaded;
 		loadOnlyProteinCoding_ = loadOnlyProteinCoding;
@@ -86,7 +90,7 @@ abstract public class GeneAnnotation {
 				if (!entry.getValue())
 					genesNotFound += entry.getKey() + " ";
 
-			Magnum.log.println("   - " + numNotFound + " genes were not found in the annotation: " + genesNotFound);
+			mag.log.println("   - " + numNotFound + " genes were not found in the annotation: " + genesNotFound);
 		}
 		return genes_;
 	}
@@ -110,7 +114,7 @@ abstract public class GeneAnnotation {
 				g.setPosition(g_annot.chr_, g_annot.start_, g_annot.end_, g_annot.posStrand_);
 		}
 		if (notFound > 0)
-			Magnum.log.warning(notFound + " genes not found in annotation");
+			mag.log.warning(notFound + " genes not found in annotation");
 	}
 
 
@@ -132,7 +136,7 @@ abstract public class GeneAnnotation {
 			return;
 
 		genesToBeLoaded_ = new HashMap<String, Boolean>();
-		FileParser parser = new FileParser(filename);
+		FileParser parser = new FileParser(mag, filename);
 		
 		while (true) {
 			String[] nextLine = parser.readLine();
@@ -152,7 +156,7 @@ abstract public class GeneAnnotation {
 	/** Write the genes to a file with gene id, symbol and position */
 	public void writeGeneList(String filename) {
 		
-		FileExport writer = new FileExport(filename);
+		FileExport writer = new FileExport(mag, filename);
 		String prevChr = null;
 		int prevStart = -1;
 		
@@ -166,7 +170,7 @@ abstract public class GeneAnnotation {
 			}
 			
 			if (gene.start_ < prevStart)
-				Magnum.log.error("Genes are not ordered by genomic position");
+				mag.log.error("Genes are not ordered by genomic position");
 			
 			String nextLine = gene.id_ + "\t" + gene.symbol_ + "\t" + 
 					gene.chr_ + "\t" + gene.start_ + "\t" + gene.end_ + "\t" + 
@@ -207,7 +211,7 @@ abstract public class GeneAnnotation {
 		if (ch.equals("-"))
 			posStrand = false;
 		else if (!ch.equals("+"))
-			Magnum.log.error("Strand has to be '+' or '-'");
+			mag.log.error("Strand has to be '+' or '-'");
 		
 		return posStrand;
 	}

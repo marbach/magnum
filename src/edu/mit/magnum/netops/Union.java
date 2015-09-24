@@ -28,7 +28,6 @@ package edu.mit.magnum.netops;
 import java.io.File;
 import java.util.ArrayList;
 
-import edu.mit.magnum.MagnumUtils;
 import edu.mit.magnum.Magnum;
 import edu.mit.magnum.net.*;
 import edu.uci.ics.jung.graph.AbstractTypedGraph;
@@ -39,6 +38,9 @@ import edu.uci.ics.jung.graph.AbstractTypedGraph;
  * - NodeProperties
  */
 public class Union {
+
+	/** The magnum instance */
+	private Magnum mag;
 
 	/** The network directory */
 	File networkDir_ = null;
@@ -52,16 +54,18 @@ public class Union {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public Union(File networkDir) {
+	public Union(Magnum mag, File networkDir) {
 		
+		this.mag = mag;
 		networkDir_ = networkDir;
-		networkFiles_ = MagnumUtils.listFiles(networkDir);
+		networkFiles_ = mag.utils.listFiles(networkDir);
 	}
 	
 	
 	/** Constructor */
-	public Union(File networkDir, ArrayList<String> networkFiles) {
+	public Union(Magnum mag, File networkDir, ArrayList<String> networkFiles) {
 		
+		this.mag = mag;
 		networkDir_ = networkDir;
 		networkFiles_ = networkFiles;
 	}
@@ -72,17 +76,17 @@ public class Union {
 	/** Compute union (max edges) across given network files */
 	public Network run() {
 		
-		if (!Magnum.set.isDirected_)
+		if (!mag.set.isDirected_)
 			throw new RuntimeException("Not yet implemented for undirected networks");
 
 		// Load the first network
-		network_ = new Network(new File(networkDir_, networkFiles_.get(0)), 
-				Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
+		network_ = new Network(mag, new File(networkDir_, networkFiles_.get(0)), 
+				mag.set.isDirected_, mag.set.removeSelfLoops_, mag.set.isWeighted_, mag.set.threshold_);
 		
 		// Add one network after the other
 		for (int i=1; i<networkFiles_.size(); i++) {
-			Network nextNet = new Network(new File(networkDir_, networkFiles_.get(i)), 
-					Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
+			Network nextNet = new Network(mag, new File(networkDir_, networkFiles_.get(i)), 
+					mag.set.isDirected_, mag.set.removeSelfLoops_, mag.set.isWeighted_, mag.set.threshold_);
 			union(nextNet);
 		}
 		

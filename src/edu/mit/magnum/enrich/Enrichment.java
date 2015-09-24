@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import cern.colt.matrix.DoubleMatrix2D;
 import edu.mit.magnum.FileExport;
 import edu.mit.magnum.Magnum;
-import edu.mit.magnum.MagnumUtils;
 import edu.mit.magnum.ProgressMonitor;
 import edu.mit.magnum.gene.Gene;
 
@@ -40,6 +39,9 @@ import edu.mit.magnum.gene.Gene;
  * 
  */
 abstract public class Enrichment {
+
+	/** The magnum instance */
+	protected Magnum mag;
 
 	/** The functional data */
 	protected DoubleMatrix2D functData_ = null;
@@ -104,10 +106,11 @@ abstract public class Enrichment {
 	// PUBLIC METHODS
 
 	/** Constructor */
-	public Enrichment(FunctionalData functData, GeneScoreList geneScores, LabelPermuter permuter) {
+	public Enrichment(Magnum mag, FunctionalData functData, GeneScoreList geneScores, LabelPermuter permuter) {
 
-		numPermutations_ = Magnum.set.numPermutations_;
-		numPermutationsExport_ = Magnum.set.numPermutationsExport_;
+		this.mag = mag;
+		numPermutations_ = mag.set.numPermutations_;
+		numPermutationsExport_ = mag.set.numPermutationsExport_;
 		if (numPermutationsExport_ == -1)
 			numPermutationsExport_ = numPermutations_;
 		functData_ = functData.getData();
@@ -122,19 +125,19 @@ abstract public class Enrichment {
 		initializeK();
 				
 		// Display info
-		if (Magnum.set.curveCutoff_ < 1)
-			Magnum.log.println("- " + 100*Magnum.set.curveCutoff_ + "% top genes used");
-		Magnum.log.print("- " + k_.size() + " points per curve ");
-		if (Magnum.set.varCurveResolution_ > 0) 
-			Magnum.log.print("(variable resolution, delta=" + Magnum.set.varCurveResolution_ + ")\n");
+		if (mag.set.curveCutoff_ < 1)
+			mag.log.println("- " + 100*mag.set.curveCutoff_ + "% top genes used");
+		mag.log.print("- " + k_.size() + " points per curve ");
+		if (mag.set.varCurveResolution_ > 0) 
+			mag.log.print("(variable resolution, delta=" + mag.set.varCurveResolution_ + ")\n");
 		else
-			Magnum.log.print("(fixed resolution, delta=" + Magnum.set.constCurveResolution_ + ")\n");
-		Magnum.log.println("- " + numPermutations_ + " permutations");
-		Magnum.log.println("- " + Magnum.set.numBins_ + " bins for within-degree permutation");
-		if (Magnum.set.excludedGenesDistance_ > 0)
-			Magnum.log.println("- Excluding gene pairs with respective windows <" + Magnum.set.excludedGenesDistance_ + "mb apart");
-		Magnum.log.println("- Sliding window size: " + Magnum.set.slidingWindowSize_);
-		Magnum.log.println();
+			mag.log.print("(fixed resolution, delta=" + mag.set.constCurveResolution_ + ")\n");
+		mag.log.println("- " + numPermutations_ + " permutations");
+		mag.log.println("- " + mag.set.numBins_ + " bins for within-degree permutation");
+		if (mag.set.excludedGenesDistance_ > 0)
+			mag.log.println("- Excluding gene pairs with respective windows <" + mag.set.excludedGenesDistance_ + "mb apart");
+		mag.log.println("- Sliding window size: " + mag.set.slidingWindowSize_);
+		mag.log.println();
 
 	}
 
@@ -148,7 +151,7 @@ abstract public class Enrichment {
 		//expected_ = computeSum();
 		
 		// Compute enrichment curve for original / unpermuted case (also computes curveExpected_)
-		Magnum.log.println("Computing enrichment curve for unpermuted list:");
+		mag.log.println("Computing enrichment curve for unpermuted list:");
 		long t0 = System.currentTimeMillis();
 		
 		computeCurve(true);
@@ -156,20 +159,20 @@ abstract public class Enrichment {
 		curveObsSlidingWindow_ = curCurveSlidingWindow_;
 		
 		long t1 = System.currentTimeMillis();
-		Magnum.log.println("Estimated runtime for " + numPermutations_ + " random permutations: " + MagnumUtils.chronometer(numPermutations_*(t1-t0)));
+		mag.log.println("Estimated runtime for " + numPermutations_ + " random permutations: " + mag.utils.chronometer(numPermutations_*(t1-t0)));
 				
 		// Do random permutations
 		computePermutCurves();
 		
 		// Compute empirical p-values based on random permutations
-		empiricalPvals_ = new EmpiricalPvals(curvesPermut_, k_);
+		empiricalPvals_ = new EmpiricalPvals(mag, curvesPermut_, k_);
 		empiricalPvals_.computeCurvesSignificance();
 		empiricalPvals_.computePvalCurve(curveObs_, false); //true);
 		curveMedian_ = empiricalPvals_.getCurveMedian();
 
 		// Compute empirical p-values based on random permutations
-		if (Magnum.set.slidingWindowSize_ > 0) {
-			empiricalPvalsSlidingWindow_ = new EmpiricalPvals(curvesPermutSlidingWindow_, k_);
+		if (mag.set.slidingWindowSize_ > 0) {
+			empiricalPvalsSlidingWindow_ = new EmpiricalPvals(mag, curvesPermutSlidingWindow_, k_);
 			empiricalPvalsSlidingWindow_.computeCurvesSignificance();
 			empiricalPvalsSlidingWindow_.computePvalCurve(curveObsSlidingWindow_, false);
 			curveMedianSlidingWindow_ = empiricalPvalsSlidingWindow_.getCurveMedian();
@@ -237,7 +240,7 @@ abstract public class Enrichment {
 		ProgressMonitor progress = null;
 		if (isObs) {
 			curveObsGeneScores_ = new Curve(k_.size());
-			progress = new ProgressMonitor(k_.size());
+			progress = new ProgressMonitor(mag, k_.size());
 		}
 		
 		int kIndex = 0; // index pointing to the next k_
@@ -254,7 +257,7 @@ abstract public class Enrichment {
 				curCurve_.addPoint(enrich);
 
 				// Window enrichment
-				if (Magnum.set.slidingWindowSize_ > 0) {
+				if (mag.set.slidingWindowSize_ > 0) {
 					double enrichWindow = computeSlidingWindowConnectivity();
 					// For the first points, sliding window and overall enrichment is the same (only when doing within window enrichment)
 					//assert (currentK_ > Settings.slidingWindowSize_) || 
@@ -291,7 +294,7 @@ abstract public class Enrichment {
 		curvesPermutSlidingWindow_ = new ArrayList<Curve>(numPermutations_);
 		
 		//Ngsea.println("Computing enrichment for " + numPermutations_ + " random permutations");
-		ProgressMonitor progress = new ProgressMonitor(numPermutations_);
+		ProgressMonitor progress = new ProgressMonitor(mag, numPermutations_);
 
 		for (int i=0; i<numPermutations_; i++) {
 			// Print progress
@@ -300,7 +303,7 @@ abstract public class Enrichment {
 			permuter_.shuffle();
 			computeCurve(false);
 			curvesPermut_.add(curCurve_);
-			if (Magnum.set.slidingWindowSize_ > 0)
+			if (mag.set.slidingWindowSize_ > 0)
 				curvesPermutSlidingWindow_.add(curCurveSlidingWindow_);
 		}
 		progress.done();
@@ -321,7 +324,7 @@ abstract public class Enrichment {
 			throw new RuntimeException("Enrichment curve of observed list has inconsistent number of points");
 		
 		// Sliding window enrichment
-		if (Magnum.set.slidingWindowSize_ > 0) {
+		if (mag.set.slidingWindowSize_ > 0) {
 			for (int i = 0; i < curvesPermutSlidingWindow_.size(); i++)
 				if (curvesPermutSlidingWindow_.get(i).getNumPoints() != k_.size())
 					throw new RuntimeException("Sliding window enrichment curve of permuted list "
@@ -338,28 +341,28 @@ abstract public class Enrichment {
 	/** Initialize the points to be computed / plotted */
 	private void initializeK() {
 
-		int numGenes = (int) Math.round(Magnum.set.curveCutoff_ * geneScores_.getNumGenes());
+		int numGenes = (int) Math.round(mag.set.curveCutoff_ * geneScores_.getNumGenes());
 		
 		// vary resolution
-		if (Magnum.set.varCurveResolution_ > 0) {
+		if (mag.set.varCurveResolution_ > 0) {
 			k_ = new ArrayList<Integer>();
 
-			int delta = Magnum.set.varCurveResolution_;
+			int delta = mag.set.varCurveResolution_;
 			int nextK = delta-1;
 			
 			for (int i=0; i<numGenes; i++) {
 				if (i == nextK) {
 					k_.add(i);
-					delta += Magnum.set.varCurveResolution_;
+					delta += mag.set.varCurveResolution_;
 					nextK = i + delta;
 				}
 			}
 			
 		// equidistant points based on curvesResolution_
 		} else {
-			k_ = new ArrayList<Integer>(numGenes/Magnum.set.constCurveResolution_);
+			k_ = new ArrayList<Integer>(numGenes/mag.set.constCurveResolution_);
 			for (int i = 0; i < numGenes; i++) {
-				if ((i+1) % Magnum.set.constCurveResolution_ == 0)
+				if ((i+1) % mag.set.constCurveResolution_ == 0)
 					k_.add(i);
 			}
 		}
@@ -416,12 +419,12 @@ abstract public class Enrichment {
 	/** Print the empirical p-values */
 	public void printPvals() {
 
-		Magnum.log.println("Ranked gene list\tP-value");
-		Magnum.log.println(Math.round(100*Magnum.set.curveCutoff_/4.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[4]));
-		Magnum.log.println(Math.round(100*Magnum.set.curveCutoff_/2.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[5]));
-		Magnum.log.println(Math.round(100*3*Magnum.set.curveCutoff_/4.0) + "%\t" + MagnumUtils.toStringScientific10(pvals_[6]));
-		Magnum.log.println(Math.round(100*Magnum.set.curveCutoff_) + "%\t" + MagnumUtils.toStringScientific10(pvals_[7]));
-		Magnum.log.println();
+		mag.log.println("Ranked gene list\tP-value");
+		mag.log.println(Math.round(100*mag.set.curveCutoff_/4.0) + "%\t" + mag.utils.toStringScientific10(pvals_[4]));
+		mag.log.println(Math.round(100*mag.set.curveCutoff_/2.0) + "%\t" + mag.utils.toStringScientific10(pvals_[5]));
+		mag.log.println(Math.round(100*3*mag.set.curveCutoff_/4.0) + "%\t" + mag.utils.toStringScientific10(pvals_[6]));
+		mag.log.println(Math.round(100*mag.set.curveCutoff_) + "%\t" + mag.utils.toStringScientific10(pvals_[7]));
+		mag.log.println();
 	}
 
 	
@@ -445,7 +448,7 @@ abstract public class Enrichment {
 		
 		// trapezoidal rule
 		for (int i=1; i<k_.size(); i++) {
-			if (k_.get(i) < Magnum.set.AUCStart_)
+			if (k_.get(i) < mag.set.AUCStart_)
 				continue;
 			
 			double delta_x = k_.get(i) - k_.get(i-1);
@@ -500,7 +503,7 @@ abstract public class Enrichment {
 		// Check that curves have consistent number of points
 		checkNumPoints();
 		// Create output file
-		FileExport writer = new FileExport(filename, Magnum.set.compressFiles_);
+		FileExport writer = new FileExport(mag, filename, mag.set.compressFiles_);
 
 		// Write header
 		writer.print("k");
@@ -518,7 +521,7 @@ abstract public class Enrichment {
 		writer.print("\tgeneScore");
 
 		// Sliding window
-		if (Magnum.set.slidingWindowSize_ > 0) {
+		if (mag.set.slidingWindowSize_ > 0) {
 			writer.print("\tobservedWindow");
 			writer.print("\tmedianWindow");
 			writer.print("\tp-valueWindow");
@@ -541,27 +544,27 @@ abstract public class Enrichment {
 			writer.print(Integer.toString(k_.get(p)+1));
 
 			// Enrichment curves
-			writer.print("\t" + MagnumUtils.toStringScientific10(curveObs_.getValue(p)));
-			writer.print("\t" + MagnumUtils.toStringScientific10(curveMedian_.getValue(p)));
-			writer.print("\t" + MagnumUtils.toStringScientific10(empiricalPvals_.getCurvePval().getValue(p)));			
+			writer.print("\t" + mag.utils.toStringScientific10(curveObs_.getValue(p)));
+			writer.print("\t" + mag.utils.toStringScientific10(curveMedian_.getValue(p)));
+			writer.print("\t" + mag.utils.toStringScientific10(empiricalPvals_.getCurvePval().getValue(p)));			
 			for (int i=0; i<empiricalPvals_.getCurvesSignificance().size(); i++)	
-				writer.print("\t" + MagnumUtils.toStringScientific10(empiricalPvals_.getCurvesSignificance().get(i).getValue(p)));
+				writer.print("\t" + mag.utils.toStringScientific10(empiricalPvals_.getCurvesSignificance().get(i).getValue(p)));
 
 			// Gene score
-			writer.print("\t" + MagnumUtils.toStringScientific10(curveObsGeneScores_.getValue(p)));
+			writer.print("\t" + mag.utils.toStringScientific10(curveObsGeneScores_.getValue(p)));
 			
 			// Sliding window enrichment curves
-			if (Magnum.set.slidingWindowSize_ > 0) {
-				writer.print("\t" + MagnumUtils.toStringScientific10(curveObsSlidingWindow_.getValue(p)));
-				writer.print("\t" + MagnumUtils.toStringScientific10(curveMedianSlidingWindow_.getValue(p)));
-				writer.print("\t" + MagnumUtils.toStringScientific10(empiricalPvalsSlidingWindow_.getCurvePval().getValue(p)));			
+			if (mag.set.slidingWindowSize_ > 0) {
+				writer.print("\t" + mag.utils.toStringScientific10(curveObsSlidingWindow_.getValue(p)));
+				writer.print("\t" + mag.utils.toStringScientific10(curveMedianSlidingWindow_.getValue(p)));
+				writer.print("\t" + mag.utils.toStringScientific10(empiricalPvalsSlidingWindow_.getCurvePval().getValue(p)));			
 				for (int i=0; i<empiricalPvalsSlidingWindow_.getCurvesSignificance().size(); i++)	
-					writer.print("\t" + MagnumUtils.toStringScientific10(empiricalPvalsSlidingWindow_.getCurvesSignificance().get(i).getValue(p)));
+					writer.print("\t" + mag.utils.toStringScientific10(empiricalPvalsSlidingWindow_.getCurvesSignificance().get(i).getValue(p)));
 			}
 			
 			// Curves for permuted lists
 			for (int i=0; i<numPermutationsExport_; i++)
-				writer.print("\t" + MagnumUtils.toStringScientific10(curvesPermut_.get(i).getValue(p)));
+				writer.print("\t" + mag.utils.toStringScientific10(curvesPermut_.get(i).getValue(p)));
 
 			writer.print("\n");
 		}
@@ -574,12 +577,12 @@ abstract public class Enrichment {
 	/** Write the AUCs */
 	private void saveAUCs(String filename) {
 		
-		FileExport writer = new FileExport(filename, Magnum.set.compressFiles_);
+		FileExport writer = new FileExport(mag, filename, mag.set.compressFiles_);
 		writer.println("AUC_1\tAUC_2\tAUC_3\tAUC_4\tAUClog2_1\tAUClog2_2\tAUClog2_3\tAUClog2_4\tAUC_GWS\tAUClog2_GWS");
 		for (int i=0; i<AUCs_.size(); i++) {
-			String line = MagnumUtils.toStringScientific10(AUCs_.get(i)[0]);
+			String line = mag.utils.toStringScientific10(AUCs_.get(i)[0]);
 			for (int j=1; j<10; j++)
-				line += "\t" + MagnumUtils.toStringScientific10(AUCs_.get(i)[j]);
+				line += "\t" + mag.utils.toStringScientific10(AUCs_.get(i)[j]);
 			writer.println(line);
 		}
 		writer.close();

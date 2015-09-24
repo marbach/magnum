@@ -44,14 +44,15 @@ import edu.mit.magnum.enrich.*;
  */
 public class Magnum {
 	
-	
-	// ============================================================================
-	// STATIC METHODS
-	
+	/** Current version */
+	final public static String version = "1.0";
+
 	/** The logger -- a different logger can be plugged in for custom logging */
-	static public MagnumLogger log = new MagnumLogger();
-	/** The settings (needs to be after log so that we can print stuff!) */
-	public static MagnumOptionParser set = new MagnumOptionParser();
+	public MagnumLogger log;
+	/** The settings */
+	public MagnumOptionParser set;
+	/** The utilities */
+	public MagnumUtils utils;
 
 	/** Main function */
 	static public void main(String[] args) {
@@ -67,41 +68,6 @@ public class Magnum {
 	}
 
 	
-	// ----------------------------------------------------------------------------
-
-	/** Flag indicates if thread was interrupted */
-	static private boolean interrupted_ = false;
-
-	/** Gets and resets the interrupted flag (same behaviour as Thread.interrupted() */
-	static public boolean interrupted() {
-		boolean returnValue = interrupted_;
-		interrupted_ = false;
-		return returnValue;
-	}
-
-	/** Set interrupted flag true */
-	static public void setInterrupted() {
-		interrupted_ = true;
-	}
-
-	/** Throws a runtime exception if the thread has been interrupted */
-	static public void exitOnInterrupt() {
-		// Throw exception on interrupt
-		if (Thread.interrupted()) {
-			interrupted_ = true;
-			throw new RuntimeException();
-		}
-	}
-	
-	/** Checks if there has been an interrupt, useful if cleanup has to be done before exciting */
-	static public boolean checkInterrupt() {
-		// Return true on interrupt
-		if (Thread.interrupted())
-			interrupted_ = true;
-		return interrupted_;
-	}
-
-	
 	// ============================================================================
 	// PUBLIC METHODS
 
@@ -114,14 +80,19 @@ public class Magnum {
 	/** Constructor, parse command-line arguments, initialize settings */
 	public Magnum(String[] args) {
 
-		// Print magnum version
-		Magnum.log.println("Magnum v" + set.magnumVersion + "\n");
+		// Initialize logger
+		log = new MagnumLogger();
+		log.println("Magnum v" + version + "\n");
+		// Utils
+		utils = new MagnumUtils(this);
+
+		// Intialize settings (sets defaults)
+		// Needs to be after log so that we can print stuff
+		set = new MagnumOptionParser(this);
 		
 		// Parse command-line arguments and initialize settings
 		if (args != null)
 			set.parse(args);
-		else  // TODO hmmm....
-			set.resetToDefaults();
 	}
 
 	
@@ -142,11 +113,11 @@ public class Magnum {
 		else if (set.mode_ == 4)
 			runLinkModuleAnalysis();
 		else {
-			MagnumOptionParser.displayHelp();
+			set.displayHelp();
 			throw new IllegalArgumentException("--mode <int> must be between 1 and 3, found mode=" + set.mode_);
 		}
 
-		Magnum.log.println("Success!");
+		log.println("Success!");
 	}
 
 	// ----------------------------------------------------------------------------
@@ -165,14 +136,14 @@ public class Magnum {
 			
 		} else {
 			// List all files in the given directory
-			ArrayList<String> networkFiles = MagnumUtils.listFiles(set.networkDir_);
+			ArrayList<String> networkFiles = utils.listFiles(set.networkDir_);
 			// Run for each file
 			ArrayList<ArrayList<Double>> networkMeans = new ArrayList<ArrayList<Double>>();
 			for (String file_i : networkFiles)
 				networkMeans.add(runNetworkAnalysis(new File(file_i)));
 			
 			// Print means to file
-			FileExport writer = new FileExport("networkMeans.txt");
+			FileExport writer = new FileExport(this, "networkMeans.txt");
 			for (int n=0; n<networkFiles.size(); n++) {
 				ArrayList<Double> means = networkMeans.get(n);
 				if (means == null || means.size() == 0)
@@ -198,12 +169,12 @@ public class Magnum {
 		Network network = loadInputNetwork(networkFile);
 
 		// Analyze network properties
-		Magnum.log.println("COMPUTING NETWORK PROPERTIES");
-		Magnum.log.println("----------------------------\n");
+		log.println("COMPUTING NETWORK PROPERTIES");
+		log.println("----------------------------\n");
 
-		NetpropMain netprop = new NetpropMain(network);
+		NetpropMain netprop = new NetpropMain(this, network);
 		ArrayList<Double> networkMeans = netprop.runAll();
-		Magnum.log.println();
+		log.println();
 		netprop.saveAll();
 		
 		return networkMeans;
@@ -216,15 +187,15 @@ public class Magnum {
 	public void runNetworkOperations() {
 
 		// Perform operations on networks
-		Magnum.log.println("PERFORMING NETWORK OPERATIONS");
-		Magnum.log.println("-----------------------------\n");
+		log.println("PERFORMING NETWORK OPERATIONS");
+		log.println("-----------------------------\n");
 
 		if (set.computeUnion_) {
-			GroupNetworks grouper = new GroupNetworks(set.networkDir_, set.networkGroupFile_, set.networkFilePrefix_);
+			GroupNetworks grouper = new GroupNetworks(this, set.networkDir_, set.networkGroupFile_, set.networkFilePrefix_);
 			grouper.run();
 
 		} else if (set.computePairwiseSum_) {
-			PairwiseSum networkSum = new PairwiseSum(set.networkDir_, set.networkDir2_);
+			PairwiseSum networkSum = new PairwiseSum(this, set.networkDir_, set.networkDir2_);
 			networkSum.run(true);
 		}
 	}
@@ -236,14 +207,14 @@ public class Magnum {
 	public void runEnrichmentAnalysis() {
 
 		// Load input files
-		Magnum.log.println("LOADING INPUT FILES");
-		Magnum.log.println("-------------------\n");
+		log.println("LOADING INPUT FILES");
+		log.println("-------------------\n");
 
-		EnrichMain enrich = new EnrichMain();
+		EnrichMain enrich = new EnrichMain(this);
 
 		// Analyze enrichment
-		Magnum.log.println("COMPUTING ENRICHMENT");
-		Magnum.log.println("--------------------\n");
+		log.println("COMPUTING ENRICHMENT");
+		log.println("--------------------\n");
 
 		enrich.run();
 	}
@@ -275,13 +246,13 @@ public class Magnum {
 	/** Load the input network */
 	private Network loadInputNetwork(File networkFile) {
 
-		Magnum.log.println("LOADING INPUT NETWORK");
-		Magnum.log.println("---------------------\n");
+		log.println("LOADING INPUT NETWORK");
+		log.println("---------------------\n");
 
 		if (set.networkDir_ != null)
 			networkFile = new File(set.networkDir_, networkFile.getPath());
 		
-		return new Network(networkFile, set.refNodesFile_,
+		return new Network(this, networkFile, set.refNodesFile_,
 				set.isDirected_, set.removeSelfLoops_,
 				set.isWeighted_, set.threshold_);
 	}

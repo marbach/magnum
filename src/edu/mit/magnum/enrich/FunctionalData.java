@@ -25,10 +25,7 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.enrich;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +42,9 @@ import edu.mit.magnum.net.Network;
  * The functional data available for the genes (e.g., network kernels)
  */
 public class FunctionalData {
+
+	/** The magnum instance */
+	private Magnum mag;
 
 	/** The original data matrix TODO delete and clean memory */
 	private DoubleMatrix2D unfilteredData;
@@ -77,9 +77,10 @@ public class FunctionalData {
 	// PUBLIC METHODS
 
 	/** Constructor */
-	public FunctionalData(Network network, DoubleMatrix2D kernel,
+	public FunctionalData(Magnum mag, Network network, DoubleMatrix2D kernel,
 			File excludedGenePairsFile,	ArrayList<Gene> geneScores) {
 		
+		this.mag = mag;
 		this.unfilteredData = kernel;
 		
 		// Get the row/col names of the kernel matrix from the network
@@ -92,9 +93,10 @@ public class FunctionalData {
 	}
 	
 	/** Constructor */
-	public FunctionalData(File functionalDataFile, File excludedGenePairsFile,
+	public FunctionalData(Magnum mag, File functionalDataFile, File excludedGenePairsFile,
 			ArrayList<Integer> functionalDataCols, ArrayList<Gene> geneScores) {
 
+		this.mag = mag;
 		// Load the kernel from the file
 		functDataColIndexes_ = functionalDataCols;
 		loadUnfilteredData(functionalDataFile);			
@@ -118,7 +120,7 @@ public class FunctionalData {
 		// Load the data for the overlapping genes
 		initializeData();
 		// Normalize by row/col sums to adjust for hubs
-		if (Magnum.set.scaleKernel_)
+		if (mag.set.scaleKernel_)
 			scaleKernel();
 		// Load the gene pairs that should be excluded from enrichment analysis, set corresponding data entries to NaN
 		loadExcludedGenePairs(excludedGenePairsFile);
@@ -138,7 +140,7 @@ public class FunctionalData {
 //		// Load the data for the overlapping genes
 //		loadData(functionalDataFile);
 //		// Normalize by row/col sums to adjust for hubs
-//		if (Magnum.set.scaleKernel_)
+//		if (mag.set.scaleKernel_)
 //			scaleKernel();
 //		// Load the gene pairs that should be excluded from enrichment analysis, set corresponding data entries to NaN
 //		loadExcludedGenePairs(excludedGenePairsFile);
@@ -255,11 +257,11 @@ public class FunctionalData {
 				|| excludedGenePairsFile.length() == 0)
 			return;
 
-		GeneIdMapping idMapping = GeneIdMapping.getInstance();
-		boolean translateToEntrez = Magnum.set.idTypeFunctionalData_.equalsIgnoreCase("entrez");
+		GeneIdMapping idMapping = GeneIdMapping.getInstance(mag);
+		boolean translateToEntrez = mag.set.idTypeFunctionalData_.equalsIgnoreCase("entrez");
 
 		// Open the file
-		FileParser parser = new FileParser(excludedGenePairsFile);
+		FileParser parser = new FileParser(mag, excludedGenePairsFile);
 		String[] header = parser.readLine();
 
 		// Find the columns corresponding to the two gene ids
@@ -274,9 +276,9 @@ public class FunctionalData {
 
 		// Check that the two columns are present
 		if (colGene1 == -1)
-			Magnum.log.error("Did not find mandatory column 'gene1_id'");
+			mag.log.error("Did not find mandatory column 'gene1_id'");
 		if (colGene2 == -1)
-			Magnum.log.error("Did not find mandatory column 'gene2_id'");
+			mag.log.error("Did not find mandatory column 'gene2_id'");
 
 		int numExcluded = 0;
 
@@ -289,7 +291,7 @@ public class FunctionalData {
 			// The two gene ids
 			String id1 = nextLine[colGene1];
 			String id2 = nextLine[colGene2];
-			if (Magnum.set.idTypeFunctionalData_.equals("ensembl")) {
+			if (mag.set.idTypeFunctionalData_.equals("ensembl")) {
 				id1 = idMapping.removeEnsemblVersion(id1);
 				id2 = idMapping.removeEnsemblVersion(id2);
 			}
@@ -321,7 +323,7 @@ public class FunctionalData {
 					
 					if ((index1 == 3979 && index2 == 9831) ||
 							(index2 == 3979 && index1 == 9831))
-						Magnum.log.println();
+						mag.log.println();
 
 					// Set entry to NaN
 					data_.set(index1, index2, Double.NaN);
@@ -332,7 +334,7 @@ public class FunctionalData {
 			}
 		}
 		parser.close();
-		Magnum.log.println("- " + numExcluded + " gene pairs excluded");
+		mag.log.println("- " + numExcluded + " gene pairs excluded");
 	}
 
 	
@@ -449,7 +451,7 @@ public class FunctionalData {
 	private void loadUnfilteredData(File functionalDataFile) {
 		
 		// Count the lines
-		FileParser reader = new FileParser(functionalDataFile);
+		FileParser reader = new FileParser(mag, functionalDataFile);
 		int lines = -1;
 		while (reader.skipLine());
 		lines = reader.getLineCounter();
@@ -459,7 +461,7 @@ public class FunctionalData {
 		numGenes_ =  lines - 2; // header, the file counter counts the last null as well
 
 		// Open the file
-		FileParser parser = new FileParser(functionalDataFile);
+		FileParser parser = new FileParser(mag, functionalDataFile);
 		// Read header (sets unfilteredDataCols)
 		parseGenePropertiesHeader(parser.readLine());
 
@@ -528,7 +530,7 @@ public class FunctionalData {
 		if (!isPairwiseData_)
 			return;
 
-		Magnum.log.println("- Scaling kernel (adjusting for hubs)...");
+		mag.log.println("- Scaling kernel (adjusting for hubs)...");
 
 		// Note, I also did this using Blas following a stackoverflow comment
 		// (multiply matrix by a vector of ones), but it was much slower

@@ -47,6 +47,9 @@ import edu.mit.magnum.gene.GeneIdMapping;
  */
 public class GeneScoreList {
 
+	/** The magnum instance */
+	private Magnum mag;
+
 	/** Genes to be excluded */
 	private HashSet<String> excludedGenes_ = null;
 	/** Genes with their scores */
@@ -63,14 +66,15 @@ public class GeneScoreList {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public GeneScoreList(File geneScoreFile, File excludedGenesFile) {
+	public GeneScoreList(Magnum mag, File geneScoreFile, File excludedGenesFile) {
 			
+		this.mag = mag;
 		// Load genes to be excluded
 		loadExcludedGenes(excludedGenesFile);
 		// Load genes and scores
 		loadGeneScores(geneScoreFile);
 		// Expand genes using the given window size and neighbor distance (used to exclude genes within a given distance) 
-		if (Magnum.set.excludedGenesDistance_ > 0)
+		if (mag.set.excludedGenesDistance_ > 0)
 			expandGeneWindows();
 	}
 
@@ -122,7 +126,7 @@ public class GeneScoreList {
 		for (int k=0; k<rankedGenes_.size(); k++) {
 			double score_k = rankedGenes_.get(k).getScore(i);
 		
-			if (score_k <= Magnum.set.genomeWideSignificanceThreshold_)
+			if (score_k <= mag.set.genomeWideSignificanceThreshold_)
 				numGenomeWideSignificant_++;
 			else
 				break;
@@ -138,32 +142,32 @@ public class GeneScoreList {
 		
 		excludedGenes_ = new HashSet<String>();
 		excludingHlaGenes_ = false;
-		GeneIdMapping idMapping = GeneIdMapping.getInstance();
+		GeneIdMapping idMapping = GeneIdMapping.getInstance(mag);
 		
 		FileParser parser;
 		if (excludedGenesFile == null) {
 			// Use default
-			if (Magnum.set.geneCoordFile_ != null)
+			if (mag.set.geneCoordFile_ != null)
 				return;
 			
 			InputStream in;
 			// TODO maybe allow also for no genes excluded
-			if (Magnum.set.excludeHlaGenes_) {
+			if (mag.set.excludeHlaGenes_) {
 				excludingHlaGenes_ = true;
-				in = Magnum.class.getClassLoader().getResourceAsStream(Magnum.set.hlaTfsRsc);
+				in = Magnum.class.getClassLoader().getResourceAsStream(mag.set.hlaTfsRsc);
 			} else {
-				in = Magnum.class.getClassLoader().getResourceAsStream(Magnum.set.tfsRsc);
+				in = Magnum.class.getClassLoader().getResourceAsStream(mag.set.tfsRsc);
 			}
 			parser = new FileParser(in);
 		
 		} else {
-			parser = new FileParser(excludedGenesFile);
+			parser = new FileParser(mag, excludedGenesFile);
 		}
 
 		// Parse header
 		String[] header = parser.readLine();
 		if (!header[0].equals("gene_id"))
-			Magnum.log.error("Expected header line with first field 'gene_id' (tab-separated)");
+			mag.log.error("Expected header line with first field 'gene_id' (tab-separated)");
 		
 		// First line
 		while (true) {
@@ -189,21 +193,21 @@ public class GeneScoreList {
 	 */
 	private void loadGeneScores(File geneScoreFile) {
 		
-		GeneIdMapping idMapping = GeneIdMapping.getInstance();
-		boolean translateToEntrez = Magnum.set.idTypeFunctionalData_.equalsIgnoreCase("entrez");
+		GeneIdMapping idMapping = GeneIdMapping.getInstance(mag);
+		boolean translateToEntrez = mag.set.idTypeFunctionalData_.equalsIgnoreCase("entrez");
 
 		// Load gene positions so that gene pairs on same chromosome can be excluded
 		GeneAnnotation geneAnnot;
-		if (Magnum.set.idTypeGeneScores_.equals("ensembl"))
-			geneAnnot = new GeneAnnotationGencode(null, Magnum.set.loadOnlyProteinCodingGenes_);
-		else if (Magnum.set.idTypeGeneScores_.equals("custom"))
-			geneAnnot = new GeneAnnotationCustom(null);
+		if (mag.set.idTypeGeneScores_.equals("ensembl"))
+			geneAnnot = new GeneAnnotationGencode(mag, null, mag.set.loadOnlyProteinCodingGenes_);
+		else if (mag.set.idTypeGeneScores_.equals("custom"))
+			geneAnnot = new GeneAnnotationCustom(mag, null);
 		else
-			throw new RuntimeException("Invalid idTypeGeneScores: " + Magnum.set.idTypeGeneScores_);
+			throw new RuntimeException("Invalid idTypeGeneScores: " + mag.set.idTypeGeneScores_);
 		geneAnnot.loadAnnotation();
 		
 		rankedGenes_ = new ArrayList<Gene>();
-		FileParser parser = new FileParser(geneScoreFile);
+		FileParser parser = new FileParser(mag, geneScoreFile);
 		
 		// Parse header
 		String[] header = parser.readLine();
@@ -229,7 +233,7 @@ public class GeneScoreList {
 			throw new RuntimeException("Didn't find column 'pvalue' in header");
 		numScoresPerGene_ = lastPvalCol - firstPvalCol + 1;
 		
-		int numExcluded = 0;
+		//int numExcluded = 0;
 		int numNoScore = 0;
 		int numNoAnnot = 0;
 		int numSignificantExcluded = 0;
@@ -242,12 +246,12 @@ public class GeneScoreList {
 			
 			// Gene id
 			String geneId = nextLine[geneIdCol];
-			if (Magnum.set.idTypeGeneScores_.equals("ensembl"))
+			if (mag.set.idTypeGeneScores_.equals("ensembl"))
 				geneId = idMapping.removeEnsemblVersion(geneId);
 			
 			// Check if it should be excluded
 			if (excludedGenes_.contains(geneId)) {
-				numExcluded++;
+				//numExcluded++;
 				continue;
 			}
 
@@ -268,11 +272,11 @@ public class GeneScoreList {
 				continue;
 				//gencodeGene = new Gene(null);
 			}
-			if (Magnum.set.excludeXYChromosomes_ && geneAnnot.isAllosome(gencodeGene.chr_))
+			if (mag.set.excludeXYChromosomes_ && geneAnnot.isAllosome(gencodeGene.chr_))
 				continue;
 			
 			// Exclude genome-wide significant genes
-			if (Magnum.set.excludeGenomeWideSignificantGenes_ && scores[0] <= Magnum.set.genomeWideSignificanceThreshold_) {
+			if (mag.set.excludeGenomeWideSignificantGenes_ && scores[0] <= mag.set.genomeWideSignificanceThreshold_) {
 				numSignificantExcluded++;
 				continue;
 			}
@@ -299,18 +303,18 @@ public class GeneScoreList {
 		}
 		sortGeneList(0);
 		
-		if (Magnum.set.excludeXYChromosomes_)
-			Magnum.log.println("- Excluding genes on X, Y chromosomes");
+		if (mag.set.excludeXYChromosomes_)
+			mag.log.println("- Excluding genes on X, Y chromosomes");
 		if (excludingHlaGenes_)
-			Magnum.log.println("- Excluding HLA genes");
+			mag.log.println("- Excluding HLA genes");
 		//if (numExcluded > 0)
-		//	Magnum.log.println("- " + numExcluded + " genes excluded");
+		//	mag.log.println("- " + numExcluded + " genes excluded");
 		if (numNoScore > 0)
-			Magnum.log.println("- " + numNoScore + " genes with NA score");
+			mag.log.println("- " + numNoScore + " genes with NA score");
 		if (numNoAnnot > 0)
-			Magnum.log.println("- " + numNoAnnot + " genes not found in the annotation");
+			mag.log.println("- " + numNoAnnot + " genes not found in the annotation");
 		if (numSignificantExcluded > 0)
-			Magnum.log.println("- " + numSignificantExcluded + " genes with p-val <" + Magnum.set.genomeWideSignificanceThreshold_ + " excluded");
+			mag.log.println("- " + numSignificantExcluded + " genes with p-val <" + mag.set.genomeWideSignificanceThreshold_ + " excluded");
 	}
 	
 	
@@ -319,7 +323,7 @@ public class GeneScoreList {
 	/** Expand genes using the given neighbor distance (used to exclude genes within a given distance) */
 	private void expandGeneWindows() {
 		
-		int d = (int) (1000000 * Magnum.set.excludedGenesDistance_);
+		int d = (int) (1000000 * mag.set.excludedGenesDistance_);
 
 		for (Gene g : rankedGenes_)
 			g.expand(d, d);

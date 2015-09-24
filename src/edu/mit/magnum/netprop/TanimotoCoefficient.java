@@ -62,9 +62,9 @@ public class TanimotoCoefficient extends PairwiseProperties {
 	// PUBLIC METHODS
 	
 	/** Constructor (network must be undirected) */
-	public TanimotoCoefficient(Network network, boolean computeTargetSimilarity, boolean computeCentrality) {
+	public TanimotoCoefficient(Magnum mag, Network network, boolean computeTargetSimilarity, boolean computeCentrality) {
 		
-		super(network, "tmp", "tmp", computeCentrality);
+		super(mag, network, "tmp", "tmp", computeCentrality);
 		computeTargetSimilarity_ = computeTargetSimilarity;
 		if (computeTargetSimilarity_) {
 			name_ = "targetTanimoto";
@@ -84,13 +84,13 @@ public class TanimotoCoefficient extends PairwiseProperties {
 	/** Compute the pairwise tanimoto coefficient for all target genes or regulators */
 	public void computeK() {
 
-		Magnum.log.println("Computing pairwise Tanimoto coefficient for " + (computeTargetSimilarity_ ? "TARGETS" : "TFs") + "...");
+		mag.log.println("Computing pairwise Tanimoto coefficient for " + (computeTargetSimilarity_ ? "TARGETS" : "TFs") + "...");
 
 		// Initialize nodes
 		initialize();
 		
 		K_ = new DenseDoubleMatrix2D(numNodes_, numNodes_);
-		ProgressMonitor progress = new ProgressMonitor(numNodes_);
+		ProgressMonitor progress = new ProgressMonitor(mag, numNodes_);
 		
 		for (int i=0; i<numNodes_; i++) {
 			progress.iteration(i);

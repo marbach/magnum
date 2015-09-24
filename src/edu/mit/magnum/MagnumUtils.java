@@ -41,14 +41,27 @@ import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 
 
 /**
- * Some static utility functions
+ * Some utility functions
  */
 public class MagnumUtils {
 
+	/** Magnum instance */
+	private Magnum mag;
+	
 	/** Scientific format with plenty of digits (no loss in precision) */
-	private static DecimalFormat scientific_ = new DecimalFormat("0.###############E0#####");
+	private DecimalFormat scientific_ = new DecimalFormat("0.###############E0#####");
 	/** Scientific format with around 10 digits (good for writing doubles to file) */
-	private static DecimalFormat scientific10_ = new DecimalFormat("0.#######E0#");
+	private DecimalFormat scientific10_ = new DecimalFormat("0.#######E0#");
+	
+
+	// ============================================================================
+	// PUBLIC METHODS
+
+	/** Constructor */
+	public MagnumUtils(Magnum mag) {
+		this.mag = mag;
+	}
+	
 	
 	// ----------------------------------------------------------------------------
 	
@@ -57,13 +70,13 @@ public class MagnumUtils {
 	 * @param dt [ms]
 	 * @return Time [h m s ms]
 	 */
-	public static String chronometer(long dt) {
+	public String chronometer(long dt) {
 		
 		int numHours = 0;
 		int numMinutes = 0;
 		int numSeconds = 0;
 		
-		//Magnum.log.println(dt);
+		//mag.log.println(dt);
 		
 		numHours = (int)Math.floor(dt / 3600000.0);
 		dt -= numHours * 3600000.0;
@@ -84,20 +97,20 @@ public class MagnumUtils {
 		
 	// ----------------------------------------------------------------------------
 	
-	public static void printArray(double[] v) {	
+	public void printArray(double[] v) {	
 		int size = v.length;
 		
 		for (int i=0; i < size; i++)
-			Magnum.log.print(v[i] + "\t");
+			mag.log.print(v[i] + "\t");
 		
-		Magnum.log.println("");
+		mag.log.println("");
 	}
 
 	
 	// ----------------------------------------------------------------------------
 
 	/** Return true if the given array is an ordered list of positive integers, given in increasing order */
-	public static boolean posIntIncreasing(ArrayList<Integer> x) {
+	public boolean posIntIncreasing(ArrayList<Integer> x) {
 		
 		if (x == null || x.size() == 0)
 			return true;
@@ -115,7 +128,7 @@ public class MagnumUtils {
 	// ----------------------------------------------------------------------------
 
 	/** Return true if the given array is an ordered list of positive doubles, given in increasing order */
-	public static boolean posDoubleIncreasing(ArrayList<Double> x) {
+	public boolean posDoubleIncreasing(ArrayList<Double> x) {
 		
 		if (x == null || x.size() == 0)
 			return true;
@@ -133,7 +146,7 @@ public class MagnumUtils {
 	// ----------------------------------------------------------------------------
 
 	/** Extract the basic file name without path and without extension */
-	static public String extractBasicFilename(String filename, boolean includePath) {
+	public String extractBasicFilename(String filename, boolean includePath) {
 		
 		// The beginning of the filename (without the path) 
 		int start = filename.lastIndexOf("/") + 1;
@@ -155,8 +168,8 @@ public class MagnumUtils {
 		String basicFilename = filename.substring((includePath ? 0 : start), end);
 		
 		// Add custom suffix
-		if (Magnum.set.outputSuffix_ != null && Magnum.set.outputSuffix_.compareTo("") != 0)
-			basicFilename += Magnum.set.outputSuffix_;
+		if (mag.set.outputSuffix_ != null && mag.set.outputSuffix_.compareTo("") != 0)
+			basicFilename += mag.set.outputSuffix_;
 		
 		return basicFilename;
 	}
@@ -165,7 +178,7 @@ public class MagnumUtils {
 	// ----------------------------------------------------------------------------
 
 	/** Scientific format */
-	static public String toStringScientific(double x) {
+	public String toStringScientific(double x) {
 		
 		return scientific_.format(x);
 	}
@@ -174,7 +187,7 @@ public class MagnumUtils {
 	// ----------------------------------------------------------------------------
 
 	/** Scientific format with limited precision (around 10 digits, good for writing doubles to file) */
-	static public String toStringScientific10(double x) {
+	public String toStringScientific10(double x) {
 		
 		if (Double.isNaN(x))
 			return "NA";
@@ -186,7 +199,7 @@ public class MagnumUtils {
 	// ----------------------------------------------------------------------------
 
 	/** Convert dense Colt to Apache Commons matrix */
-	static public RealMatrix colt2apache(DoubleMatrix2D colt) {
+	public RealMatrix colt2apache(DoubleMatrix2D colt) {
 		
 		RealMatrix apache = MatrixUtils.createRealMatrix(colt.rows(), colt.columns());
 		for (int i=0; i<colt.rows(); i++)
@@ -200,7 +213,7 @@ public class MagnumUtils {
 	// ----------------------------------------------------------------------------
 
 	/** Convert dense Apache Commons to Colt matrix */
-	static public DoubleMatrix2D apache2colt(RealMatrix apache) {
+	public DoubleMatrix2D apache2colt(RealMatrix apache) {
 		
 		// Convert apache commons matrix to colt
 		DoubleMatrix2D colt = new DenseDoubleMatrix2D(apache.getRowDimension(), apache.getColumnDimension());
@@ -212,12 +225,15 @@ public class MagnumUtils {
 	}
 
 	
-	static public void exec(String command) {
+	// ----------------------------------------------------------------------------
+
+	/** Execute the given system command */
+	public void exec(String command) {
 
 		try {
 
 			// Execute command
-			Magnum.log.println(command);
+			mag.log.println(command);
 			Process p;
 			p = Runtime.getRuntime().exec(command);
 			BufferedReader stdInput = new BufferedReader(new
@@ -229,13 +245,13 @@ public class MagnumUtils {
 			// read the output from the command
 			String s;
 			while ((s = stdInput.readLine()) != null) {
-				Magnum.log.println(s);
+				mag.log.println(s);
 			}
 
 			// read any errors from the attempted command
-			Magnum.log.println("Here is the standard error of the command (if any):\n");
+			mag.log.println("Here is the standard error of the command (if any):\n");
 			while ((s = stdError.readLine()) != null) {
-				Magnum.log.println(s);
+				mag.log.println(s);
 			}
 
 		} catch (IOException e) {
@@ -246,8 +262,8 @@ public class MagnumUtils {
 	
 	// ----------------------------------------------------------------------------
 	
-	/** Constructor */
-	public static ArrayList<String> listFiles(File directory) {
+	/** List file names in the given directory */
+	public ArrayList<String> listFiles(File directory) {
 		
 		// Get files in networkDir
 		File[] files = directory.listFiles();

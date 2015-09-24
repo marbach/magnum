@@ -41,19 +41,21 @@ import edu.mit.magnum.netops.PairwiseSum;
  */
 public class PairwiseSumTest {
 	
-	
+	/** The magnum instance */
+	private static Magnum mag = new Magnum();
+
 	// ============================================================================
 	// SETUP
 	
 	@BeforeClass
 	public static void testSetup() {
 		
-		Magnum.set.resetToDefaults();
-		Magnum.set.superHubThreshold_ = 0;
-		Magnum.set.computePairwiseSum_ = true;
-		Magnum.set.isDirected_ = true;
-		Magnum.set.isWeighted_ = true;
-		Magnum.set.threshold_ = 0;
+		mag.set.resetToDefaults();
+		mag.set.superHubThreshold_ = 0;
+		mag.set.computePairwiseSum_ = true;
+		mag.set.isDirected_ = true;
+		mag.set.isWeighted_ = true;
+		mag.set.threshold_ = 0;
 	}
 
 	@AfterClass
@@ -68,7 +70,7 @@ public class PairwiseSumTest {
 	public void testPairwiseSum() {
 
 		// Initialize netops
-		PairwiseSum sum = new PairwiseSum(new File("src/edu/mit/magnum/netops/test/net.e"), new File("src/edu/mit/magnum/netops/test/net.p"));
+		PairwiseSum sum = new PairwiseSum(mag, new File("src/edu/mit/magnum/netops/test/net.e"), new File("src/edu/mit/magnum/netops/test/net.p"));
 		// Compute sum
 		Network[] nets = sum.run(false);
 		assertEquals(3, nets.length);

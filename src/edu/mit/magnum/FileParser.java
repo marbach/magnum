@@ -43,10 +43,13 @@ import java.util.zip.GZIPInputStream;
  */
 public class FileParser {
 
+	/** The magnum instance */
+	@SuppressWarnings("unused")
+	private Magnum mag;
 	/** The token used to separate the columns (usually a single character) */
-	String separator_ = "\t";
+	private String separator_ = "\t";
 	/** The buffered file reader */
-	BufferedReader reader_ = null;
+	private BufferedReader reader_ = null;
 	/** Line counter */
 	private int lineCounter_ = 0;
 	/** Next line */
@@ -57,22 +60,23 @@ public class FileParser {
 	// PUBLIC METHODS
 	    
 	/** Constructor */
-	public FileParser(String filename) {
-		this(new File(filename));
+	public FileParser(Magnum mag, String filename) {
+		this(mag, new File(filename));
 	}
 	
 	
 	/** Constructor */
-	public FileParser(File file) {
+	public FileParser(Magnum mag, File file) {
 
 		try {
+			this.mag = mag;
 			String filename = file.getPath();
-			Magnum.log.println("Reading file: " + filename);
+			mag.log.println("Reading file: " + filename);
 			if (!file.exists())
 				throw new RuntimeException("File not found: " + filename);
 
 			if (filename.endsWith(" "))
-				Magnum.log.println("WARNING: Filename ends with a space (' ')");
+				mag.log.println("WARNING: Filename ends with a space (' ')");
 
 			if (filename.endsWith(".gz")) {
 				InputStream fileStream = new FileInputStream(file);
@@ -95,7 +99,7 @@ public class FileParser {
 	public FileParser(InputStream in) {
 
 		try {
-			//Magnum.log.println("Reading input stream...");
+			//mag.log.println("Reading input stream...");
 			Reader decoder = new InputStreamReader(in);
 			reader_ = new BufferedReader(decoder);
 
@@ -205,21 +209,21 @@ public class FileParser {
 	// ============================================================================
 	// STATIC METHODS
 
-	/** Count the number of lines in the given file */
-	public static int countLines(String filename) {
-	
-		FileParser reader = new FileParser(filename);
-		int count = 0;
-		
-		String[] nextLine = reader.readLine();
-		while (nextLine != null) {
-			count++;
-			nextLine = reader.readLine();  
-		}
-		reader.close();
-
-		return count;
-	}
+//	/** Count the number of lines in the given file */
+//	public static int countLines(String filename) {
+//	
+//		FileParser reader = new FileParser(filename);
+//		int count = 0;
+//		
+//		String[] nextLine = reader.readLine();
+//		while (nextLine != null) {
+//			count++;
+//			nextLine = reader.readLine();  
+//		}
+//		reader.close();
+//
+//		return count;
+//	}
 	  	
 	
 	// ============================================================================

@@ -39,6 +39,9 @@ import edu.uci.ics.jung.graph.AbstractTypedGraph;
  */
 public class PairwiseSum {
 
+	/** The magnum instance */
+	private Magnum mag;
+
 	/** The first network directory */
 	private File networkDir1_ = null;
 	/** The second network directory */
@@ -59,8 +62,9 @@ public class PairwiseSum {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public PairwiseSum(File networkDir1, File networkDir2) {
+	public PairwiseSum(Magnum mag, File networkDir1, File networkDir2) {
 		
+		this.mag = mag;
 		networkDir1_ = networkDir1;
 		networkDir2_ = networkDir2;
 		
@@ -73,13 +77,13 @@ public class PairwiseSum {
 	/**  */
 	public Network[] run(boolean writeFiles) {
 		
-		if (!Magnum.set.isDirected_)
+		if (!mag.set.isDirected_)
 			throw new RuntimeException("Not yet implemented for undirected networks");
-		if (!Magnum.set.isWeighted_)
+		if (!mag.set.isWeighted_)
 			throw new RuntimeException("Not yet implemented for unweighted networks");
 		
 		// Output file prefix
-		String outPrefix = Magnum.set.outputDirectory_ + System.getProperty("file.separator") + Magnum.set.outputFilename_ + ".";
+		String outPrefix = mag.set.outputDirectory_ + System.getProperty("file.separator") + mag.set.outputFilename_ + ".";
 		
 		// Initialize array for results
 		Network[] networks = null;
@@ -87,8 +91,8 @@ public class PairwiseSum {
 			networks = new Network[numFiles_];
 		
 		for (int i=0; i<numFiles_; i++) {
-			Network net1 = new Network(new File(networkDir1_, networkFiles1_.get(i)), Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
-			Network net2 = new Network(new File(networkDir2_, networkFiles2_.get(i)), Magnum.set.isDirected_, Magnum.set.removeSelfLoops_, Magnum.set.isWeighted_, Magnum.set.threshold_);
+			Network net1 = new Network(mag, new File(networkDir1_, networkFiles1_.get(i)), mag.set.isDirected_, mag.set.removeSelfLoops_, mag.set.isWeighted_, mag.set.threshold_);
+			Network net2 = new Network(mag, new File(networkDir2_, networkFiles2_.get(i)), mag.set.isDirected_, mag.set.removeSelfLoops_, mag.set.isWeighted_, mag.set.threshold_);
 			
 			AbstractTypedGraph<Node, Edge> graph1 = net1.getGraph();
 			AbstractTypedGraph<Node, Edge> graph2 = net2.getGraph();
@@ -122,8 +126,8 @@ public class PairwiseSum {
 	/** Initialize file names, check that pairwise networks are listed at corresponding positions */
 	private void initializeNetworkFiles() {
 
-		networkFiles1_ = MagnumUtils.listFiles(networkDir1_);
-		networkFiles2_ = MagnumUtils.listFiles(networkDir2_);
+		networkFiles1_ = mag.utils.listFiles(networkDir1_);
+		networkFiles2_ = mag.utils.listFiles(networkDir2_);
 		
 		numFiles_ = networkFiles1_.size();		
 		if (numFiles_ != networkFiles2_.size())
@@ -133,8 +137,8 @@ public class PairwiseSum {
 		sampleIds_ = new String[numFiles_];
 		for (int i=0; i<numFiles_; i++) {
 			
-			String name1 = MagnumUtils.extractBasicFilename(networkFiles1_.get(i), false);
-			String name2 = MagnumUtils.extractBasicFilename(networkFiles2_.get(i), false);
+			String name1 = mag.utils.extractBasicFilename(networkFiles1_.get(i), false);
+			String name2 = mag.utils.extractBasicFilename(networkFiles2_.get(i), false);
 			
 			int index1 = name1.lastIndexOf(".");
 			int index2 = name2.lastIndexOf(".");

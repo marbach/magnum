@@ -40,6 +40,9 @@ import edu.mit.magnum.Magnum;
  */
 public class Genome {
 
+	/** The magnum instance */
+	private Magnum mag;
+
 	/** The chromosomes (chr1, ..., chr22, chrX, chrY, chrM) */
 	private LinkedHashMap<String, Chromosome> chromosomes_ = null;
 
@@ -51,15 +54,16 @@ public class Genome {
 	// PUBLIC METHODS
 	
 	/** Constructor */
-	public Genome() {
+	public Genome(Magnum mag) {
 
 		// initialize
+		this.mag = mag;
 		chromosomes_ = new LinkedHashMap<String, Chromosome>();
 		numElements_ = 0;
 		
 		for (int i=1; i<=22; i++)
 			chromosomes_.put("chr" + i, new Chromosome());
-		if (!Magnum.set.excludeXYChromosomes_) {
+		if (!mag.set.excludeXYChromosomes_) {
 			chromosomes_.put("chrX", new Chromosome());
 			chromosomes_.put("chrY", new Chromosome());
 		}
@@ -69,9 +73,9 @@ public class Genome {
 	
 	/** Constructor */
 	@SuppressWarnings("rawtypes")
-	public Genome(Collection elements) {
+	public Genome(Magnum mag, Collection elements) {
 		
-		this();
+		this(mag);
 		addElements(elements);
 	}
 
@@ -146,7 +150,7 @@ public class Genome {
 	/** Write a BED file with all the elements */
 	public void writeBedFile(String filename) {
 		
-		FileExport writer = new FileExport(filename);
+		FileExport writer = new FileExport(mag, filename);
 		
 		for (Chromosome chr : chromosomes_.values()) {
 			for (GenomicElement el : chr.getElements()) {

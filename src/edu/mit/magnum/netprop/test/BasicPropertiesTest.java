@@ -41,6 +41,9 @@ import edu.mit.magnum.netprop.*;
  */
 public class BasicPropertiesTest {
 	
+	/** The magnum instance */
+	private static Magnum mag = new Magnum();
+
 	/** Test network */
 	private File ppiNetFile_ = new File("src/edu/mit/magnum/netprop/test/ppi.txt");
 
@@ -49,8 +52,8 @@ public class BasicPropertiesTest {
 	
 	@BeforeClass
 	public static void testSetup() {
-		Magnum.set.resetToDefaults();
-		Magnum.set.superHubThreshold_ = 0;
+		mag.set.resetToDefaults();
+		mag.set.superHubThreshold_ = 0;
 	}
 
 	@AfterClass
@@ -65,8 +68,8 @@ public class BasicPropertiesTest {
 	public void testDegree() {
 
 		// Load undirected network without self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, true);
-		BasicProperties test = new BasicProperties(testNet);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, true);
+		BasicProperties test = new BasicProperties(mag, testNet);
 
 		// Check number of nodes and edges
 		assertEquals(testNet.getNumNodes(), 7);
@@ -86,8 +89,8 @@ public class BasicPropertiesTest {
 		assertEquals((int)degree[testNet.getNodeIndex("7")], 1);
 		
 		// Load the ppi and test that the degrees sum up to the number of edges
-		testNet = new Network(ppiNetFile_, false, true);
-		test = new BasicProperties(testNet);
+		testNet = new Network(mag, ppiNetFile_, false, true);
+		test = new BasicProperties(mag, testNet);
 		
 		assertEquals(testNet.getNumEdges(), 96967);
 
@@ -111,8 +114,8 @@ public class BasicPropertiesTest {
 	public void testDegreesDirected() {
 		
 		// Load directed network with self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
-		BasicProperties test = new BasicProperties(testNet);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
+		BasicProperties test = new BasicProperties(mag, testNet);
 
 		// Check number of nodes and edges
 		assertEquals(testNet.getNumNodes(), 7);
@@ -159,8 +162,8 @@ public class BasicPropertiesTest {
 	public void testBetweenness() {
 		
 		// Load undirected network without self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
-		BasicProperties test = new BasicProperties(testNet);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
+		BasicProperties test = new BasicProperties(mag, testNet);
 
 		// Compute betweenness
 		test.computeBetweenness();
@@ -184,8 +187,8 @@ public class BasicPropertiesTest {
 	public void testBetweennessDirected() {
 		
 		// Load directed network with self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
-		BasicProperties test = new BasicProperties(testNet);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
+		BasicProperties test = new BasicProperties(mag, testNet);
 
 		// Compute betweenness
 		test.computeBetweenness();
@@ -209,8 +212,8 @@ public class BasicPropertiesTest {
 	public void testClusteringCoeff() {
 		
 		// Load undirected network with self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
-		BasicProperties test = new BasicProperties(testNet);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), false, false);
+		BasicProperties test = new BasicProperties(mag, testNet);
 
 		// Compute betweenness
 		test.computeClusteringCoefficient();
@@ -234,8 +237,8 @@ public class BasicPropertiesTest {
 	public void testClusteringCoeffDirected() {
 		
 		// Load undirected network with self-loops
-		Network testNet = new Network(new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
-		BasicProperties test = new BasicProperties(testNet);
+		Network testNet = new Network(mag, new File("src/edu/mit/magnum/netprop/test/degreeTestNet.txt"), true, false);
+		BasicProperties test = new BasicProperties(mag, testNet);
 
 		// Compute betweenness
 		test.computeClusteringCoefficient();
