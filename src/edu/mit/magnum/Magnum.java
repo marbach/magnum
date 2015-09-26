@@ -58,7 +58,7 @@ public class Magnum {
 	static public void main(String[] args) {
 
 		try {
-			Magnum magnum = new Magnum(args);
+			Magnum magnum = new Magnum(args, null);
 			magnum.run();
 			
 		} catch (Exception e) {
@@ -71,24 +71,27 @@ public class Magnum {
 	// ============================================================================
 	// PUBLIC METHODS
 
-	/** Constructor without args */
+	/** Constructor with custom logger */
 	public Magnum() {
-		this(null);
+		this(null, null);
+	}
+
+	/** Constructor with custom logger */
+	public Magnum(MagnumLogger customLog) {
+		this(null, customLog);
 	}
 
 	
 	/** Constructor, parse command-line arguments, initialize settings */
-	public Magnum(String[] args) {
+	public Magnum(String[] args, MagnumLogger customLog) {
 
-		// Initialize logger
-		log = new MagnumLogger();
-		log.println("Magnum v" + version + "\n");
-		// Utils
+		// Initialize
+		if (customLog != null)
+			log = customLog;
+		else
+			log = new MagnumLogger(); // must be first
 		utils = new MagnumUtils(this);
-
-		// Intialize settings (sets defaults)
-		// Needs to be after log so that we can print stuff
-		set = new MagnumOptionParser(this);
+		set = new MagnumOptionParser(this); // sets defaults
 		
 		// Parse command-line arguments and initialize settings
 		if (args != null)
@@ -143,7 +146,7 @@ public class Magnum {
 				networkMeans.add(runNetworkAnalysis(new File(file_i)));
 			
 			// Print means to file
-			FileExport writer = new FileExport(this, "networkMeans.txt");
+			FileExport writer = new FileExport(log, "networkMeans.txt");
 			for (int n=0; n<networkFiles.size(); n++) {
 				ArrayList<Double> means = networkMeans.get(n);
 				if (means == null || means.size() == 0)

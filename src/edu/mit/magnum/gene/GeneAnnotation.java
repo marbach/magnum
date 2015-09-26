@@ -136,7 +136,7 @@ abstract public class GeneAnnotation {
 			return;
 
 		genesToBeLoaded_ = new HashMap<String, Boolean>();
-		FileParser parser = new FileParser(mag, filename);
+		FileParser parser = new FileParser(mag.log, filename);
 		
 		while (true) {
 			String[] nextLine = parser.readLine();
@@ -156,7 +156,7 @@ abstract public class GeneAnnotation {
 	/** Write the genes to a file with gene id, symbol and position */
 	public void writeGeneList(String filename) {
 		
-		FileExport writer = new FileExport(mag, filename);
+		FileExport writer = new FileExport(mag.log, filename);
 		String prevChr = null;
 		int prevStart = -1;
 		
@@ -170,7 +170,7 @@ abstract public class GeneAnnotation {
 			}
 			
 			if (gene.start_ < prevStart)
-				mag.log.error("Genes are not ordered by genomic position");
+				throw new RuntimeException("Genes are not ordered by genomic position");
 			
 			String nextLine = gene.id_ + "\t" + gene.symbol_ + "\t" + 
 					gene.chr_ + "\t" + gene.start_ + "\t" + gene.end_ + "\t" + 
@@ -211,7 +211,7 @@ abstract public class GeneAnnotation {
 		if (ch.equals("-"))
 			posStrand = false;
 		else if (!ch.equals("+"))
-			mag.log.error("Strand has to be '+' or '-'");
+			throw new RuntimeException("Strand has to be '+' or '-'");
 		
 		return posStrand;
 	}

@@ -56,7 +56,7 @@ public class Settings {
 		
 		String value = prop.getProperty(param);
 		if (value == null)
-			mag.log.error("Parameter not found in setting file: " + param);
+			throw new RuntimeException("Parameter not found in setting file: " + param);
 		
 		return value; 
 	}
@@ -105,7 +105,7 @@ public class Settings {
 			prop.add(Integer.valueOf(propStr[i]));
 			
 		if (positiveSorted && !mag.utils.posIntIncreasing(prop))
-			mag.log.error("Error parsing settings file, " + name + " has to be an ordered list of positive integers, given in increasing order");
+			throw new RuntimeException("Error parsing settings file, " + name + " has to be an ordered list of positive integers, given in increasing order");
 		
 		return prop;
 	}
@@ -126,7 +126,7 @@ public class Settings {
 			prop.add(Double.valueOf(propStr[i]));
 			
 		if (positiveSorted && !mag.utils.posDoubleIncreasing(prop))
-			mag.log.error("Error parsing settings file, " + name + " has to be an ordered list of positive numbers, given in increasing order");
+			throw new RuntimeException("Error parsing settings file, " + name + " has to be an ordered list of positive numbers, given in increasing order");
 		
 		return prop;
 	}

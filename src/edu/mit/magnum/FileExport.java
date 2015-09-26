@@ -39,9 +39,6 @@ import java.util.zip.GZIPOutputStream;
  */
 public class FileExport {
 
-	/** The magnum instance */
-	@SuppressWarnings("unused")
-	private Magnum mag;
 	/** The buffered file writer */
 	private BufferedWriter writer_ = null;
 	
@@ -50,11 +47,10 @@ public class FileExport {
 	// PUBLIC METHODS
 	    
 	/** Constructor */
-	public FileExport(Magnum mag, File file, boolean gzip) {
+	public FileExport(MagnumLogger log, File file, boolean gzip) {
 
 		try {
-			this.mag = mag;
-			mag.log.println("Writing file: " + file.getPath());
+			log.println("Writing file: " + file.getPath());
 		
 			if (gzip) {
 				FileOutputStream output = new FileOutputStream(file);
@@ -70,18 +66,18 @@ public class FileExport {
 	}
 
 	/** Constructor for uncompressed file */
-	public FileExport(Magnum mag, File file) {
-		this(mag, file, false);
+	public FileExport(MagnumLogger log, File file) {
+		this(log, file, false);
 	}
 
 	/** Constructor */
-	public FileExport(Magnum mag, String filename, boolean gzip) {
-		this(mag, new File(gzip ? filename + ".gz" : filename), gzip);
+	public FileExport(MagnumLogger log, String filename, boolean gzip) {
+		this(log, new File(gzip ? filename + ".gz" : filename), gzip);
 	}
 	
 	/** Constructor for uncompressed file */
-	public FileExport(Magnum mag, String filename) {
-		this(mag, filename, false);
+	public FileExport(MagnumLogger log, String filename) {
+		this(log, filename, false);
 	}
 
 	

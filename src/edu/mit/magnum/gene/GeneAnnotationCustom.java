@@ -58,7 +58,7 @@ public class GeneAnnotationCustom extends GeneAnnotation {
 		if (annotationFile_ == null)
 			parser = new FileParser(Magnum.class.getClassLoader().getResourceAsStream(mag.set.annotationRsc));
 		else
-			parser = new FileParser(mag, annotationFile_);
+			parser = new FileParser(mag.log, annotationFile_);
 						
 		while (true) {
 			// Read next line

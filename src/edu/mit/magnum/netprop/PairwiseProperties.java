@@ -125,7 +125,7 @@ public abstract class PairwiseProperties extends NetworkProperties {
 		File file = new File(kernelDir, networkName + "_" + name_ + ".txt.gz");
 
 		// The file writer
-		FileExport writer = new FileExport(mag, file, true);
+		FileExport writer = new FileExport(mag.log, file, true);
 
 		// Write the header
 		//writer.print("node");

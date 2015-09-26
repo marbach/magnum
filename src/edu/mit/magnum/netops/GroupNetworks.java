@@ -96,7 +96,7 @@ public class GroupNetworks {
 			return;
 		}
 
-		FileParser parser = new FileParser(mag, networkGroupFile);
+		FileParser parser = new FileParser(mag.log, networkGroupFile);
 		// Skip header
 		//parser.skipLines(1);
 

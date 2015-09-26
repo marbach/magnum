@@ -84,7 +84,7 @@ public class GeneIdMapping {
 		}
 		
 		ensembl2entrez_ = new HashMap<String, HashSet<String>>();
-		FileParser parser = new FileParser(mag, filename);
+		FileParser parser = new FileParser(mag.log, filename);
 		
 		while(true) {
 			// Read next line
@@ -94,12 +94,12 @@ public class GeneIdMapping {
 			
 			// Check number of columns
 			if (nextLine.length != 3)
-				mag.log.error("Expected three columns (ensembl id, entrez id, gene symbol)");
+				throw new RuntimeException("Expected three columns (ensembl id, entrez id, gene symbol)");
 			
 			// Parse ensembl id
 			String ensg = nextLine[0];
 			if (!(ensg.length() > 4 && ensg.substring(0, 4).equals("ENSG")))
-				mag.log.error("Invalid ENSEMBL gene ID (expected 'ENSG...'): " + ensg);
+				throw new RuntimeException("Invalid ENSEMBL gene ID (expected 'ENSG...'): " + ensg);
 			ensg = removeEnsemblVersion(ensg);
 
 			// Parse entrez id
@@ -108,7 +108,7 @@ public class GeneIdMapping {
 				try {
 					Integer.valueOf(entrez);
 				} catch (NumberFormatException e) {
-					mag.log.error("Invalid Entrez gene ID (expected an integer number): " + entrez);
+					throw new RuntimeException("Invalid Entrez gene ID (expected an integer number): " + entrez);
 				}
 			}
 			

@@ -161,13 +161,13 @@ public class GeneScoreList {
 			parser = new FileParser(in);
 		
 		} else {
-			parser = new FileParser(mag, excludedGenesFile);
+			parser = new FileParser(mag.log, excludedGenesFile);
 		}
 
 		// Parse header
 		String[] header = parser.readLine();
 		if (!header[0].equals("gene_id"))
-			mag.log.error("Expected header line with first field 'gene_id' (tab-separated)");
+			throw new RuntimeException("Expected header line with first field 'gene_id' (tab-separated)");
 		
 		// First line
 		while (true) {
@@ -207,7 +207,7 @@ public class GeneScoreList {
 		geneAnnot.loadAnnotation();
 		
 		rankedGenes_ = new ArrayList<Gene>();
-		FileParser parser = new FileParser(mag, geneScoreFile);
+		FileParser parser = new FileParser(mag.log, geneScoreFile);
 		
 		// Parse header
 		String[] header = parser.readLine();

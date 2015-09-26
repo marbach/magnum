@@ -134,7 +134,7 @@ public class NetpropMain {
 		basicFilename += "_nodeProperties" + weighted + directionality + ".txt";
 
 		// The file writer
-		FileExport writer = new FileExport(mag, basicFilename, mag.set.compressFiles_);
+		FileExport writer = new FileExport(mag.log, basicFilename, mag.set.compressFiles_);
 		
 		// Write the header
 		for (int i=0; i<ids.size(); i++)

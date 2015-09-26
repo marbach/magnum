@@ -72,7 +72,7 @@ public class GeneAnnotationGencode extends GeneAnnotation {
 		//HashSet<String> geneType = new HashSet<String>();
 		
 		// Open the file
-		FileParser parser = new FileParser(mag, annotationFile_);
+		FileParser parser = new FileParser(mag.log, annotationFile_);
 		GeneIdMapping mapping = GeneIdMapping.getInstance(mag);
 		
 		// Skip the first 5 lines (start with #)
@@ -165,7 +165,7 @@ public class GeneAnnotationGencode extends GeneAnnotation {
 		
 		int start = keyValueList.indexOf(key + " \"");
 		if (start == -1)
-			mag.log.error("Key not found: '" + key + "\"");
+			throw new RuntimeException("Key not found: '" + key + "\"");
 		
 		start = start + key.length() + 2;
 		int end = keyValueList.indexOf("\"", start);

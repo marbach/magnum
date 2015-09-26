@@ -380,7 +380,7 @@ public class MagnumSettings extends Settings {
 			
 		} catch (Exception e) {
 			mag.log.warning(e.getMessage());
-			mag.log.error("Failed to load settings file (a parameter may be missing or malformed): " + settingsFile);
+			throw new RuntimeException("Failed to load settings file (a parameter may be missing or malformed): " + settingsFile);
 		}		
 	}
 	

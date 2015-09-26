@@ -150,7 +150,7 @@ public class Genome {
 	/** Write a BED file with all the elements */
 	public void writeBedFile(String filename) {
 		
-		FileExport writer = new FileExport(mag, filename);
+		FileExport writer = new FileExport(mag.log, filename);
 		
 		for (Chromosome chr : chromosomes_.values()) {
 			for (GenomicElement el : chr.getElements()) {

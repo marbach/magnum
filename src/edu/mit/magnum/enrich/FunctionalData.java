@@ -124,6 +124,12 @@ public class FunctionalData {
 			scaleKernel();
 		// Load the gene pairs that should be excluded from enrichment analysis, set corresponding data entries to NaN
 		loadExcludedGenePairs(excludedGenePairsFile);
+		
+		// Remove references to unfiltered data so that they can be deleted by garbage collector
+		// (make sure to remove references elsewhere as well, e.g. pstep kernel instance)
+		unfilteredData = null;
+		unfilteredDataCols = null;
+		unfilteredDataRows = null;
 	}
 
 //	/** Load genes and their properties */
@@ -261,7 +267,7 @@ public class FunctionalData {
 		boolean translateToEntrez = mag.set.idTypeFunctionalData_.equalsIgnoreCase("entrez");
 
 		// Open the file
-		FileParser parser = new FileParser(mag, excludedGenePairsFile);
+		FileParser parser = new FileParser(mag.log, excludedGenePairsFile);
 		String[] header = parser.readLine();
 
 		// Find the columns corresponding to the two gene ids
@@ -276,9 +282,9 @@ public class FunctionalData {
 
 		// Check that the two columns are present
 		if (colGene1 == -1)
-			mag.log.error("Did not find mandatory column 'gene1_id'");
+			throw new RuntimeException("Did not find mandatory column 'gene1_id'");
 		if (colGene2 == -1)
-			mag.log.error("Did not find mandatory column 'gene2_id'");
+			throw new RuntimeException("Did not find mandatory column 'gene2_id'");
 
 		int numExcluded = 0;
 
@@ -451,7 +457,7 @@ public class FunctionalData {
 	private void loadUnfilteredData(File functionalDataFile) {
 		
 		// Count the lines
-		FileParser reader = new FileParser(mag, functionalDataFile);
+		FileParser reader = new FileParser(mag.log, functionalDataFile);
 		int lines = -1;
 		while (reader.skipLine());
 		lines = reader.getLineCounter();
@@ -461,7 +467,7 @@ public class FunctionalData {
 		numGenes_ =  lines - 2; // header, the file counter counts the last null as well
 
 		// Open the file
-		FileParser parser = new FileParser(mag, functionalDataFile);
+		FileParser parser = new FileParser(mag.log, functionalDataFile);
 		// Read header (sets unfilteredDataCols)
 		parseGenePropertiesHeader(parser.readLine());
 

@@ -195,7 +195,7 @@ public class Network {
 	/** Save the Network */
 	public void write(String filename) {
 
-		FileExport writer = new FileExport(mag, filename, true);
+		FileExport writer = new FileExport(mag.log, filename, true);
 		for (Edge edge : graph_.getEdges()) {
 			String nextLine = graph_.getSource(edge).id_ + "\t" + graph_.getDest(edge).id_;
 			if (isWeighted_)
@@ -212,7 +212,7 @@ public class Network {
 	public void loadRefNodes(File file) {
 		
 		// Open the file
-		FileParser parser = new FileParser(mag, file);
+		FileParser parser = new FileParser(mag.log, file);
 		String[] nextLine = parser.readLine();
 		refNodeIndexMap_ = new DualHashBidiMap<Node,Integer>();
 		
@@ -464,7 +464,7 @@ public class Network {
 			graph_ = new UndirectedSparseGraph<Node, Edge>();
 		
 		// Open the file
-		FileParser parser = new FileParser(mag, file_);
+		FileParser parser = new FileParser(mag.log, file_);
 		if (mag.set.networkFileDelim_.equalsIgnoreCase("TAB"))
 			parser.setSeparator("\t");
 		else if (mag.set.networkFileDelim_.equalsIgnoreCase("SPACE"))

@@ -56,8 +56,6 @@ public class EnrichMain {
 	
 	/** The network */
 	private Network network;
-	/** The corresponding kernel (as is before any filtering for genes with scores) */
-	private DoubleMatrix2D kernel;
 	
 	
 	// ============================================================================
@@ -92,8 +90,9 @@ public class EnrichMain {
 			
 			// Else, compute kernel
 			} else {
-				computeSimilarityNetwork();
+				DoubleMatrix2D kernel = computeSimilarityNetwork();
 				functData_ = new FunctionalData(mag, network, kernel, mag.set.excludedGenePairsFile_, geneScores_.getGenes());
+				network = null; // Not needed anymore
 				name_ = extractName(mag.set.geneScoreFile_, mag.set.networkFile_);
 			}
 			// Change the output dir back
@@ -120,7 +119,7 @@ public class EnrichMain {
 		//assert geneScores_.getNumGenes() == functData_.getNumGenes();
 		int numDuplicateGenes = geneScores_.getNumGenes() - functData_.getNumGenes();
 		if (numDuplicateGenes < 0)
-			mag.log.error("More genes in functional data than gene score list");
+			throw new RuntimeException("More genes in functional data than gene score list");
 		else if (numDuplicateGenes > 0)
 			mag.log.warning(numDuplicateGenes + " duplicate genes in gene score list because of many-to-many mappings from Ensembl to Entrez gene IDs");
 		
@@ -181,7 +180,7 @@ public class EnrichMain {
 	// PRIVATE METHODS
 		
 	/** Compute kernel / tanimoto similarity network (when no precomputed similarity matrix is given) */
-	private void computeSimilarityNetwork() {
+	private DoubleMatrix2D computeSimilarityNetwork() {
 		
 		// Load the input network
 		File networkFile; 
@@ -209,15 +208,11 @@ public class EnrichMain {
 		mag.log.println("COMPUTING RANDOM-WALK KERNEL");
 		mag.log.println("----------------------------\n");
 		
-		// Compute and save K
+		// Compute and return K
 		PairwiseProperties netprop = new PstepKernel(mag, network, mag.set.pstepKernelAlpha_, mag.set.pstepKernelP_, mag.set.pstepKernelNormalize_, false);
 		netprop.run();
-		kernel = netprop.getK();
-		
-		// filename where K was written
-		//String filename = mag.utils.extractBasicFilename(network.getFile().getName(), false);
-		//File kfile = new File(mag.set.outputDirectory_, filename + "_" + netprop.getName() + ".txt.gz");
-		//return kfile;
+		DoubleMatrix2D kernel = netprop.getK();
+		return kernel;		
 	}
 
 

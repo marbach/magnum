@@ -27,7 +27,6 @@ package edu.mit.magnum.gene;
 
 import java.util.LinkedHashMap;
 
-import edu.mit.magnum.FileParser;
 import edu.mit.magnum.Magnum;
 
 
@@ -56,70 +55,71 @@ public class GeneAnnotationUcsc extends GeneAnnotation {
 	 */
 	public LinkedHashMap<String, Gene> loadAnnotation() {
 		
-		mag.log.error("TBD: Check, debug, adapt so that genesToBeLoaded_ is used");
-		
-		genes_ = new LinkedHashMap<String, Gene>();
-		FileParser parser = new FileParser(mag, mag.set.ucscAnnotationFile_);
-		
-		// Skip the header lines (start with #)
-		String[] nextLine = parser.readLine();
-		while (nextLine[0].startsWith("#"))
-			nextLine = parser.readLine();
-
-		while (nextLine != null) {
-			// Check number of columns
-			if (nextLine.length != 8)
-				parser.error("Expected 8 columns");
-
-			// Chromosome
-			String chr = nextLine[1];
-			// Continue if not the specified chromosome
-			if (!chr.equals(chromosomeToBeLoaded_)) {
-				nextLine = parser.readLine();
-				continue;
-			}
-			
-			// Gene id and name
-			String gene_id = nextLine[7];
-			String gene_name = nextLine[5];
-
-			// Skip entries without entrez id
-			if (gene_id.equals("n/a")) {
-				nextLine = parser.readLine();
-				continue;				
-			}
-			
-			// Strand
-			boolean posStrand = isPosStrand(nextLine[6]);
-			// Start and end
-			int start = Integer.parseInt(nextLine[3]);
-			int end = Integer.parseInt(nextLine[4]);
-
-			Gene nextGene = genes_.get(gene_id);
-			// Create new gene
-			if (nextGene == null) {
-				nextGene = new Gene(gene_id, gene_name);
-				nextGene.setPosition(chr, start, end, posStrand);
-				genes_.put(gene_id, nextGene);
-			
-			// Update existing gene
-			} else {
-				// Check that strand and symbol are consistent
-				if (nextGene.posStrand_ != posStrand || !nextGene.symbol_.equals(gene_name))
-					parser.error("Inconsistent entry (strand or gene symbol doesn't agree)");
-				// Update start and end
-				if (start < nextGene.start_)
-					nextGene.start_ = start;
-				if (end > nextGene.end_)
-					nextGene.end_ = end;
-			}
-				
-			// Read next line
-			nextLine = parser.readLine();
-		}
-		parser.close();		
-
-		return genes_;
+		return null;
+//		throw new RuntimeException("TBD: Check, debug, adapt so that genesToBeLoaded_ is used");
+//		
+//		genes_ = new LinkedHashMap<String, Gene>();
+//		FileParser parser = new FileParser(mag.log, mag.set.ucscAnnotationFile_);
+//		
+//		// Skip the header lines (start with #)
+//		String[] nextLine = parser.readLine();
+//		while (nextLine[0].startsWith("#"))
+//			nextLine = parser.readLine();
+//
+//		while (nextLine != null) {
+//			// Check number of columns
+//			if (nextLine.length != 8)
+//				parser.error("Expected 8 columns");
+//
+//			// Chromosome
+//			String chr = nextLine[1];
+//			// Continue if not the specified chromosome
+//			if (!chr.equals(chromosomeToBeLoaded_)) {
+//				nextLine = parser.readLine();
+//				continue;
+//			}
+//			
+//			// Gene id and name
+//			String gene_id = nextLine[7];
+//			String gene_name = nextLine[5];
+//
+//			// Skip entries without entrez id
+//			if (gene_id.equals("n/a")) {
+//				nextLine = parser.readLine();
+//				continue;				
+//			}
+//			
+//			// Strand
+//			boolean posStrand = isPosStrand(nextLine[6]);
+//			// Start and end
+//			int start = Integer.parseInt(nextLine[3]);
+//			int end = Integer.parseInt(nextLine[4]);
+//
+//			Gene nextGene = genes_.get(gene_id);
+//			// Create new gene
+//			if (nextGene == null) {
+//				nextGene = new Gene(gene_id, gene_name);
+//				nextGene.setPosition(chr, start, end, posStrand);
+//				genes_.put(gene_id, nextGene);
+//			
+//			// Update existing gene
+//			} else {
+//				// Check that strand and symbol are consistent
+//				if (nextGene.posStrand_ != posStrand || !nextGene.symbol_.equals(gene_name))
+//					parser.error("Inconsistent entry (strand or gene symbol doesn't agree)");
+//				// Update start and end
+//				if (start < nextGene.start_)
+//					nextGene.start_ = start;
+//				if (end > nextGene.end_)
+//					nextGene.end_ = end;
+//			}
+//				
+//			// Read next line
+//			nextLine = parser.readLine();
+//		}
+//		parser.close();		
+//
+//		return genes_;
 	}
 	
 }

@@ -503,7 +503,7 @@ abstract public class Enrichment {
 		// Check that curves have consistent number of points
 		checkNumPoints();
 		// Create output file
-		FileExport writer = new FileExport(mag, filename, mag.set.compressFiles_);
+		FileExport writer = new FileExport(mag.log, filename, mag.set.compressFiles_);
 
 		// Write header
 		writer.print("k");
@@ -577,7 +577,7 @@ abstract public class Enrichment {
 	/** Write the AUCs */
 	private void saveAUCs(String filename) {
 		
-		FileExport writer = new FileExport(mag, filename, mag.set.compressFiles_);
+		FileExport writer = new FileExport(mag.log, filename, mag.set.compressFiles_);
 		writer.println("AUC_1\tAUC_2\tAUC_3\tAUC_4\tAUClog2_1\tAUClog2_2\tAUClog2_3\tAUClog2_4\tAUC_GWS\tAUClog2_GWS");
 		for (int i=0; i<AUCs_.size(); i++) {
 			String line = mag.utils.toStringScientific10(AUCs_.get(i)[0]);

@@ -43,9 +43,6 @@ import java.util.zip.GZIPInputStream;
  */
 public class FileParser {
 
-	/** The magnum instance */
-	@SuppressWarnings("unused")
-	private Magnum mag;
 	/** The token used to separate the columns (usually a single character) */
 	private String separator_ = "\t";
 	/** The buffered file reader */
@@ -60,23 +57,22 @@ public class FileParser {
 	// PUBLIC METHODS
 	    
 	/** Constructor */
-	public FileParser(Magnum mag, String filename) {
-		this(mag, new File(filename));
+	public FileParser(MagnumLogger log, String filename) {
+		this(log, new File(filename));
 	}
 	
 	
 	/** Constructor */
-	public FileParser(Magnum mag, File file) {
+	public FileParser(MagnumLogger log, File file) {
 
 		try {
-			this.mag = mag;
 			String filename = file.getPath();
-			mag.log.println("Reading file: " + filename);
+			log.println("Reading file: " + filename);
 			if (!file.exists())
 				throw new RuntimeException("File not found: " + filename);
 
 			if (filename.endsWith(" "))
-				mag.log.println("WARNING: Filename ends with a space (' ')");
+				log.println("WARNING: Filename ends with a space (' ')");
 
 			if (filename.endsWith(".gz")) {
 				InputStream fileStream = new FileInputStream(file);

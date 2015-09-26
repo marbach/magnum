@@ -25,9 +25,11 @@ THE SOFTWARE.
  */
 package edu.mit.magnum;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
- * Logger supporting separate outputs for different threads
+ * Logger -- can be extended to customize/redirect outputs
  */
 public class MagnumLogger {
 
@@ -54,13 +56,13 @@ public class MagnumLogger {
 	public void print(String msg) {
 		System.out.print(msg);
 	}
-
-
-	// TODO move back to Magnum?
 	
-	/** Throw RuntimeException with given message */
-	public void error(String msg) {
-		throw new RuntimeException(msg);
-	}
+	/** Get stack trace as string */
+	public void printStackTrace(Throwable e) {
 		
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		println(sw.toString());
+	}
 }
