@@ -27,6 +27,8 @@ outputDirectory = .
 outputFilename = 
 # Compress output files (gzip)
 compressFiles = 1
+# Verbose console output
+verbose = 1
 
 
 ##########################################################################

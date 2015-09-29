@@ -96,6 +96,9 @@ public class Magnum {
 		// Parse command-line arguments and initialize settings
 		if (args != null)
 			set.parse(args);
+		
+		// Set verbose flag in logger
+		log.setVerbose(set.verbose_);
 	}
 
 	
@@ -120,7 +123,8 @@ public class Magnum {
 			throw new IllegalArgumentException("--mode <int> must be between 1 and 3, found mode=" + set.mode_);
 		}
 
-		log.println("Success!");
+		log.println("Success!\n"
+				  + "--------\n");
 	}
 
 	// ----------------------------------------------------------------------------

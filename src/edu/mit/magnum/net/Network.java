@@ -169,19 +169,18 @@ public class Network {
 		useRefNodes_ = false;
 		
 		// Print info
-		mag.log.println("- Treat as: " + (isDirected_ ? "DIRECTED" : "UNDIRECTED") + ", " + (isWeighted_ ? "WEIGHTED" : "UNWEIGHTED"));
-		mag.log.println("- Remove self-loops: " + (removeSelfLoops_ ? "YES" : "NO"));
-		mag.log.println("- Discard edges below threshold: " + threshold_);
-		mag.log.println("");
+		mag.log.printlnVerbose("- Treat as: " + (isDirected_ ? "DIRECTED" : "UNDIRECTED") + ", " + (isWeighted_ ? "WEIGHTED" : "UNWEIGHTED"));
+		mag.log.printlnVerbose("- Remove self-loops: " + (removeSelfLoops_ ? "YES" : "NO"));
+		mag.log.printlnVerbose("- Discard edges below threshold: " + threshold_);
 		
-		mag.log.println("Loaded network with:");
+		mag.log.println("\nLoaded network with:");
 		mag.log.println("- " + graph_.getVertexCount() + " nodes");
 		mag.log.println("- " + graph_.getEdgeCount() + " edges");
-		mag.log.println("Removed:");
-		mag.log.println("- " + numBelowThreshold_ + " edges below threshold");			
-		mag.log.println("- " + numRemovedMultiEdges_ + " multi-edges" + (isWeighted_? ", taking MAX edge weight" : "") );
+		mag.log.printlnVerbose("Removed:");
+		mag.log.printlnVerbose("- " + numBelowThreshold_ + " edges below threshold");			
+		mag.log.printlnVerbose("- " + numRemovedMultiEdges_ + " multi-edges" + (isWeighted_? ", taking MAX edge weight" : "") );
 		if (removeSelfLoops_)
-			mag.log.println("- " + numRemovedSelfEdges_ + " self-loops");
+			mag.log.printlnVerbose("- " + numRemovedSelfEdges_ + " self-loops");
 		if (mag.set.superHubThreshold_ > 0 && mag.set.superHubThreshold_ < 1)
 			mag.log.println("- " + numRemovedSuperHubs_ + " super-hubs connecting > " + 100*mag.set.superHubThreshold_ + "% of all genes");
 		if (numRemovedIsolatedNodes_ > 0)

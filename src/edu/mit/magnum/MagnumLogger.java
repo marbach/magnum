@@ -33,10 +33,12 @@ import java.io.StringWriter;
  */
 public class MagnumLogger {
 
-
+	/** Verbose output */
+	private boolean verbose;
+	
 	// ============================================================================
 	// PUBLIC FUNCTIONS
-
+	
 	/** Write empty line to stdout */
 	public void println() {
 		print("\n");
@@ -45,6 +47,20 @@ public class MagnumLogger {
 	/** Write line to stdout */
 	public void println(String msg) {
 		print(msg + "\n");
+	}
+
+	/** Write line to stdout */
+	public void printlnVerbose(String msg) {
+		if (verbose)
+			println(msg);
+	}
+
+	/** Write line to stdout */
+	public void printlnVerbose(String verboseMsg, String nonVerboseMsg) {
+		if (verbose)
+			println(verboseMsg);
+		else
+			println(nonVerboseMsg);
 	}
 
 	/** Print warning message */
@@ -64,5 +80,16 @@ public class MagnumLogger {
 		PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);
 		println(sw.toString());
+	}
+
+	
+	// ============================================================================
+	// SETTERS AND GETTERS
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
+	public boolean getVerbose() {
+		return verbose;
 	}
 }

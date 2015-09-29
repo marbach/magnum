@@ -126,17 +126,17 @@ abstract public class Enrichment {
 				
 		// Display info
 		if (mag.set.curveCutoff_ < 1)
-			mag.log.println("- " + 100*mag.set.curveCutoff_ + "% top genes used");
-		mag.log.print("- " + k_.size() + " points per curve ");
+			mag.log.printlnVerbose("- " + 100*mag.set.curveCutoff_ + "% top genes used");
+		mag.log.printlnVerbose("- " + k_.size() + " points per curve ");
 		if (mag.set.varCurveResolution_ > 0) 
-			mag.log.print("(variable resolution, delta=" + mag.set.varCurveResolution_ + ")\n");
+			mag.log.printlnVerbose("(variable resolution, delta=" + mag.set.varCurveResolution_ + ")");
 		else
-			mag.log.print("(fixed resolution, delta=" + mag.set.constCurveResolution_ + ")\n");
+			mag.log.printlnVerbose("(fixed resolution, delta=" + mag.set.constCurveResolution_ + ")");
 		mag.log.println("- " + numPermutations_ + " permutations");
 		mag.log.println("- " + mag.set.numBins_ + " bins for within-degree permutation");
 		if (mag.set.excludedGenesDistance_ > 0)
 			mag.log.println("- Excluding gene pairs with respective windows <" + mag.set.excludedGenesDistance_ + "mb apart");
-		mag.log.println("- Sliding window size: " + mag.set.slidingWindowSize_);
+		mag.log.printlnVerbose("- Sliding window size: " + mag.set.slidingWindowSize_);
 		mag.log.println();
 
 	}
@@ -203,8 +203,8 @@ abstract public class Enrichment {
 	/** Save enrichment curves for observed and permuted lists */
 	public void save(String filename) {
 		
-		saveCurves(filename + ".txt");
-		saveAUCs(filename + "_AUC.txt");
+		saveCurves(filename + ".curves.txt");
+		saveAUCs(filename + ".AUC.txt");
 	}
 
 	
@@ -419,12 +419,15 @@ abstract public class Enrichment {
 	/** Print the empirical p-values */
 	public void printPvals() {
 
-		mag.log.println("Ranked gene list\tP-value");
-		mag.log.println(Math.round(100*mag.set.curveCutoff_/4.0) + "%\t" + mag.utils.toStringScientific10(pvals_[4]));
-		mag.log.println(Math.round(100*mag.set.curveCutoff_/2.0) + "%\t" + mag.utils.toStringScientific10(pvals_[5]));
-		mag.log.println(Math.round(100*3*mag.set.curveCutoff_/4.0) + "%\t" + mag.utils.toStringScientific10(pvals_[6]));
-		mag.log.println(Math.round(100*mag.set.curveCutoff_) + "%\t" + mag.utils.toStringScientific10(pvals_[7]));
-		mag.log.println();
+		mag.log.println("Enrichment score (empirical p-value):\n" +
+				        "p = " + mag.utils.toStringScientific10(pvals_[7]) + "\n");
+		
+		mag.log.printlnVerbose("Scores at different cutoffs:");
+		mag.log.printlnVerbose("Cutoff\tP-value");
+		mag.log.printlnVerbose(Math.round(100*mag.set.curveCutoff_/4.0) + "%\t" + mag.utils.toStringScientific10(pvals_[4]));
+		mag.log.printlnVerbose(Math.round(100*mag.set.curveCutoff_/2.0) + "%\t" + mag.utils.toStringScientific10(pvals_[5]));
+		mag.log.printlnVerbose(Math.round(100*3*mag.set.curveCutoff_/4.0) + "%\t" + mag.utils.toStringScientific10(pvals_[6]));
+		mag.log.printlnVerbose(Math.round(100*mag.set.curveCutoff_) + "%\t" + mag.utils.toStringScientific10(pvals_[7]) + "\n");
 	}
 
 	

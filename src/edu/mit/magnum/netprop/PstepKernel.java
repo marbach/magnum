@@ -93,9 +93,6 @@ public class PstepKernel extends PairwiseProperties {
 			throw new IllegalArgumentException("P-step kernels are not implemented for directed networks");
 		if (numRefNodes_ != numNodes_)
 			mag.log.warning("Specified reference nodes will be ignored by p-step kernel");
-		// We now explicitly check for self-loops and abort if there are, because it screws up the degrees
-		//if (!Settings.removeSelfLoops_)
-			//Ngsea.warning("Self-loops will be ignored by p-step kernel");
 	}
 	
 	
@@ -114,7 +111,8 @@ public class PstepKernel extends PairwiseProperties {
 		mag.log.println("Computing normalized Laplacian...");		
 		normalizedLaplacian_ = network_.computeNormalizedLaplacian();
 		
-		mag.log.println("Computing " + numSteps_ + "-step kernel with alpha=" + alpha_ + ":");
+		mag.log.printlnVerbose("Computing " + numSteps_ + "-step kernel with alpha=" + alpha_ + ":",
+				"Computing random-walk kernel (" + numSteps_ + " steps):");
 		mag.log.println("Step 1...");
 
 		// K = (a*I - L)^p ,  with a >= 2

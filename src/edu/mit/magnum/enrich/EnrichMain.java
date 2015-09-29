@@ -124,13 +124,13 @@ public class EnrichMain {
 			mag.log.warning(numDuplicateGenes + " duplicate genes in gene score list because of many-to-many mappings from Ensembl to Entrez gene IDs");
 		
 		// Print info on gene overlap
+		mag.log.println("\nLoaded:");
+		mag.log.println("- " + functData_.getNumGenes() + " genes with both GWAS and network data");
+		mag.log.printlnVerbose("Removed:");
+		mag.log.printlnVerbose("- " + genesMissingScores.size() + " genes have no GWAS data or were specifically excluded (e.g., HLA genes)");
+		mag.log.printlnVerbose("- " + genesMissingFunctData.size() + " genes with no network data");
 		mag.log.println();
-		mag.log.println("Loaded:");
-		mag.log.println("- " + functData_.getNumGenes() + " genes with scores and functional data");
-		mag.log.println("Removed:");
-		mag.log.println("- " + genesMissingScores.size() + " genes with functional data but no scores");
-		mag.log.println("- " + genesMissingFunctData.size() + " genes with scores but no functional data");
-		
+
 //		// Export genes without scores
 //		if (genesMissingScores.size() > 0) {
 //			FileExport writer = new FileExport(Settings.outputDirectory_ + "/genesWithoutScores.txt");
@@ -146,7 +146,6 @@ public class EnrichMain {
 //				writer.println(gene);
 //			writer.close();
 //		}
-		mag.log.println();
 	}
 
 	
@@ -253,15 +252,19 @@ public class EnrichMain {
 		enrichment_ = new EnrichmentPairwise(mag, functData_, geneScores_, permuter_);
 		enrichment_.run();
 		
-		// Print pvals
-		enrichment_.printPvals();
-		
+		// Results
+		mag.log.println("RESULTS\n" + 
+				        "-------\n");
 		// Save results
+		mag.log.println("Writing enrichment curves and AUCs ...");
 		String filename = new File(mag.set.outputDirectory_, name_).getPath();
 		if (geneScoreIndex > 0)
 			filename += "." + geneScoreIndex;
 		enrichment_.save(filename);
 		mag.log.println();
+
+		// Print pvals
+		enrichment_.printPvals();
 	}
 
 	

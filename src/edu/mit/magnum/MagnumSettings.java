@@ -71,6 +71,8 @@ public class MagnumSettings extends Settings {
 	public String outputFilename_;
 	/** Compress output files (gzip) */
 	public boolean compressFiles_;
+	/** Verbose console output */
+	public boolean verbose_;
 
 	// ----------------------------------------------------------------------------
 	// NETWORK PROPERTIES
@@ -260,6 +262,7 @@ public class MagnumSettings extends Settings {
 		outputDirectory_ = new File(System.getProperty("user.dir"));
 		outputFilename_ = "";
 		compressFiles_ = true;
+		verbose_ = true;
 
 		networkDir_ = null;
 		networkFile_ = null;
@@ -424,7 +427,10 @@ public class MagnumSettings extends Settings {
 		}
 		if (requireAll || prop.containsKey("outputFilename"))
 			outputFilename_ = getSetting("outputFilename");
-		
+		if (requireAll || prop.containsKey("verbose"))
+			verbose_ = getSettingBoolean("verbose");
+		mag.log.setVerbose(verbose_);
+
 		// INPUT NETWORK
 		if (requireAll || prop.containsKey("networkDir"))
 			networkDir_ = getFileSetting("networkDir");
