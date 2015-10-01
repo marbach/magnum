@@ -159,7 +159,7 @@ abstract public class Enrichment {
 		curveObsSlidingWindow_ = curCurveSlidingWindow_;
 		
 		long t1 = System.currentTimeMillis();
-		mag.log.println("Estimated runtime for " + numPermutations_ + " random permutations: " + mag.utils.chronometer(numPermutations_*(t1-t0)));
+		mag.log.printlnVerbose("Estimated runtime for " + numPermutations_ + " random permutations: < " + mag.utils.chronometer(numPermutations_*(t1-t0)));
 				
 		// Do random permutations
 		computePermutCurves();
@@ -389,7 +389,12 @@ abstract public class Enrichment {
 	
 	// ----------------------------------------------------------------------------
 
-	/** Compute empirical p-values */
+	/** 
+	 * Compute empirical p-values 
+	 * 0-3: AUCs at cutoffs 0.25, 0.5, 0.75, 1
+	 * 4-7: AUCs on log scale
+	 * 8-9: Cutoff at genome-wide significant, regular and log scale 
+	 */
 	private void computePvals() {
 		
 		// The observed AUCs
@@ -421,6 +426,7 @@ abstract public class Enrichment {
 
 		mag.log.println("Enrichment score (empirical p-value):\n" +
 				        "p = " + mag.utils.toStringScientific10(pvals_[7]) + "\n");
+		assert getEnrichmentScore() == pvals_[7];
 		
 		mag.log.printlnVerbose("Scores at different cutoffs:");
 		mag.log.printlnVerbose("Cutoff\tP-value");
@@ -434,7 +440,12 @@ abstract public class Enrichment {
 
 	// ----------------------------------------------------------------------------
 
-	/** Compute AUC for the given curve with respect to the given reference curve */
+	/** 
+	 * Compute AUC for the given curve with respect to the given reference curve
+	 * 0-3: AUCs at cutoffs 0.25, 0.5, 0.75, 1
+	 * 4-7: AUCs on log scale
+	 * 8-9: Cutoff at genome-wide significant, regular and log scale 
+	 */
 	private double[] computeAUC(Curve curve) {
 
 		// The first one is linear scale (no enrichment is 1), the second one is log2 scale (no enrichment is 0)
@@ -596,7 +607,6 @@ abstract public class Enrichment {
 	// GETTERS AND SETTERS
 	
 	public Curve getCurveObs() { return curveObs_; }
-//	public Curve getCurveExpected() { return curveExpected_; }
-	//public double getExpected() { return expected_; }
 	public ArrayList<double[]> getAUCs() { return AUCs_; }
+	public double getEnrichmentScore() { return pvals_[7]; }
 }

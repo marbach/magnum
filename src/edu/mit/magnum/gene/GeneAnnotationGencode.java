@@ -73,7 +73,7 @@ public class GeneAnnotationGencode extends GeneAnnotation {
 		
 		// Open the file
 		FileParser parser = new FileParser(mag.log, annotationFile_);
-		GeneIdMapping mapping = GeneIdMapping.getInstance(mag);
+		GeneIdMapping mapping = GeneIdMapping.getInstance(mag.log);
 		
 		// Skip the first 5 lines (start with #)
 		String[] nextLine = parser.readLine();

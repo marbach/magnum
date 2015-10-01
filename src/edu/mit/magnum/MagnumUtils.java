@@ -71,6 +71,16 @@ public class MagnumUtils {
 	 * @return Time [h m s ms]
 	 */
 	public String chronometer(long dt) {
+		return chronometer(dt, true);
+	}
+	
+	
+	/**
+	 * Take a time in [ms] and convert it into [h min s ms].
+	 * @param dt [ms]
+	 * @return Time [h m s ms]
+	 */
+	public String chronometer(long dt, boolean showSeconds) {
 		
 		int numHours = 0;
 		int numMinutes = 0;
@@ -89,9 +99,10 @@ public class MagnumUtils {
 		
 		String time = Integer.toString(numHours) + "h ";
 		time += Integer.toString(numMinutes) + "min ";
-		time += Integer.toString(numSeconds) + "s ";
-		time += Integer.toString((int)dt) + "ms";
-		
+		if (showSeconds) {
+			time += Integer.toString(numSeconds) + "s ";
+			time += Integer.toString((int)dt) + "ms";
+		}
 		return time;
 	}
 		

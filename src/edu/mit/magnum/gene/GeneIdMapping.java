@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import edu.mit.magnum.FileParser;
-import edu.mit.magnum.Magnum;
+import edu.mit.magnum.MagnumLogger;
 
 
 /**
@@ -38,9 +38,14 @@ import edu.mit.magnum.Magnum;
 public class GeneIdMapping {
 
 	/** The magnum instance */
-	private Magnum mag;
+	private MagnumLogger log;
 
-	/** The unique instance of the mapping (Singleton design pattern) */
+	/** 
+	 * The unique instance of the mapping (Singleton design pattern)
+	 * TODO Not very nice, I had to replace the Magnum with a MagnumLogger reference,
+	 * otherwise there would have been a memory leak. We should avoid static instances.
+	 * Instead, a Magnum instance could have its own GeneIdMapping.
+	 */
 	static private GeneIdMapping instance_ = null;
 	
 	/** Mapping ensembl to entrez */
@@ -50,15 +55,15 @@ public class GeneIdMapping {
 	// ============================================================================
 	// PUBLIC METHODS
 	
-	private GeneIdMapping(Magnum mag) {
-		this.mag = mag;
+	private GeneIdMapping(MagnumLogger log) {
+		this.log = log;
 	}
 	
 	/** Get the unique instance */
-	public static GeneIdMapping getInstance(Magnum mag) {
+	public static GeneIdMapping getInstance(MagnumLogger log) {
 	
 		if (instance_ == null)
-			instance_ = new GeneIdMapping(mag);
+			instance_ = new GeneIdMapping(log);
 		
 		return instance_;
 	}
@@ -79,12 +84,12 @@ public class GeneIdMapping {
 	public void load(String filename) {
 		
 		if (ensembl2entrez_ != null) {
-			mag.log.warning("Gene mapping already loaded");
+			log.warning("Gene mapping already loaded");
 			return;
 		}
 		
 		ensembl2entrez_ = new HashMap<String, HashSet<String>>();
-		FileParser parser = new FileParser(mag.log, filename);
+		FileParser parser = new FileParser(log, filename);
 		
 		while(true) {
 			// Read next line

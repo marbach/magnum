@@ -53,6 +53,10 @@ public class Magnum {
 	public MagnumOptionParser set;
 	/** The utilities */
 	public MagnumUtils utils;
+	
+	/** Connectivity enrichment analysis */
+	private EnrichMain enrichMain;
+	
 
 	/** Main function */
 	static public void main(String[] args) {
@@ -217,13 +221,13 @@ public class Magnum {
 		log.println("LOADING INPUT FILES");
 		log.println("-------------------\n");
 
-		EnrichMain enrich = new EnrichMain(this);
+		enrichMain = new EnrichMain(this);
 
 		// Analyze enrichment
 		log.println("COMPUTING ENRICHMENT");
 		log.println("--------------------\n");
 
-		enrich.run();
+		enrichMain.run();
 	}
 
 
@@ -263,5 +267,11 @@ public class Magnum {
 				set.isDirected_, set.removeSelfLoops_,
 				set.isWeighted_, set.threshold_);
 	}
+
+	
+	// ============================================================================
+	// GETTERS AND SETTERS
+	
+	public EnrichMain getEnrichMain() { return enrichMain; }
 
 }

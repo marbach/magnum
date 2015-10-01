@@ -67,7 +67,7 @@ public class EnrichMain {
 		this.mag = mag;
 		// Initialize gene mapping
 		if (!mag.set.idTypeFunctionalData_.equalsIgnoreCase(mag.set.idTypeGeneScores_))
-			GeneIdMapping.getInstance(mag).load(mag.set.geneIdMappingFile_);
+			GeneIdMapping.getInstance(mag.log).load(mag.set.geneIdMappingFile_);
 		
 		// Load the gene scores, excluding genes from the excludedGenesFile
 		geneScores_ = new GeneScoreList(mag, mag.set.geneScoreFile_, mag.set.excludedGenesFile_);
@@ -288,5 +288,6 @@ public class EnrichMain {
 	
 	public Enrichment getEnrichment() { return enrichment_; }
 	public GeneScoreList getGeneScores() { return geneScores_; }
+	public double getEnrichmentScore() { return enrichment_.getEnrichmentScore(); }
 	
 }

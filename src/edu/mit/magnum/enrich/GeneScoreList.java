@@ -142,7 +142,7 @@ public class GeneScoreList {
 		
 		excludedGenes_ = new HashSet<String>();
 		excludingHlaGenes_ = false;
-		GeneIdMapping idMapping = GeneIdMapping.getInstance(mag);
+		GeneIdMapping idMapping = GeneIdMapping.getInstance(mag.log);
 		
 		FileParser parser;
 		if (excludedGenesFile == null) {
@@ -193,7 +193,7 @@ public class GeneScoreList {
 	 */
 	private void loadGeneScores(File geneScoreFile) {
 		
-		GeneIdMapping idMapping = GeneIdMapping.getInstance(mag);
+		GeneIdMapping idMapping = GeneIdMapping.getInstance(mag.log);
 		boolean translateToEntrez = mag.set.idTypeFunctionalData_.equalsIgnoreCase("entrez");
 
 		// Load gene positions so that gene pairs on same chromosome can be excluded

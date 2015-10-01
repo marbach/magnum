@@ -263,7 +263,7 @@ public class FunctionalData {
 				|| excludedGenePairsFile.length() == 0)
 			return;
 
-		GeneIdMapping idMapping = GeneIdMapping.getInstance(mag);
+		GeneIdMapping idMapping = GeneIdMapping.getInstance(mag.log);
 		boolean translateToEntrez = mag.set.idTypeFunctionalData_.equalsIgnoreCase("entrez");
 
 		// Open the file

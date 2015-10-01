@@ -39,8 +39,10 @@ import java.util.zip.GZIPOutputStream;
  */
 public class FileExport {
 
+	/** The file */
+	private File file;
 	/** The buffered file writer */
-	private BufferedWriter writer_ = null;
+	private BufferedWriter writer_;
 	
 	
 	// ============================================================================
@@ -50,6 +52,7 @@ public class FileExport {
 	public FileExport(MagnumLogger log, File file, boolean gzip) {
 
 		try {
+			this.file = file;
 			log.println("Writing file: " + file.getPath());
 		
 			if (gzip) {
@@ -127,5 +130,11 @@ public class FileExport {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	// ============================================================================
+	// GETTERS AND SETTERS
+	
+	public File getFile() { return file; }
+
 	  
 }
