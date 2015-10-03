@@ -1,10 +1,14 @@
-**Magnum** is a java tool implementing the methods described in the paper:
-* **Cell type-specific regulatory circuits reveal variable modular perturbations across complex diseases**. 
-Marbach D, Lamparter D, Quon G, Kellis M, Kutalik Z, and Bergmann S. 
-*Submitted.*
+**Magnum** is a java app for GWAS pathway and network analysis. This is the GitHub repository for the **command-line tool**, there is a [separate repository](https://github.com/marbach/magnum-app) for the app. 
 
-**Web site**
+**Website**
 * [regulatorycircuits.org](http://regulatorycircuits.org)
+
+**Reference**
+* Marbach D, Lamparter D, Quon G, Kellis M, Kutalik Z, and Bergmann S. Tissue-specific regulatory circuits reveal variable modular perturbations across complex diseases. Submitted (preprint available upon request).
+
+**GitHub**
+* Magnum app: [wiki](https://github.com/marbach/magnum-app/wiki/), [repository](https://github.com/marbach/magnum-app)
+* Magnum command-line tool: [wiki](https://github.com/marbach/magnum/wiki/), [repository](https://github.com/marbach/magnum)
 
 **Features**
 * Network connectivity enrichment analysis
@@ -13,7 +17,28 @@ Marbach D, Lamparter D, Quon G, Kellis M, Kutalik Z, and Bergmann S.
 
 Magnum is under active development, more features are currently being added.
 
-### Support
+**Help**
+* [Help](http://regulatorycircuits.org/help/)
+* [FAQ](https://github.com/marbach/magnum-app/wiki/FAQ)
+* [Contact](http://regulatorycircuits.org/contact/)
+
+**License**
+* [MIT license (free, open-source)](https://github.com/marbach/magnum-app/wiki/License)
+
+**Author**
+* [Daniel Marbach](http://danielmarbach.com)
+
+**Advisor**
+* [Sven Bergmann](http://www.unil.ch/dgm/en/home/menuinst/research-groups/sven-bergmann.html)
+
+**Affiliations**
+* University of Lausanne, Department of Medical Genetics
+* Swiss Institute of Bioinformatics
+
+**Extramural funding**
+* SystemsX.ch (SysGenetiX project)
+
+**Support**
 
 ![UNIL logo](https://github.com/marbach/gpdream/blob/master/wiki/images/unil_logo.png)
 ![SIB logo](https://github.com/marbach/gpdream/blob/master/wiki/images/sib_logo.png)
