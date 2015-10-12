@@ -27,7 +27,7 @@ package edu.mit.magnum.netops;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import edu.mit.magnum.FileParser;
 import edu.mit.magnum.Magnum;
@@ -40,14 +40,14 @@ import edu.mit.magnum.net.Network;
 public class GroupNetworks {
 
 	/** The magnum instance */
-	private Magnum mag;
+	protected Magnum mag;
 
 	/** The network directory */
-	File networkDir_ = null;
+	protected File networkDir_ = null;
 	/** The prefix of the network files */
-	String networkFilesPrefix_ = null;
+	protected String networkFilesPrefix_ = null;
 	/** Each entry gives the name and the files of a network set */
-	HashMap<String, ArrayList<String>> networkSets_ = null;
+	protected LinkedHashMap<String, ArrayList<String>> networkSets_ = null;
 
 	
 	// ============================================================================
@@ -87,7 +87,7 @@ public class GroupNetworks {
 	/** Initialize the sets of network files for which the union will be computed */
 	private void initialize(File networkGroupFile) {
 		
-		networkSets_ = new HashMap<String, ArrayList<String>>();
+		networkSets_ = new LinkedHashMap<String, ArrayList<String>>();
 		
 		if (networkGroupFile == null) {
 			ArrayList<String> filenames = mag.utils.listFiles(networkDir_);

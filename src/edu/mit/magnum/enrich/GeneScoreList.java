@@ -114,7 +114,6 @@ public class GeneScoreList {
 				scoreIndex_ = scoreIndex;
 			}
 			// Compare
-			@Override
 			public int compare(Gene g1, Gene g2) {
 				return Double.compare(g1.getScore(scoreIndex_), g2.getScore(scoreIndex_));
 			}

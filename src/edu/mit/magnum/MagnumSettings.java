@@ -262,7 +262,7 @@ public class MagnumSettings extends Settings {
 		outputDirectory_ = new File(System.getProperty("user.dir"));
 		outputFilename_ = "";
 		compressFiles_ = true;
-		verbose_ = true;
+		verbose_ = false;
 
 		networkDir_ = null;
 		networkFile_ = null;
@@ -355,7 +355,7 @@ public class MagnumSettings extends Settings {
 	// ----------------------------------------------------------------------------
 	
 	/** Load settings from given file */
-	public void loadSettings(String settingsFile, boolean requireAll) {
+	public void loadSettings(String settingsFile) {
 		
 		mag.log.println("SETTINGS FILE");
 		mag.log.println("-------------\n");
@@ -379,7 +379,7 @@ public class MagnumSettings extends Settings {
 			prop.load(new InputStreamReader(in));
 			
 			// Get the param values
-			setParameterValues(requireAll);
+			setParameterValues();
 			
 		} catch (Exception e) {
 			mag.log.warning(e.getMessage());
@@ -413,189 +413,189 @@ public class MagnumSettings extends Settings {
 	// PRIVATE METHODS
 
 	/** Set ngsea parameters based on the loaded properties */
-	private void setParameterValues(boolean requireAll) throws Exception {
+	private void setParameterValues() throws Exception {
 
 		// VARIOUS
-		if (requireAll || prop.containsKey("mode"))
+		if (prop.containsKey("mode"))
 			mode_ = getSettingInt("mode");
-		if (requireAll || prop.containsKey("randomSeed"))
+		if (prop.containsKey("randomSeed"))
 			setRandomSeed(getSettingInt("randomSeed"));
-		if (requireAll || prop.containsKey("outputDirectory")) {
+		if (prop.containsKey("outputDirectory")) {
 			outputDirectory_ = getFileSetting("outputDirectory");
 			if (outputDirectory_.equals("")) 
 				outputDirectory_ = new File(System.getProperty("user.dir"));
 		}
-		if (requireAll || prop.containsKey("outputFilename"))
+		if (prop.containsKey("outputFilename"))
 			outputFilename_ = getSetting("outputFilename");
-		if (requireAll || prop.containsKey("verbose"))
+		if (prop.containsKey("verbose"))
 			verbose_ = getSettingBoolean("verbose");
 		mag.log.setVerbose(verbose_);
 
 		// INPUT NETWORK
-		if (requireAll || prop.containsKey("networkDir"))
+		if (prop.containsKey("networkDir"))
 			networkDir_ = getFileSetting("networkDir");
-		if (requireAll || prop.containsKey("networkFile"))
+		if (prop.containsKey("networkFile"))
 			networkFile_ = getFileSetting("networkFile");
-		if (requireAll || prop.containsKey("networkFileDelim"))
+		if (prop.containsKey("networkFileDelim"))
 			networkFileDelim_ = getSetting("networkFileDelim");
-		if (requireAll || prop.containsKey("isDirected"))
+		if (prop.containsKey("isDirected"))
 			isDirected_ = getSettingBoolean("isDirected");
-		if (requireAll || prop.containsKey("removeSelfLoops"))
+		if (prop.containsKey("removeSelfLoops"))
 			removeSelfLoops_ = getSettingBoolean("removeSelfLoops");
-		if (requireAll || prop.containsKey("isWeighted"))
+		if (prop.containsKey("isWeighted"))
 			isWeighted_ = getSettingBoolean("isWeighted");
-		if (requireAll || prop.containsKey("threshold"))
+		if (prop.containsKey("threshold"))
 			threshold_ = getSettingDouble("threshold");
-		if (requireAll || prop.containsKey("superHubThreshold"))
+		if (prop.containsKey("superHubThreshold"))
 			superHubThreshold_ = getSettingDouble("superHubThreshold");
-		if (requireAll || prop.containsKey("refNodesFile"))
+		if (prop.containsKey("refNodesFile"))
 			refNodesFile_ = getFileSetting("refNodesFile");
 
 		// OUTPUT FILES
-		if (requireAll || prop.containsKey("outputSuffix"))
+		if (prop.containsKey("outputSuffix"))
 			outputSuffix_ = getSetting("outputSuffix");
-		if (requireAll || prop.containsKey("exportPairwiseNodeProperties"))
+		if (prop.containsKey("exportPairwiseNodeProperties"))
 			exportPairwiseNodeProperties_ = getSettingBoolean("exportPairwiseNodeProperties");
-		if (requireAll || prop.containsKey("exportNodeProperties"))
+		if (prop.containsKey("exportNodeProperties"))
 			exportNodeProperties_ = getSettingBoolean("exportNodeProperties");
-		if (requireAll || prop.containsKey("compressFiles"))
+		if (prop.containsKey("compressFiles"))
 			compressFiles_ = getSettingBoolean("compressFiles");
 
 		// NETWORKOPS
-		if (requireAll || prop.containsKey("computeUnion"))
+		if (prop.containsKey("computeUnion"))
 			computeUnion_ = getSettingBoolean("computeUnion");
-		if (requireAll || prop.containsKey("networkGroupFile"))
+		if (prop.containsKey("networkGroupFile"))
 			networkGroupFile_ = getFileSetting("networkGroupFile");
-		if (requireAll || prop.containsKey("networkFilePrefix"))
+		if (prop.containsKey("networkFilePrefix"))
 			networkFilePrefix_ = getSetting("networkFilePrefix");
-		if (requireAll || prop.containsKey("computePairwiseSum"))
+		if (prop.containsKey("computePairwiseSum"))
 			computePairwiseSum_ = getSettingBoolean("computePairwiseSum");
-		if (requireAll || prop.containsKey("networkDir2"))
+		if (prop.containsKey("networkDir2"))
 			networkDir2_ = getFileSetting("networkDir2");
 
 		// BASIC NETWORK PROPERTIES
-		if (requireAll || prop.containsKey("computeDegree"))
+		if (prop.containsKey("computeDegree"))
 			computeDegree_ = getSettingBoolean("computeDegree");
-		if (requireAll || prop.containsKey("computeBetweenness"))
+		if (prop.containsKey("computeBetweenness"))
 			computeBetweenness_ = getSettingBoolean("computeBetweenness");
-		if (requireAll || prop.containsKey("computeClusteringCoefficient"))
+		if (prop.containsKey("computeClusteringCoefficient"))
 			computeClusteringCoefficient_ = getSettingBoolean("computeClusteringCoefficient");
 
 		// SHORTEST PATHS
-		if (requireAll || prop.containsKey("computeShortestPathLengths"))
+		if (prop.containsKey("computeShortestPathLengths"))
 			computeShortestPathLengths_ = getSettingBoolean("computeShortestPathLengths");
 
 		// KERNELS
-		if (requireAll || prop.containsKey("computePstepKernel"))
+		if (prop.containsKey("computePstepKernel"))
 			computePstepKernel_ = getSettingBoolean("computePstepKernel");
-		if (requireAll || prop.containsKey("pstepKernelAlpha"))
+		if (prop.containsKey("pstepKernelAlpha"))
 			pstepKernelAlpha_ = getSettingDouble("pstepKernelAlpha");
-		if (requireAll || prop.containsKey("pstepKernelP"))
+		if (prop.containsKey("pstepKernelP"))
 			pstepKernelP_ = getSettingIntArray("pstepKernelP", true);
-		if (requireAll || prop.containsKey("pstepKernelNormalize"))
+		if (prop.containsKey("pstepKernelNormalize"))
 			pstepKernelNormalize_ = getSettingBoolean("pstepKernelNormalize");
 
 		// TANIMOTO
-		if (requireAll || prop.containsKey("computeTargetTanimoto"))
+		if (prop.containsKey("computeTargetTanimoto"))
 			computeTargetTanimoto_ = getSettingBoolean("computeTargetTanimoto");
-		if (requireAll || prop.containsKey("computeTfTanimoto"))
+		if (prop.containsKey("computeTfTanimoto"))
 			computeTfTanimoto_ = getSettingBoolean("computeTfTanimoto");
 
 		// ----------------------------------------------------------------------------
 		// GENOME ANNOTATION
 
-		if (requireAll || prop.containsKey("genesToBeLoadedFile"))
+		if (prop.containsKey("genesToBeLoadedFile"))
 			genesToBeLoadedFile_ = getSetting("genesToBeLoadedFile");
-		if (requireAll || prop.containsKey("chromosome"))
+		if (prop.containsKey("chromosome"))
 			chromosome_ = getSetting("chromosome");
-		if (requireAll || prop.containsKey("excludeXYChromosomes"))
+		if (prop.containsKey("excludeXYChromosomes"))
 			excludeXYChromosomes_ = getSettingBoolean("excludeXYChromosomes");
-		if (requireAll || prop.containsKey("excludeHlaGenes"))
+		if (prop.containsKey("excludeHlaGenes"))
 			excludeHlaGenes_ = getSettingBoolean("excludeHlaGenes");
-		if (requireAll || prop.containsKey("genecodeAnnotationFile"))
+		if (prop.containsKey("genecodeAnnotationFile"))
 			gencodeAnnotationFile_ = getFileSetting("genecodeAnnotationFile");
-		if (requireAll || prop.containsKey("ucscAnnotationFile"))
+		if (prop.containsKey("ucscAnnotationFile"))
 			ucscAnnotationFile_ = getFileSetting("ucscAnnotationFile");
-		if (requireAll || prop.containsKey("loadOnlyProteinCodingGenes"))
+		if (prop.containsKey("loadOnlyProteinCodingGenes"))
 			loadOnlyProteinCodingGenes_ = getSettingBoolean("loadOnlyProteinCodingGenes");
-		if (requireAll || prop.containsKey("geneIdMappingFile"))
+		if (prop.containsKey("geneIdMappingFile"))
 			geneIdMappingFile_ = getSetting("geneIdMappingFile");
 
 		// ----------------------------------------------------------------------------
 		// ENRICHMENT ANALYSIS
 
-		if (requireAll || prop.containsKey("geneCoordFile")) {
+		if (prop.containsKey("geneCoordFile")) {
 			geneCoordFile_ = getFileSetting("geneCoordFile");
 			idTypeFunctionalData_ = "custom";
 			idTypeGeneScores_ = "custom";
 		}
 
-		if (requireAll || prop.containsKey("geneScoreFile"))
+		if (prop.containsKey("geneScoreFile"))
 			geneScoreFile_ = getFileSetting("geneScoreFile");
-		if (requireAll || prop.containsKey("genomeWideSignificanceThreshold"))
+		if (prop.containsKey("genomeWideSignificanceThreshold"))
 			genomeWideSignificanceThreshold_ = getSettingDouble("genomeWideSignificanceThreshold");
-		if (requireAll || prop.containsKey("excludeGenomeWideSignificantGenes"))
+		if (prop.containsKey("excludeGenomeWideSignificantGenes"))
 			excludeGenomeWideSignificantGenes_ = getSettingBoolean("excludeGenomeWideSignificantGenes");
 
-		if (requireAll || prop.containsKey("functionalDataFile"))
+		if (prop.containsKey("functionalDataFile"))
 			functionalDataFile_ = getFileSetting("functionalDataFile"); 
-		if (requireAll || prop.containsKey("functionalDataCols"))
+		if (prop.containsKey("functionalDataCols"))
 			functionalDataCols_ = getSettingIntArray("functionalDataCols", true);		
 
-		if (requireAll || prop.containsKey("excludedGenesFile"))
+		if (prop.containsKey("excludedGenesFile"))
 			excludedGenesFile_ = getFileSetting("excludedGenesFile");
-		if (requireAll || prop.containsKey("excludedGenePairsFile"))
+		if (prop.containsKey("excludedGenePairsFile"))
 			excludedGenePairsFile_ = getFileSetting("excludedGenePairsFile");
-		if (requireAll || prop.containsKey("excludedGenesDistance"))
+		if (prop.containsKey("excludedGenesDistance"))
 			excludedGenesDistance_ = getSettingInt("excludedGenesDistance");
 
-		if (requireAll || prop.containsKey("idTypeGeneScores"))
+		if (prop.containsKey("idTypeGeneScores"))
 			idTypeGeneScores_ = getSetting("idTypeGeneScores");
-		if (requireAll || prop.containsKey("idTypeFunctionalData"))
+		if (prop.containsKey("idTypeFunctionalData"))
 			idTypeFunctionalData_ = getSetting("idTypeFunctionalData");
 
-		if (requireAll || prop.containsKey("usePrecomputedKernels"))
+		if (prop.containsKey("usePrecomputedKernels"))
 			usePrecomputedKernels = getSettingBoolean("usePrecomputedKernels");
-		if (requireAll || prop.containsKey("networkKernelDir"))
+		if (prop.containsKey("networkKernelDir"))
 			networkKernelDir = getFileSetting("networkKernelDir");
-		if (requireAll || prop.containsKey("exportKernels"))
+		if (prop.containsKey("exportKernels"))
 			exportKernels = getSettingBoolean("exportKernels");
 		
 		// ENRICHMENT
-		if (requireAll || prop.containsKey("numPermutations"))
+		if (prop.containsKey("numPermutations"))
 			numPermutations_ = getSettingInt("numPermutations");
-		if (requireAll || prop.containsKey("numBins"))
+		if (prop.containsKey("numBins"))
 			numBins_ = getSettingInt("numBins");
-		if (requireAll || prop.containsKey("scaleKernel"))
+		if (prop.containsKey("scaleKernel"))
 			scaleKernel_ = getSettingBoolean("scaleKernel");
 
-		if (requireAll || prop.containsKey("constCurveResolution"))
+		if (prop.containsKey("constCurveResolution"))
 			constCurveResolution_ = getSettingInt("constCurveResolution");
-		if (requireAll || prop.containsKey("varCurveResolution"))
+		if (prop.containsKey("varCurveResolution"))
 			varCurveResolution_ = getSettingInt("varCurveResolution");
-		if (requireAll || prop.containsKey("curveCutoff"))
+		if (prop.containsKey("curveCutoff"))
 			curveCutoff_ = getSettingDouble("curveCutoff");
-		if (requireAll || prop.containsKey("slidingWindowSize"))
+		if (prop.containsKey("slidingWindowSize"))
 			slidingWindowSize_ = getSettingInt("slidingWindowSize");
 
-		if (requireAll || prop.containsKey("numPermutationsExport")) {
+		if (prop.containsKey("numPermutationsExport")) {
 			numPermutationsExport_ = getSettingInt("numPermutationsExport");
 			if (numPermutationsExport_ > numPermutations_)
 				throw new IllegalArgumentException("Invalid settings: 'numPermutationsExport' must be smaller or equal 'numPermutations'");
 		}
-		if (requireAll || prop.containsKey("pval"))
+		if (prop.containsKey("pval"))
 			pval_ = getSettingDoubleArray("pval", true);
-		if (requireAll || prop.containsKey("twoSidedTest"))
+		if (prop.containsKey("twoSidedTest"))
 			twoSidedTest_ = getSettingBoolean("twoSidedTest");
-		if (requireAll || prop.containsKey("controlFDR"))
+		if (prop.containsKey("controlFDR"))
 			controlFDR_ = getSettingBoolean("controlFDR");
-		if (requireAll || prop.containsKey("FDRStart"))
+		if (prop.containsKey("FDRStart"))
 			FDRStart_ = getSettingInt("FDRStart");
-		if (requireAll || prop.containsKey("AUCStart"))
+		if (prop.containsKey("AUCStart"))
 			AUCStart_ = getSettingInt("AUCStart");
-		if (requireAll || prop.containsKey("geneScoreIndexStart"))
+		if (prop.containsKey("geneScoreIndexStart"))
 			geneScoreIndexStart_ = getSettingInt("geneScoreIndexStart");
-		if (requireAll || prop.containsKey("geneScoreIndexEnd"))
+		if (prop.containsKey("geneScoreIndexEnd"))
 			geneScoreIndexEnd_ = getSettingInt("geneScoreIndexEnd");
 	}
 	

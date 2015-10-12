@@ -76,7 +76,7 @@ public class MagnumOptionParser extends MagnumSettings {
 
 		// (2-3) Set and load the settings file
 		if (options.has("set"))
-			loadSettings((String) options.valueOf("set"), false);
+			loadSettings((String) options.valueOf("set"));
 
 		// (4) Set command-line options (override settings in loaded settings file)
 		

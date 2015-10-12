@@ -160,7 +160,6 @@ public class LabelPermuter {
 		
 		// Comparator to sort genes by centrality
 		final class GeneComparator implements Comparator<Gene> {
-			@Override
 			public int compare(Gene g1, Gene g2) {
 				return -Double.compare(g1.getCentrality(), g2.getCentrality());
 			}

@@ -148,9 +148,10 @@ public class Settings {
     	
     	String filename = getSetting(param);
     	if (filename.isEmpty() || filename.equals(" "))
-    		throw new RuntimeException(param + ": file/directory name is empty or has trailing whitespace");
+    		return null;
+    		//throw new RuntimeException(param + ": file/directory name is empty or has trailing whitespace");
     	
-		return new File(filename);
+		return new File(filename.trim());
     }
 
 

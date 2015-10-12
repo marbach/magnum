@@ -32,6 +32,7 @@ import edu.mit.magnum.net.*;
 import edu.mit.magnum.netops.*;
 import edu.mit.magnum.netprop.NetpropMain;
 import edu.mit.magnum.enrich.*;
+import edu.mit.magnum.experiments.Experiments;
 
 /**
  * Main class 
@@ -122,6 +123,8 @@ public class Magnum {
 			runEnrichmentAnalysis();
 		else if (set.mode_ == 4)
 			runLinkModuleAnalysis();
+		else if (set.mode_ == 5)
+			new Experiments(this).run();
 		else {
 			set.displayHelp();
 			throw new IllegalArgumentException("--mode <int> must be between 1 and 3, found mode=" + set.mode_);
