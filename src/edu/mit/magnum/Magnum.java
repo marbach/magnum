@@ -256,6 +256,35 @@ public class Magnum {
 //		// LinkCommViz.visualize(linkComm);
 	}
 
+	
+	// ----------------------------------------------------------------------------
+
+//	/** Convert dense Colt to Apache Commons matrix */
+//	public RealMatrix colt2apache(DoubleMatrix2D colt) {
+//		
+//		RealMatrix apache = MatrixUtils.createRealMatrix(colt.rows(), colt.columns());
+//		for (int i=0; i<colt.rows(); i++)
+//			for (int j=0; j<colt.columns(); j++)
+//				apache.setEntry(i, j, colt.get(i, j));
+//		
+//		return apache;
+//	}
+//
+//	
+//	// ----------------------------------------------------------------------------
+//
+//	/** Convert dense Apache Commons to Colt matrix */
+//	public DoubleMatrix2D apache2colt(RealMatrix apache) {
+//		
+//		// Convert apache commons matrix to colt
+//		DoubleMatrix2D colt = new DenseDoubleMatrix2D(apache.getRowDimension(), apache.getColumnDimension());
+//		for (int i=0; i<apache.getRowDimension(); i++)
+//			for (int j=0; j<apache.getColumnDimension(); j++)
+//				colt.set(i, j, apache.getEntry(i, j));
+//		
+//		return colt;
+//	}
+
 		
 	// ============================================================================
 	// PRIVATE METHODS

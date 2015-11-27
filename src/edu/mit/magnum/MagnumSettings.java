@@ -46,6 +46,9 @@ import ch.unil.gpsutils.Settings;
  */
 public class MagnumSettings extends Settings {	
 	
+	/** Magnum instance */
+	protected Magnum mag;
+
 	/** The annotation file (default file included in jar) */
 	public final String annotationRsc = "edu/mit/magnum/gene/rsc/gene_coord.bed";
 	/** The HLA+TF genes file (default file included in jar) */
@@ -247,7 +250,8 @@ public class MagnumSettings extends Settings {
 	
 	/** Constructor */
 	public MagnumSettings(Magnum mag) {
-		super(mag);
+		
+		this.mag = mag;
 		resetToDefaults();
 	}
 	
@@ -493,7 +497,7 @@ public class MagnumSettings extends Settings {
 		if (prop.containsKey("pstepKernelAlpha"))
 			pstepKernelAlpha_ = getSettingDouble("pstepKernelAlpha");
 		if (prop.containsKey("pstepKernelP"))
-			pstepKernelP_ = getSettingIntArray("pstepKernelP", true);
+			pstepKernelP_ = getSettingIntArray("pstepKernelP", true, mag.log);
 		if (prop.containsKey("pstepKernelNormalize"))
 			pstepKernelNormalize_ = getSettingBoolean("pstepKernelNormalize");
 
@@ -542,7 +546,7 @@ public class MagnumSettings extends Settings {
 		if (prop.containsKey("functionalDataFile"))
 			functionalDataFile_ = getFileSetting("functionalDataFile"); 
 		if (prop.containsKey("functionalDataCols"))
-			functionalDataCols_ = getSettingIntArray("functionalDataCols", true);		
+			functionalDataCols_ = getSettingIntArray("functionalDataCols", true, mag.log);		
 
 		if (prop.containsKey("excludedGenesFile"))
 			excludedGenesFile_ = getFileSetting("excludedGenesFile");
@@ -586,7 +590,7 @@ public class MagnumSettings extends Settings {
 				throw new IllegalArgumentException("Invalid settings: 'numPermutationsExport' must be smaller or equal 'numPermutations'");
 		}
 		if (prop.containsKey("pval"))
-			pval_ = getSettingDoubleArray("pval", true);
+			pval_ = getSettingDoubleArray("pval", true, mag.log);
 		if (prop.containsKey("twoSidedTest"))
 			twoSidedTest_ = getSettingBoolean("twoSidedTest");
 		if (prop.containsKey("controlFDR"))

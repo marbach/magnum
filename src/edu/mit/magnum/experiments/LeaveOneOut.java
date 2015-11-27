@@ -25,7 +25,6 @@ THE SOFTWARE.
  */
 package edu.mit.magnum.experiments;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import ch.unil.gpsutils.FileExport;
