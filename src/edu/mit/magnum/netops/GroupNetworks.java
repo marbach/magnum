@@ -29,7 +29,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import edu.mit.magnum.FileParser;
+import ch.unil.gpsutils.FileParser;
 import edu.mit.magnum.Magnum;
 import edu.mit.magnum.net.Network;
 

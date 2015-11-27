@@ -23,7 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package edu.mit.magnum;
+package ch.unil.gpsutils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -31,7 +31,7 @@ import java.io.StringWriter;
 /**
  * Logger -- can be extended to customize/redirect outputs
  */
-public class MagnumLogger {
+public class Logger {
 
 	/** Verbose output */
 	private boolean verbose;

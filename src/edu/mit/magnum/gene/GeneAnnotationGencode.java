@@ -28,6 +28,7 @@ package edu.mit.magnum.gene;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import ch.unil.gpsutils.FileParser;
 import edu.mit.magnum.*;
 
 

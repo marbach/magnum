@@ -31,8 +31,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
+import ch.unil.gpsutils.ProgressMonitor;
 import edu.mit.magnum.Magnum;
-import edu.mit.magnum.ProgressMonitor;
 import edu.mit.magnum.net.*;
 
 
@@ -90,7 +90,7 @@ public class TanimotoCoefficient extends PairwiseProperties {
 		initialize();
 		
 		K_ = new DenseDoubleMatrix2D(numNodes_, numNodes_);
-		ProgressMonitor progress = new ProgressMonitor(mag, numNodes_);
+		ProgressMonitor progress = new ProgressMonitor(mag.log, numNodes_);
 		
 		for (int i=0; i<numNodes_; i++) {
 			progress.iteration(i);

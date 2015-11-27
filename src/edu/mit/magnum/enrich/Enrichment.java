@@ -28,9 +28,9 @@ package edu.mit.magnum.enrich;
 import java.util.ArrayList;
 
 import cern.colt.matrix.DoubleMatrix2D;
-import edu.mit.magnum.FileExport;
+import ch.unil.gpsutils.FileExport;
+import ch.unil.gpsutils.ProgressMonitor;
 import edu.mit.magnum.Magnum;
-import edu.mit.magnum.ProgressMonitor;
 import edu.mit.magnum.gene.Gene;
 
 
@@ -240,7 +240,7 @@ abstract public class Enrichment {
 		ProgressMonitor progress = null;
 		if (isObs) {
 			curveObsGeneScores_ = new Curve(k_.size());
-			progress = new ProgressMonitor(mag, k_.size());
+			progress = new ProgressMonitor(mag.log, k_.size());
 		}
 		
 		int kIndex = 0; // index pointing to the next k_
@@ -294,7 +294,7 @@ abstract public class Enrichment {
 		curvesPermutSlidingWindow_ = new ArrayList<Curve>(numPermutations_);
 		
 		//Ngsea.println("Computing enrichment for " + numPermutations_ + " random permutations");
-		ProgressMonitor progress = new ProgressMonitor(mag, numPermutations_);
+		ProgressMonitor progress = new ProgressMonitor(mag.log, numPermutations_);
 
 		for (int i=0; i<numPermutations_; i++) {
 			// Print progress

@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import cern.colt.matrix.DoubleMatrix2D;
-import edu.mit.magnum.FileExport;
+import ch.unil.gpsutils.FileExport;
 import edu.mit.magnum.Magnum;
 import edu.mit.magnum.net.*;
 

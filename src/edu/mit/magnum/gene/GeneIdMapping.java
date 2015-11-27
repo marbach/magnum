@@ -28,8 +28,8 @@ package edu.mit.magnum.gene;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import edu.mit.magnum.FileParser;
-import edu.mit.magnum.MagnumLogger;
+import ch.unil.gpsutils.FileParser;
+import ch.unil.gpsutils.Logger;
 
 
 /**
@@ -38,7 +38,7 @@ import edu.mit.magnum.MagnumLogger;
 public class GeneIdMapping {
 
 	/** The magnum instance */
-	private MagnumLogger log;
+	private Logger log;
 
 	/** 
 	 * The unique instance of the mapping (Singleton design pattern)
@@ -55,12 +55,12 @@ public class GeneIdMapping {
 	// ============================================================================
 	// PUBLIC METHODS
 	
-	private GeneIdMapping(MagnumLogger log) {
+	private GeneIdMapping(Logger log) {
 		this.log = log;
 	}
 	
 	/** Get the unique instance */
-	public static GeneIdMapping getInstance(MagnumLogger log) {
+	public static GeneIdMapping getInstance(Logger log) {
 	
 		if (instance_ == null)
 			instance_ = new GeneIdMapping(log);

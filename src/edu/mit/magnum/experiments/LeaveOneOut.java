@@ -28,7 +28,7 @@ package edu.mit.magnum.experiments;
 import java.io.File;
 import java.util.ArrayList;
 
-import edu.mit.magnum.FileExport;
+import ch.unil.gpsutils.FileExport;
 import edu.mit.magnum.Magnum;
 import edu.mit.magnum.net.Network;
 import edu.mit.magnum.netops.GroupNetworks;

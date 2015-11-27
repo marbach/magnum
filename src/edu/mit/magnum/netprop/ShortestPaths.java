@@ -30,9 +30,9 @@ import java.util.HashSet;
 import java.util.Map;
 
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
+import ch.unil.gpsutils.ProgressMonitor;
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraDistance;
 import edu.mit.magnum.Magnum;
-import edu.mit.magnum.ProgressMonitor;
 import edu.mit.magnum.net.*;
 
 
@@ -81,7 +81,7 @@ public class ShortestPaths extends PairwiseProperties {
 		//DijkstraShortestPath<Node,Edge> distance = new DijkstraShortestPath<Node,Edge>(graph_, cached);
 
 		// Print status after doing 'freq' regulators
-		ProgressMonitor progress = new ProgressMonitor(mag, numNodes_);
+		ProgressMonitor progress = new ProgressMonitor(mag.log, numNodes_);
 
 		for (int i=0; i<numNodes_; i++) {
 			// Print progress

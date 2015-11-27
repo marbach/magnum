@@ -23,7 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package edu.mit.magnum;
+package ch.unil.gpsutils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -49,7 +49,7 @@ public class FileExport {
 	// PUBLIC METHODS
 	    
 	/** Constructor */
-	public FileExport(MagnumLogger log, File file, boolean gzip) {
+	public FileExport(Logger log, File file, boolean gzip) {
 
 		try {
 			this.file = file;
@@ -69,17 +69,17 @@ public class FileExport {
 	}
 
 	/** Constructor for uncompressed file */
-	public FileExport(MagnumLogger log, File file) {
+	public FileExport(Logger log, File file) {
 		this(log, file, false);
 	}
 
 	/** Constructor */
-	public FileExport(MagnumLogger log, String filename, boolean gzip) {
+	public FileExport(Logger log, String filename, boolean gzip) {
 		this(log, new File(gzip ? filename + ".gz" : filename), gzip);
 	}
 	
 	/** Constructor for uncompressed file */
-	public FileExport(MagnumLogger log, String filename) {
+	public FileExport(Logger log, String filename) {
 		this(log, filename, false);
 	}
 

@@ -28,6 +28,9 @@ package edu.mit.magnum;
 import java.io.File;
 import java.util.ArrayList;
 
+import ch.unil.gpsutils.FileExport;
+import ch.unil.gpsutils.Logger;
+import ch.unil.gpsutils.Utils;
 import edu.mit.magnum.net.*;
 import edu.mit.magnum.netops.*;
 import edu.mit.magnum.netprop.NetpropMain;
@@ -49,11 +52,11 @@ public class Magnum {
 	final public static String version = "1.0";
 
 	/** The logger -- a different logger can be plugged in for custom logging */
-	public MagnumLogger log;
+	public Logger log;
 	/** The settings */
 	public MagnumOptionParser set;
 	/** The utilities */
-	public MagnumUtils utils;
+	public Utils utils;
 	
 	/** Connectivity enrichment analysis */
 	private EnrichMain enrichMain;
@@ -82,20 +85,20 @@ public class Magnum {
 	}
 
 	/** Constructor with custom logger */
-	public Magnum(MagnumLogger customLog) {
+	public Magnum(Logger customLog) {
 		this(null, customLog);
 	}
 
 	
 	/** Constructor, parse command-line arguments, initialize settings */
-	public Magnum(String[] args, MagnumLogger customLog) {
+	public Magnum(String[] args, Logger customLog) {
 
 		// Initialize
 		if (customLog != null)
 			log = customLog;
 		else
-			log = new MagnumLogger(); // must be first
-		utils = new MagnumUtils(this);
+			log = new Logger(); // must be first
+		utils = new Utils(log);
 		set = new MagnumOptionParser(this); // sets defaults
 		
 		// Parse command-line arguments and initialize settings

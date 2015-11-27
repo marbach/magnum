@@ -23,7 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package edu.mit.magnum;
+package ch.unil.gpsutils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,10 +43,10 @@ import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 /**
  * Some utility functions
  */
-public class MagnumUtils {
+public class Utils {
 
 	/** Magnum instance */
-	private Magnum mag;
+	private Logger log;
 	
 	/** Scientific format with plenty of digits (no loss in precision) */
 	private DecimalFormat scientific_ = new DecimalFormat("0.###############E0#####");
@@ -58,8 +58,8 @@ public class MagnumUtils {
 	// PUBLIC METHODS
 
 	/** Constructor */
-	public MagnumUtils(Magnum mag) {
-		this.mag = mag;
+	public Utils(Logger log) {
+		this.log = log;
 	}
 	
 	
@@ -112,9 +112,9 @@ public class MagnumUtils {
 		int size = v.length;
 		
 		for (int i=0; i < size; i++)
-			mag.log.print(v[i] + "\t");
+			log.print(v[i] + "\t");
 		
-		mag.log.println("");
+		log.println("");
 	}
 
 	
@@ -159,6 +159,13 @@ public class MagnumUtils {
 	/** Extract the basic file name without path and without extension */
 	public String extractBasicFilename(String filename, boolean includePath) {
 		
+		return extractBasicFilename(filename, null, includePath);
+	}
+	
+	
+	/** Extract the basic file name without path and without extension */
+	public String extractBasicFilename(String filename, String outputSuffix, boolean includePath) {
+		
 		// The beginning of the filename (without the path) 
 		int start = filename.lastIndexOf("/") + 1;
 		if (start == -1)
@@ -179,8 +186,8 @@ public class MagnumUtils {
 		String basicFilename = filename.substring((includePath ? 0 : start), end);
 		
 		// Add custom suffix
-		if (mag.set.outputSuffix_ != null && mag.set.outputSuffix_.compareTo("") != 0)
-			basicFilename += mag.set.outputSuffix_;
+		if (outputSuffix != null && outputSuffix.compareTo("") != 0)
+			basicFilename += outputSuffix;
 		
 		return basicFilename;
 	}
@@ -242,9 +249,8 @@ public class MagnumUtils {
 	public void exec(String command) {
 
 		try {
-
 			// Execute command
-			mag.log.println(command);
+			log.println(command);
 			Process p;
 			p = Runtime.getRuntime().exec(command);
 			BufferedReader stdInput = new BufferedReader(new
@@ -256,13 +262,13 @@ public class MagnumUtils {
 			// read the output from the command
 			String s;
 			while ((s = stdInput.readLine()) != null) {
-				mag.log.println(s);
+				log.println(s);
 			}
 
 			// read any errors from the attempted command
-			mag.log.println("Here is the standard error of the command (if any):\n");
+			log.println("Here is the standard error of the command (if any):\n");
 			while ((s = stdError.readLine()) != null) {
-				mag.log.println(s);
+				log.println(s);
 			}
 
 		} catch (IOException e) {

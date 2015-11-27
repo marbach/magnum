@@ -38,8 +38,8 @@ import org.apache.commons.collections15.bidimap.DualHashBidiMap;
 
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 import cern.colt.matrix.linalg.SeqBlas;
-import edu.mit.magnum.FileExport;
-import edu.mit.magnum.FileParser;
+import ch.unil.gpsutils.FileExport;
+import ch.unil.gpsutils.FileParser;
 import edu.mit.magnum.Magnum;
 import edu.uci.ics.jung.algorithms.util.Indexer;
 import edu.uci.ics.jung.graph.AbstractTypedGraph;

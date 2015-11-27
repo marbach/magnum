@@ -31,8 +31,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import edu.mit.magnum.FileExport;
-import edu.mit.magnum.FileParser;
+import ch.unil.gpsutils.FileExport;
+import ch.unil.gpsutils.FileParser;
 import edu.mit.magnum.Magnum;
 
 

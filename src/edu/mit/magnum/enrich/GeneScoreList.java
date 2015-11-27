@@ -34,7 +34,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import edu.mit.magnum.FileParser;
+import ch.unil.gpsutils.FileParser;
 import edu.mit.magnum.Magnum;
 import edu.mit.magnum.gene.Gene;
 import edu.mit.magnum.gene.GeneAnnotation;

@@ -36,6 +36,8 @@ import java.util.Random;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.Well19937c;
 
+import ch.unil.gpsutils.Settings;
+
 
 
 /** 
